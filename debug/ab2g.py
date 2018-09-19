@@ -17,7 +17,7 @@ def b2g(b,emptyAsGoal=False):
 def matchGoal(b,g):
 	barr=b.rawBoard()
 	for x in g.constraints:
-		if barr[x[1]]!=x[0]:
+		if str(barr[x[0]])!=str(x[1]):
 			return False
 	return True
 

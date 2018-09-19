@@ -52,6 +52,11 @@ class board:
 	def dontcareNum(self):
 		return -1
 	def setDontcare(self,atHere=[],excludeEmpty=False):
+		'''
+			if excludeEmpty!=False , then the empty is NOT set to dontcare
+			/* or in other ways to say */
+			if excludeEmpty==False , then the empty is included to set to dontcare
+		'''
 		sz=self.size()
 		for i in atHere:
 			if excludeEmpty!=False and i==self.emptyAt(): continue
