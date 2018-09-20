@@ -45,8 +45,13 @@ txt.fromTxt(sys.argv[0])
 tmp=txt.constraints[-5:]
 txt.constraints=tmp
 del tmp
-print('txt',txt.constraints)
+print('txt',txt)
+from pprint import pprint
 print('match b:txt',matchGoal(b,txt))
 print('match bg:txt',matchGoal(bg,txt))
 print('match b:bgg',matchGoal(b,bgg))
+
+xxx=goaltree()
+xxx.fromTxt("ainputtest.txt")
+print(xxx)
 
