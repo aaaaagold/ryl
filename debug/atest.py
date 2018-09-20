@@ -55,3 +55,7 @@ xxx=goaltree()
 xxx.fromTxt("ainputtest.txt")
 print(xxx)
 
+
+
+
+

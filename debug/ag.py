@@ -5,8 +5,8 @@ from shorthand import *
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
 token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
-token_goalset='([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
-token_goaltree='[\n]*(('+token_goalset+')*)'
+token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
+token_goaltree='(('+token_goalset+')*)'
 #token_goaltree='[\n]*([A-Za-z0-9_$]+[ \t]([A-Za-z0-9_$]+|-)([\n][^\n])*)($|[\n][\n]+)'
 parser_goaltree=re.compile(token_goaltree)
 
@@ -86,7 +86,7 @@ class goaltree:
 			format: see self.fromTxt
 		'''
 		s=s.replace('\r','')
-		print(bytes(token_goaltree,"UTF-8"))
+		#print(bytes(token_goaltree,"UTF-8")) # debug
 		m=self.__class__.parser_tree.match(s)
 		if isNone(m): return
 		#print('*',m.groups()) # debug
@@ -96,6 +96,7 @@ class goaltree:
 		for block in blocks:
 			#print('**',block) # debug
 			m=self.__class__.parser_set.match(block)
+			if isNone(m): continue
 			#print('***',m.groups()) # debug
 			curr=m.group(1)
 			succ=m.group(2)
