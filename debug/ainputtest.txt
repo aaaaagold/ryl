@@ -17,58 +17,54 @@ name0 -
 15 15
 
 
-name1 name0
+name001 name0
 0 0
 1 1
 2 2
 3 3
-# a comment passing by
 4 4
-8 8
-12 12
-# a comment passing by
 5 5
 6 6
-7 7
+8 8
 9 9
-13 13
+12 12
 
-
-name2 name1
-# a comment passing by
+ 
+name001 name0
 0 0
 1 1
 2 2
 3 3
 4 4
-8 8
-12 12
-
-
-name3 name2
-0 0
-1 1
-2 2
-3 3
-
-0 0
-4 4
-8 8
-12 12
-
-
-name4 name1
-0 0
-1 1
-2 2
-3 3
-4 4
-8 8
-12 12
 5 5
-6 6
-7 7
+8 8
+12 12
 
+ 
+ 
+name002 name001
+0 0
+1 1
+2 2
+3 3
+4 4
+10 5
+8 8
+12 12
+
+  
+name003 name002
+0 0
+1 1
+2 2
+3 3
+4 4
+10 5
+8 8
+12 12
+
+ 
+name003 name002
 0 0
 1 1
 2 2
@@ -76,118 +72,12 @@ name4 name1
 4 4
 8 8
 12 12
-5 5
-9 9
-13 13
 
-
-name01 name02
-15 0
-
-
-name02 name03
-14 0
-
-11 0
-
-
-name03 name04
-13 0
-
-10 0
-
-7 0
-
-name04 name05
-12 0
-
-9 0
-
-6 0
-
-3 0
-
-
-name05 name06
-8 0
-
-5 0
-
-2 0
-
-
-name06 name07
-4 0
-
-1 0
-
-
-name07 name11
-0 0
-
-
-
-name11 name12
-0 0
-15 1
-
-
-name12 name13
-0 0
-14 1
-
-0 0
-11 1
-
-
-name13 name14
-0 0
-13 1
-
-0 0
-10 1
-
-0 0
-7 1
-
-
-name14 name15
-0 0
-12 1
-
-0 0
-9 1
-
-0 0
-6 1
-
-0 0
-3 1
-
-
-name15 name16
-0 0
-8 1
-
-0 0
-5 1
-
-
-name16 name17
-0 0
-4 1
-
-
-name17 name21
+ 
+ 
+name003 name002
 0 0
 1 1
+2 2
 
-
-name19 name17
-0 0
-2 1
-
-0 0
-3 1
-
-
+ 

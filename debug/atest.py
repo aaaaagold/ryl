@@ -51,10 +51,27 @@ print('match b:txt',matchGoal(b,txt))
 print('match bg:txt',matchGoal(bg,txt))
 print('match b:bgg',matchGoal(b,bgg))
 
-xxx=goaltree()
-xxx.fromTxt("ainputtest.txt")
-print(xxx)
+try:
+	xxx=goaltree()
+	xxx.fromTxt("ainputtest.txt")
+	print(xxx)
+except Exception as inst:
+	print(inst)
 
+print()
+xxx=goaltree()
+xxx.fromTxt("ainput-8puzzle.txt")
+print(xxx)
+print("toStr")
+print(xxx.toStr())
+print("#end")
+bbb=board((3,3))
+print("bd"),bbb.print()
+keys=matchGoaltree(b,xxx)
+print("matches:",keys)
+print("finals:",xxx.getFinals())
+print("rand()"),bbb.random(),bbb.print()
+# TODO 
 
 
 
