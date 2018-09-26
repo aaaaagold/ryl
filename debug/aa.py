@@ -161,7 +161,7 @@ class A:
 		tmpcurr.setDontcare(ds_curr,True)
 		#print("curr dontcare"),tmpcurr.print() # debug
 		res=tmpcurr.bfs(step=111,fixedBlockIts=g[2],stateLimit=numOf_evalStates)
-		# (stat,step,(move,prevstat))
+		# statHash => (stat,stepCnt,(move,prevstat))
 		tmpres={}
 		# (originalHash,(stat,step,(move,prevstat)) )
 		for i in res:

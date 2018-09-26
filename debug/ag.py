@@ -56,6 +56,7 @@ class goal:
 			if isNone(m): continue
 			res=m.group(1,2)
 			self.add(res[1],int(res[0]),arrangeLater=True)
+			# TODO: need ORs
 		return self
 	def toStr(self):
 		length=len(str(self.maxLabel))

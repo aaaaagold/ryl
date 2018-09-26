@@ -70,9 +70,24 @@ print("bd"),bbb.print()
 keys=matchGoaltree(b,xxx)
 print("matches:",keys)
 print("finals:",xxx.getFinals())
-print("rand()"),bbb.random(),bbb.print()
 # TODO 
 
+if 0==0:
+	notSolved=[
+		[8,4,2,6,5,0,1,7,3],
+		[1,3,6,5,4,0,2,8,7],
+		[2,3,4,1,7,0,8,5,6],
+	]
+	for arr in notSolved:
+		print("notSolved")
+		bbb.setNums(arr,arr.index(8))
+		bbb.print()
+		genSol(bbb,xxx,step=8)
+		print()
 
-
+print("board.random()")
+bbb.random()
+while bbb.solvable()==False: bbb.random()
+bbb.print()
+genSol(bbb,xxx,step=8)
 

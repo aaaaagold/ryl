@@ -189,7 +189,7 @@ class board:
 					tmpstat=currstat.copy()
 					tmpstatNum=tmpstat.hash()
 					if currstep<step:
-						t=(tmpstat,currstep+1,(m,currstatNum))
+						t=(tmpstat,currstep+1,(m,currstatNum)) ####
 						q.push(t)
 						del t
 					del tmpstat,tmpstatNum
