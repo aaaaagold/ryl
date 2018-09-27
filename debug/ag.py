@@ -124,7 +124,7 @@ class goaltree:
 		defined=set()
 		data=[]
 		rs=p.split(s)
-		for i in range(1,len(rs),6):
+		for i in range(1,len(rs),p.groups+1):
 			curr=rs[i  ]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")

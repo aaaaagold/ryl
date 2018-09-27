@@ -1,0 +1,123 @@
+####-comments-without-spaces-and-tabs-can-be-at-start-of-the-file
+####-several-lines-are-possible
+####-this-is-example-to-solve-"8-puzzle"
+name0 -
+ after starting define a goal, spaces and tabs are available in comments, but need to notice:
+  line in the block starting with [0-9]+[ \t] will be consider as a constraint of a goal,
+   others are comment
+    confused? use '#' at the start of a line
+ tailing [ \t] will be ignored
+ empty lines ( or lines with only [ \t]+ ) have special meaning:
+ format:
+ goalName[ \t]succNameOfThisGoal
+  # [0-9A-Za-z_$]+
+ constraint
+ constraint
+ # an empty line
+ # next constraint set
+ ...
+ # two or more empty line
+ # next goalName
+ ...
+ constraint format: label(integer>=0, not used in this case) item( any except [\n] and tailing [ \t] , loc:piece_number[ loc:piece_number[ ...]] )
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
+0 5:5
+0 6:6
+0 7:7
+0 8:8
+
+
+name1 name0
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 6:6
+
+
+name2 name1
+0 0:0
+0 1:1
+0 2:2
+0 3:6
+0 4:3 5:3 8:3
+
+0 0:0
+0 1:1
+0 2:2
+0 6:3
+0 5:6 7:6 8:6
+
+0 0:0
+0 3:3
+0 6:6
+0 1:2
+0 4:1 7:1 8:1
+
+0 0:0
+0 3:3
+0 6:6
+0 2:1
+0 5:2 7:2 8:2
+
+
+name3 name2
+0 0:0
+0 1:1
+0 2:2
+
+0 0:0
+0 3:3
+0 6:6
+
+
+name3_1 name3
+0 0:0
+0 1:2
+0 4:1
+
+0 0:0
+0 2:1
+0 5:2
+
+0 0:0
+0 3:6
+0 4:3
+
+0 0:0
+0 6:3
+0 7:6
+
+
+name4 name3_1
+0 0:0
+0 1:2
+0 3:1 6:1 7:1 8:1
+
+0 0:0
+0 2:1
+0 3:2 6:2 7:2 8:2
+
+0 0:0
+0 3:6
+0 1:3 2:3 5:3 8:3
+
+0 0:0
+0 6:3
+0 8:6 5:6 2:6 1:6
+
+
+name5 name4
+0 0:0
+
+
+name6 name5
+0 2:0 4:0 6:0
+
+
+name7 name6
+0 5:0 7:0
