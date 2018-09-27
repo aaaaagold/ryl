@@ -1,5 +1,25 @@
+####-comments-without-spaces-and-tabs-can-be-at-start-of-the-file
+####-several-lines-are-possible
+####-this-is-example-to-solve-"8-puzzle"
 name0 -
-# loc item
+ after starting define a goal, spaces and tabs are available in comments, but need to notice:
+  line in the block starting with [0-9]+[ \t] will be consider as a constraint of a goal,
+   others are comment
+    confused? use '#' at the start of a line
+ tailing [ \t] will be ignored
+ empty lines ( or lines with only [ \t]+ ) have special meaning:
+ format:
+ goalName[ \t]succNameOfThisGoal
+  # [0-9A-Za-z_$]+
+ constraint
+ constraint
+ # an empty line
+ # next constraint set
+ ...
+ # two or more empty line
+ # next goalName
+ ...
+ constraint format: loc(integer>=0) item(any except [\n] and tailing [ \t])
 0 0
 1 1
 2 2

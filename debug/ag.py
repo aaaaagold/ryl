@@ -8,8 +8,6 @@ from pprint import pprint
 token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
 token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
 token_goaltree='(('+token_goalset+')*)'
-#token_goaltree='[\n]*([A-Za-z0-9_$]+[ \t]([A-Za-z0-9_$]+|-)([\n][^\n])*)($|[\n][\n]+)'
-parser_goaltree=re.compile(token_goaltree)
 
 class goal:
 	parser_item=re.compile(token_item)
@@ -51,10 +49,13 @@ class goal:
 		'''
 		self.maxLabel=-1
 		lines=s.split('\n')
-		rs=self.__class__.parser_item.split(s)
+		p=self.__class__.parser_item
+		rs=p.split(s)
 		#print('*'*11,'\n',rs) # debug
-		for i in range(1,len(rs),3):
+		for i in range(1,len(rs),p.groups+1):
 			# not match , [0-9]+ , [^\n]+
+			# start from 1 =>
+			# [0-9]+ , [^\n]+ , not match
 			self.add(rs[i+1],int(rs[i]),arrangeLater=True)
 			# TODO: need ORs
 		'''
@@ -120,18 +121,26 @@ class goaltree:
 		'''
 		s=s.replace('\r','')
 		#print(bytes(token_goaltree,"UTF-8")) # debug
-		m=self.__class__.parser_tree.match(s)
-		if isNone(m): return # not match
+		rs=self.__class__.parser_tree.split(s)
+		# TODO: use re.split only once via parse_set
+		if len(rs)<2: return # not match
+		pprint(rs) # debug
 		#print('*',m.groups()) # debug
 		data=[]
 		defined=set()
-		blocks=re.sub("[ \t]+[\n]","\n",m.group(1)).split("\n\n\n")
+		#blocks=re.sub("[ \t]+[\n]","\n",m.group(1)).split("\n\n\n")
+		blocks=re.sub("[ \t]+[\n]","\n",rs[1]).split("\n\n\n")
 		#pprint(blocks) # debug
+		p=self.__class__.parser_set
+		#tmp=p.split(re.sub("[ \t]+[\n]","\n",s)) # test
+		#print('-'*11,"test"),pprint(tmp) # test
 		for block in blocks:
-			rs=self.__class__.parser_set.split(block)
-			print("{"*11,'\n',rs,'\n',"}"*11) # debug
-			for i in range(1,len(rs),6):
+			rs=p.split(block)
+			#print("{"*11,'\n',rs,'\n',"}"*11) # debug
+			for i in range(1,len(rs),p.groups+1):
 				# not match , currName , succName , goalset , lastGoalset , newLines>2 || $
+				# start from 1 =>
+				# currName , succName , goalset , lastGoalset , newLines>2 || $ , not match
 				curr = rs[i  ]
 				if curr in defined:
 					raise TypeError("Error: '"+curr+"' is defined twice")
