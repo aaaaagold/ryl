@@ -7,6 +7,7 @@ from pprint import pprint
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
 token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
 token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
+#token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)([\n][\n]?[^\n]+)*([\n][\n][\n]|[\n]?[\n]?$)'
 token_goaltree='(('+token_goalset+')*)'
 #token_goaltree='[\n]*([A-Za-z0-9_$]+[ \t]([A-Za-z0-9_$]+|-)([\n][^\n])*)($|[\n][\n]+)'
 parser_goaltree=re.compile(token_goaltree)
@@ -51,12 +52,18 @@ class goal:
 		'''
 		self.maxLabel=-1
 		lines=s.split('\n')
+		rs=self.__class__.parser_item.split(s)
+		#print('*'*11,'\n',rs) # debug
+		for i in range(1,len(rs),3):
+			self.add(rs[i+1],int(rs[i]),arrangeLater=True)
+		'''
 		for line in lines:
 			m=self.__class__.parser_item.match(line)
 			if isNone(m): continue
 			res=m.group(1,2)
 			self.add(res[1],int(res[0]),arrangeLater=True)
 			# TODO: need ORs
+		'''
 		return self
 	def toStr(self):
 		length=len(str(self.maxLabel))
@@ -122,6 +129,8 @@ class goaltree:
 		for block in blocks:
 			#print('**',block) # debug
 			m=self.__class__.parser_set.match(block)
+			r='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)([\n][\n]?[^\n]+)*([\n][\n][\n]|[\n]?[\n]?$)'
+			print('*'*11,'\n',re.compile(r).split(block),'\n','#'*11)
 			if isNone(m): continue
 			#print('***',m.groups()) # debug
 			curr=m.group(1)
