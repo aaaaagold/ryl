@@ -7,7 +7,6 @@ from pprint import pprint
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
 token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
 token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
-#token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)([\n][\n]?[^\n]+)*([\n][\n][\n]|[\n]?[\n]?$)'
 token_goaltree='(('+token_goalset+')*)'
 #token_goaltree='[\n]*([A-Za-z0-9_$]+[ \t]([A-Za-z0-9_$]+|-)([\n][^\n])*)($|[\n][\n]+)'
 parser_goaltree=re.compile(token_goaltree)
@@ -55,7 +54,9 @@ class goal:
 		rs=self.__class__.parser_item.split(s)
 		#print('*'*11,'\n',rs) # debug
 		for i in range(1,len(rs),3):
+			# not match , [0-9]+ , [^\n]+
 			self.add(rs[i+1],int(rs[i]),arrangeLater=True)
+			# TODO: need ORs
 		'''
 		for line in lines:
 			m=self.__class__.parser_item.match(line)
@@ -120,17 +121,26 @@ class goaltree:
 		s=s.replace('\r','')
 		#print(bytes(token_goaltree,"UTF-8")) # debug
 		m=self.__class__.parser_tree.match(s)
-		if isNone(m): return
+		if isNone(m): return # not match
 		#print('*',m.groups()) # debug
 		data=[]
 		defined=set()
 		blocks=re.sub("[ \t]+[\n]","\n",m.group(1)).split("\n\n\n")
 		#pprint(blocks) # debug
 		for block in blocks:
-			#print('**',block) # debug
+			rs=self.__class__.parser_set.split(block)
+			print("{"*11,'\n',rs,'\n',"}"*11) # debug
+			for i in range(1,len(rs),6):
+				# not match , currName , succName , goalset , lastGoalset , newLines>2 || $
+				curr = rs[i  ]
+				if curr in defined:
+					raise TypeError("Error: '"+curr+"' is defined twice")
+				defined.add(curr)
+				succ = rs[i+1]
+				gsv  = rs[i+2].split("\n\n")
+				data.append((curr,([ goal().fromStr(gs) for gs in gsv ],succ)))
+			'''
 			m=self.__class__.parser_set.match(block)
-			r='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)([\n][\n]?[^\n]+)*([\n][\n][\n]|[\n]?[\n]?$)'
-			print('*'*11,'\n',re.compile(r).split(block),'\n','#'*11)
 			if isNone(m): continue
 			#print('***',m.groups()) # debug
 			curr=m.group(1)
@@ -141,7 +151,8 @@ class goaltree:
 			#print("add",curr) # debug
 			gsv=m.group(3).split("\n\n")
 			data.append((curr,([ goal().fromStr(gs) for gs in gsv ],succ)))
-			#data.sort()
+			'''
+		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
 		return self
