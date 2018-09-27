@@ -6,7 +6,9 @@ from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
 token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
-token_goalset='[\n]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)(([\n][\n]?[^\n]+)*)([\n][\n][\n]|[\n]?[\n]?$)'
+#token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
+#token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
+token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
 token_goaltree='(('+token_goalset+')*)'
 
 class goal:
@@ -87,7 +89,6 @@ class goaltree:
 				the next goal to match after matching a goal
 	'''
 	parser_set=re.compile(token_goalset)
-	parser_tree=re.compile(token_goaltree)
 	def __init__(self):
 		self.sets={}
 		pass
@@ -116,51 +117,23 @@ class goaltree:
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s):
 		'''
-			character:'\r' is ommited
+			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
 		'''
-		s=s.replace('\r','')
-		#print(bytes(token_goaltree,"UTF-8")) # debug
-		rs=self.__class__.parser_tree.split(s)
-		# TODO: use re.split only once via parse_set
-		if len(rs)<2: return # not match
-		pprint(rs) # debug
-		#print('*',m.groups()) # debug
-		data=[]
-		defined=set()
-		#blocks=re.sub("[ \t]+[\n]","\n",m.group(1)).split("\n\n\n")
-		blocks=re.sub("[ \t]+[\n]","\n",rs[1]).split("\n\n\n")
-		#pprint(blocks) # debug
 		p=self.__class__.parser_set
-		#tmp=p.split(re.sub("[ \t]+[\n]","\n",s)) # test
-		#print('-'*11,"test"),pprint(tmp) # test
-		for block in blocks:
-			rs=p.split(block)
-			#print("{"*11,'\n',rs,'\n',"}"*11) # debug
-			for i in range(1,len(rs),p.groups+1):
-				# not match , currName , succName , goalset , lastGoalset , newLines>2 || $
-				# start from 1 =>
-				# currName , succName , goalset , lastGoalset , newLines>2 || $ , not match
-				curr = rs[i  ]
-				if curr in defined:
-					raise TypeError("Error: '"+curr+"' is defined twice")
-				defined.add(curr)
-				succ = rs[i+1]
-				gsv  = rs[i+2].split("\n\n")
-				data.append((curr,([ goal().fromStr(gs) for gs in gsv ],succ)))
-			'''
-			m=self.__class__.parser_set.match(block)
-			if isNone(m): continue
-			#print('***',m.groups()) # debug
-			curr=m.group(1)
-			succ=m.group(2)
+		s=re.sub("(\n\r|\n|\r\n)[ \t]+(\n\r|\n|\r\n)","\n\n",s)
+		#print(bytes(token_goaltree,"UTF-8")) # debug
+		defined=set()
+		data=[]
+		rs=p.split(s)
+		for i in range(1,len(rs),6):
+			curr=rs[i  ]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")
 			defined.add(curr)
-			#print("add",curr) # debug
-			gsv=m.group(3).split("\n\n")
+			succ = rs[i+1]
+			gsv  = re.split("[\n][ \t]*[\n]",rs[i+2])
 			data.append((curr,([ goal().fromStr(gs) for gs in gsv ],succ)))
-			'''
 		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
