@@ -9,7 +9,6 @@ token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
-token_goaltree='(('+token_goalset+')*)'
 
 class goal:
 	parser_item=re.compile(token_item)
@@ -122,7 +121,6 @@ class goaltree:
 		'''
 		p=self.__class__.parser_set
 		s=re.sub("(\n\r|\n|\r\n)[ \t]+(\n\r|\n|\r\n)","\n\n",s)
-		#print(bytes(token_goaltree,"UTF-8")) # debug
 		defined=set()
 		data=[]
 		rs=p.split(s)
