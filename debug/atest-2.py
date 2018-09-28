@@ -21,9 +21,7 @@ print("finals:",xxx.getFinals())
 
 if 0==0:
 	notSolved=[
-		[8,4,2,6,5,0,1,7,3],
-		[1,3,6,5,4,0,2,8,7],
-		[2,3,4,1,7,0,8,5,6],
+		[1,6,3,5,8,2,7,0,4],
 	]
 	for arr in notSolved:
 		print("notSolved")
@@ -32,11 +30,10 @@ if 0==0:
 		bbb.print()
 		genSol(bbb,xxx,step=8)
 		print()
-	exit()
-
-print("board.random()")
-bbb.random()
-while bbb.solvable()==False: bbb.random()
-bbb.print()
-genSol(bbb,xxx,step=8)
+else:
+	print("board.random()")
+	bbb.random()
+	while bbb.solvable()==False: bbb.random()
+	bbb.print()
+	genSol(bbb,xxx,step=8)
 
