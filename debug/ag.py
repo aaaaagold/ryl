@@ -14,7 +14,7 @@ class goal:
 	parser_item=re.compile(token_item)
 	# node
 	def __init__(self):
-		self.constraints=[]
+		self.constraints=[] # [ (int(label),item) ... ]
 		self.maxLabel=-1
 		self.arrangeNeeded=False
 	def __eq__(self,rhs):

@@ -1,4 +1,5 @@
 #!/bin/python3
+import re
 from ab import *
 from ag import *
 
@@ -16,12 +17,30 @@ def b2g(b,emptyAsGoal=False):
 
 ###########
 
-def matchGoal(b,g):
+def matchGoal_v1(b,g):
 	barr=b.rawBoard()
 	for x in g.constraints:
 		if str(barr[x[0]])!=str(x[1]):
 			return False
 	return True
+
+def matchGoal_v2(b,g):
+	barr=b.rawBoard()
+	for x in g.constraints:
+		p=re.compile("([0-9]+):([0-9]+)")
+		item=p.split(str(x[1]))
+		matched=False
+		for i in range(1,len(item),p.groups+1):
+			loc = int(item[i  ])
+			pn  = item[i+1]
+			if str(barr[loc])==str(pn):
+				matched=True
+				break
+		if matched==False:
+			return False
+	return True
+
+matchGoal=matchGoal_v2
 
 def matchGoaltree_find_inSet(b,goals):
 	for g in goals:
