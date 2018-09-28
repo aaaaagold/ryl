@@ -6,22 +6,17 @@ from ag import *
 from ab import *
 from ab2g import *
 
-'''
 xxx=goaltree()
 xxx.fromTxt("ainput-8puzzle-2.txt")
 print(xxx)
 print("toStr")
 print(xxx.toStr())
 print("#end")
-bbb=board((3,3))
-print("bd"),bbb.print()
-keys=matchGoaltree(bbb,xxx)
-print("matches:",keys)
 print("finals:",xxx.getFinals())
-'''
+bbb=board((3,3))
 # TODO 
 
-if 0==0:
+if 0!=0:
 	notSolved=[
 		[1,6,3,5,8,2,7,0,4],
 	]
