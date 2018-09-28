@@ -6,6 +6,7 @@ from ag import *
 from ab import *
 from ab2g import *
 
+'''
 xxx=goaltree()
 xxx.fromTxt("ainput-8puzzle-2.txt")
 print(xxx)
@@ -17,6 +18,7 @@ print("bd"),bbb.print()
 keys=matchGoaltree(bbb,xxx)
 print("matches:",keys)
 print("finals:",xxx.getFinals())
+'''
 # TODO 
 
 if 0==0:

@@ -103,13 +103,14 @@ def genSol_bfsTopMatch(bfsRes,gt):
 		matches+=matchGoaltree_trim(mv,gt)
 	return matchGoaltree_trim(matches,gt)
 
-def genSol_1(b,gt,step=8):
+# TODO: try fixedBlockIts if unable to reach next subgoal
+def genSol_1(b,gt,step=8,fixedBlockIts=[]):
 	# return: [ (goalName,[ (stateNum,(state,stepCnt,(move,stateNum))), ]) ]
 	bfsRes=b.bfs(step)
 	mv=genSol_bfsTopMatch(bfsRes,gt)
 	return [ (k,genSol_bfsMatchStates(bfsRes,gt.getGoals(k))) for k in mv ]
 
-def genSol(b,gt,step=8,currStep=0):
+def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[]):
 	# TODO should return each move
 	immediateMatched=matchGoaltree(b,gt)
 	print('genSol',immediateMatched)
