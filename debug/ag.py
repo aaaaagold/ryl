@@ -5,7 +5,7 @@ from shorthand import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item='[ \t]*([0-9]+)[ \t]([^\n]+)'
+token_item='[ \t]*([0-9]+|include)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
@@ -48,6 +48,8 @@ class goal:
 			[ \t]*([0-9]+)[ \t]([^\n]+)
 			lines not match will be omitted
 		'''
+		old=self.constraints
+		self.constraints=[]
 		self.maxLabel=-1
 		lines=s.split('\n')
 		p=self.__class__.parser_item
@@ -57,7 +59,11 @@ class goal:
 			# not match , [0-9]+ , [^\n]+
 			# start from 1 =>
 			# [0-9]+ , [^\n]+ , not match
-			self.add(rs[i+1],int(rs[i]),arrangeLater=True)
+			
+			# TODO: include
+			if rs[i]=="include":
+				print("Warning: 'include' is not implemented yet, ignored")
+			else: self.add(rs[i+1],int(rs[i]),arrangeLater=True)
 			# TODO: need ORs
 		'''
 		for line in lines:
@@ -119,12 +125,16 @@ class goaltree:
 			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
 		'''
+		old=self.sets
 		p=self.__class__.parser_set
 		s=re.sub("(\n\r|\n|\r\n)[ \t]+(\n\r|\n|\r\n)","\n\n",s)
 		defined=set()
 		data=[]
-		rs=p.split(s)
+		rs=p.split(s) # cut via "\n\n\n"
 		for i in range(1,len(rs),p.groups+1):
+			# not match , currName , succName , goals , others
+			# start from 1 =>
+			# currName , succName , goals , others
 			curr=rs[i  ]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")
@@ -135,6 +145,7 @@ class goaltree:
 		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
+		del data
 		return self
 	def toStr(self):
 		kv=self.keys()

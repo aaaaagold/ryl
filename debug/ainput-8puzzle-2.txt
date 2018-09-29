@@ -19,7 +19,10 @@ name0 -
  # two or more empty line
  # next goalName
  ...
- constraint format: label(integer>=0, not used in this case) item( any except [\n] and tailing [ \t] , loc:piece_number[ loc:piece_number[ ...]] )
+ constraint format: label(a keyword or integer>=0, not used in this case) item( any except [\n] and tailing [ \t] , loc:piece_number[ loc:piece_number[ ...]] )
+ keyword:
+ 	include: include a goaltree
+include "somegoalmanual.txt"
 0 0:0
 0 1:1
 0 2:2
@@ -189,8 +192,12 @@ name5 name4
 
 
 name6 name5
-0 2:0 4:0 6:0
+0 1:0 3:0
 
 
 name7 name6
+0 2:0 4:0 6:0
+
+
+name8 name7
 0 5:0 7:0

@@ -10,6 +10,8 @@ xxx=goaltree()
 xxx.fromTxt("ainput-8puzzle-2.txt")
 print(xxx)
 print("toStr")
+xxxtxt=xxx.toStr()
+xxx.fromStr(xxxtxt)
 print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
@@ -19,6 +21,7 @@ bbb=board((3,3))
 if 0!=0:
 	notSolved=[
 		[3,0,8,2,4,1,5,7,6],
+		[1,6,8,5,7,3,0,2,4],
 	]
 	for arr in notSolved:
 		print("notSolved")
