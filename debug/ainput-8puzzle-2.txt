@@ -21,7 +21,7 @@ name0 -
  ...
  constraint format: label(a keyword or integer>=0, not used in this case) item( any except [\n] and tailing [ \t] , loc:piece_number[ loc:piece_number[ ...]] )
  keyword:
- 	include: include a goaltree
+ 	include: include a goaltree, meaning that need to reach one of that tree's final goals
 include "somegoalmanual.txt"
 0 0:0
 0 1:1
