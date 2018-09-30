@@ -48,10 +48,11 @@ def matchGoal_v3(b,g):
 		matched=False # if a cosntraint is matched
 		if x[0]==g.__class__.KW_include_label:
 			isKW=True
-			includedGFinName=x[1][1].getFinals()[0] # only one final
-			includedG=x[1][1].getGoals(includedGFinName)
-			matched=matchGoaltree_find_inSet(b,includedG)
-			#print("KW",res),b.print() # debug
+			for name in x[1][1].getFinals():
+				goals=x[1][1].getGoals(name)
+				if matchGoaltree_find_inSet(b,goals):
+					matched=True
+					break
 		if isKW==False:
 			p=re.compile("([0-9]+):([0-9]+)")
 			item=p.split(str(x[1])) # may have several constraints, just one of them
