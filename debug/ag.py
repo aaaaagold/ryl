@@ -5,17 +5,21 @@ from shorthand import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item='[ \t]*([0-9]+|include)[ \t]([^\n]+)'
+token_item='([\n]|^)([ \t]*[0-9]+|include)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
 
 class goal:
 	parser_item=re.compile(token_item)
+	KW_include_label=-1
+	KW_include_txt="include"
+	KW_include_lentxt=len(KW_include_txt)
 	# node
 	def __init__(self):
 		self.constraints=[] # [ (int(label),item) ... ]
 		self.maxLabel=-1
+		self.including=False
 		self.arrangeNeeded=False
 	def __eq__(self,rhs):
 		self.arrange()
@@ -54,17 +58,22 @@ class goal:
 		lines=s.split('\n')
 		p=self.__class__.parser_item
 		rs=p.split(s)
-		#print('*'*11,'\n',rs) # debug
+		#print('*'*11),pprint(rs) # debug
 		for i in range(1,len(rs),p.groups+1):
-			# not match , [0-9]+ , [^\n]+
+			# not match , ([\n]|^) , [ \t]*[0-9]+|KWs , [^\n]+
 			# start from 1 =>
-			# [0-9]+ , [^\n]+ , not match
-			
-			# TODO: include
-			if rs[i]=="include":
-				print("Warning: 'include' is not implemented yet, ignored")
-			else: self.add(rs[i+1],int(rs[i]),arrangeLater=True)
-			# TODO: need ORs
+			# ([\n]|^) , [ \t]*[0-9]+|KWs , [^\n]+ , not match
+			isKW=False
+			label=rs[i+1]
+			content=rs[i+2]
+			#print(rs[i],rs[i+1]) # debug
+			if label==self.__class__.KW_include_txt:
+				isKW=True
+				self.including=True
+				tmp=goaltree()
+				tmp.fromTxt(content)
+				self.add((content,tmp),self.__class__.KW_include_label,arrangeLater=True)
+			if isKW==False: self.add(content,int(label),arrangeLater=True)
 		'''
 		for line in lines:
 			m=self.__class__.parser_item.match(line)
@@ -74,12 +83,24 @@ class goal:
 			# TODO: need ORs
 		'''
 		return self
-	def toStr(self):
-		length=len(str(self.maxLabel))
+	def toStr(self,labelMinLen=0):
+		length=max(len(str(self.maxLabel)),labelMinLen)
+		if self.including:
+			length=max(length,self.__class__.KW_include_lentxt)
 		rtv=""
 		tmpv=[]
 		for c in self.constraints:
-			tmpv.append("%*d\t%s"%(length,c[0],c[1]))
+			useLen=length
+			label=c[0]
+			content=c[1]
+			if label==self.__class__.KW_include_label:
+				useLen=0
+				label=self.__class__.KW_include_txt
+				content=c[1][0]
+				if 0!=0:
+					tmpv.append(c[1][1].toStr(labelMinLen=length).split('\n')[1:])
+			label=str(label)
+			tmpv.append("%*s\t%s"%(useLen,label,content))
 		rtv+='\n'.join(tmpv)
 		return rtv
 	def fromTxt(self,filename):
@@ -147,7 +168,7 @@ class goaltree:
 		self.sets=dict(data)
 		del data
 		return self
-	def toStr(self):
+	def toStr(self,labelMinLen=0):
 		kv=self.keys()
 		rtv=""
 		tmpv=[]
@@ -156,7 +177,7 @@ class goaltree:
 			tmps+=k
 			tmps+='\t'
 			tmps+=self.getSucc(k)
-			tmpgsv=[ g.toStr() for g in self.getGoals(k) ]
+			tmpgsv=[ g.toStr(labelMinLen=labelMinLen) for g in self.getGoals(k) ]
 			tmpv.append('\n'.join([tmps,"\n\n".join(tmpgsv)]))
 		rtv+="\n\n\n".join(tmpv)
 		return rtv

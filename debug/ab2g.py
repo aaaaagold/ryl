@@ -26,6 +26,7 @@ def matchGoal_v1(b,g):
 
 def matchGoal_v2(b,g):
 	barr=b.rawBoard()
+	print(g),exit()
 	for x in g.constraints:
 		p=re.compile("([0-9]+):([0-9]+)")
 		item=p.split(str(x[1]))
@@ -40,7 +41,31 @@ def matchGoal_v2(b,g):
 			return False
 	return True
 
-matchGoal=matchGoal_v2
+def matchGoal_v3(b,g):
+	barr=b.rawBoard()
+	for x in g.constraints:
+		isKW=False
+		matched=False # if a cosntraint is matched
+		if x[0]==g.__class__.KW_include_label:
+			isKW=True
+			includedGFinName=x[1][1].getFinals()[0] # only one final
+			includedG=x[1][1].getGoals(includedGFinName)
+			matched=matchGoaltree_find_inSet(b,includedG)
+			#print("KW",res),b.print() # debug
+		if isKW==False:
+			p=re.compile("([0-9]+):([0-9]+)")
+			item=p.split(str(x[1])) # may have several constraints, just one of them
+			for i in range(1,len(item),p.groups+1):
+				loc = int(item[i  ])
+				pn  = item[i+1]
+				if str(barr[loc])==str(pn):
+					matched=True
+					break
+		if matched==False:
+			return False
+	return True
+
+matchGoal=matchGoal_v3
 
 def matchGoaltree_find_inSet(b,goals):
 	for g in goals:
@@ -121,6 +146,7 @@ def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[]):
 	if len(goalsInFinals)!=0:
 		minDistItem=min(goalsInFinals,key=(lambda x:x[1][0][1][1]))
 		print('goal!',minDistItem)
+		minDistItem[1][0][1][0].print()
 		return [minDistItem]
 	else:
 		tmp=[ x for x in tmp if not x[0] in immediateMatched ]
