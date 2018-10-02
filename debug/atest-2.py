@@ -16,6 +16,35 @@ print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
 bbb=board((3,3))
+if 0!=0:
+	def permutationAll(items):
+		rg=range(len(items))
+		rtv=[]
+		def innerFoo(rtv,rtvitem,markedSelected):
+			if not False in markedSelected:
+				rtv.append([ i for i in rtvitem ])
+			for i in rg:
+				if markedSelected[i]: continue
+				rtvitem.append(items[i])
+				markedSelected[i]=True
+				innerFoo(rtv,rtvitem,markedSelected)
+				rtvitem.pop()
+				markedSelected[i]=False
+		innerFoo(rtv,[],[ False for _ in rg ])
+		return rtv
+	tmp=permutationAll([ x for x in range(9)])
+	bd33all=[]
+	for x in tmp:
+		tmpbd=board()
+		tmpbd.setNums(x,x.index(8))
+		if tmpbd.solvable():
+			bd33all.append(tmpbd)
+	print(len(bd33all))
+	#
+	#
+	
+	#
+	exit()
 # TODO 
 
 if 0!=0:
@@ -31,9 +60,13 @@ if 0!=0:
 		genSol(bbb,xxx,step=8)
 		print()
 else:
+	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
+	print("need appearing 'goal!'.  %s=%s"%("step",str(step)))
 	print("board.random()")
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	bbb.print()
-	genSol(bbb,xxx,step=8)
+	moves=genSol(bbb,xxx,step=8)
+	print(moves)
+	bbb.moveSeq(moves)
 
