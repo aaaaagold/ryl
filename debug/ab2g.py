@@ -136,7 +136,11 @@ def genSol_1(b,gt,step=8,fixedBlockIts=[]):
 	mv=genSol_bfsTopMatch(bfsRes,gt)
 	return ([ (k,genSol_bfsMatchStates(bfsRes,gt.getGoals(k))) for k in mv ],bfsRes)
 
-def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[],_isBegin=True,_moves=[],_rtvMoves=[]):
+def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[],
+	_isBegin=True,
+	_moves=[],_rtvMoves=[],
+	_nodes=[],_rtvNodes=[],
+	__dummy=None):
 	# TODO should return each move
 	immediateMatched=matchGoaltree(b,gt)
 	print('genSol',immediateMatched)
@@ -148,12 +152,13 @@ def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[],_isBegin=True,_moves=[],_rtvM
 		minDistItem=min(goalsInFinals,key=(lambda x:x[1][0][1][1]))
 		print('goal!',minDistItem)
 		minDistItem[1][0][1][0].print()
-		_rtvMoves+=_moves+bfs2moveSeq(bfs,minDistItem[1][0][0])
+		_rtvMoves.append(_moves+bfs2moveSeq(bfs,minDistItem[1][0][0]))
+		_rtvNodes.append(_nodes+[minDistItem[0]])
 		#return [minDistItem]
 	else:
 		tmp=[ x for x in tmp if not x[0] in immediateMatched ]
-		res=[ genSol(x[1][0][1][0],gt,step,currStep=x[1][0][1][1],_isBegin=False,_moves=_moves+bfs2moveSeq(bfs,x[1][0][0])) for x in tmp ]
+		res=[ genSol(x[1][0][1][0],gt,step,currStep=x[1][0][1][1],_isBegin=False,_moves=_moves+bfs2moveSeq(bfs,x[1][0][0]),_nodes=_nodes+[x[0]]) for x in tmp ]
 		#return res
 	if _isBegin:
-		return _rtvMoves
+		return {"moves":_rtvMoves,"nodes":_rtvNodes}
 

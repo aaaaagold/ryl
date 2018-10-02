@@ -66,7 +66,15 @@ else:
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	bbb.print()
-	moves=genSol(bbb,xxx,step=8)
-	print(moves)
-	bbb.moveSeq(moves)
+	res=genSol(bbb,xxx,step=8)
+	movesS=res['moves']
+	nodesS=res['nodes']
+	print(nodesS)
+	print(movesS)
+	for i in range(len(nodesS)):
+		moves=movesS[i]
+		nodes=nodesS[i]
+		print(nodes)
+		print(moves)
+		bbb.moveSeq(moves)
 
