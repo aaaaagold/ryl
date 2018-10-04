@@ -16,7 +16,7 @@ print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
 bbb=board((3,3))
-if 0!=0:
+if 0==0:
 	def permutationAll(items):
 		rg=range(len(items))
 		rtv=[]
@@ -35,14 +35,23 @@ if 0!=0:
 	tmp=permutationAll([ x for x in range(9)])
 	bd33all=[]
 	for x in tmp:
-		tmpbd=board()
+		tmpbd=board((3,3))
 		tmpbd.setNums(x,x.index(8))
 		if tmpbd.solvable():
 			bd33all.append(tmpbd)
 	print(len(bd33all))
 	#
 	#
-	
+	for i in range(len(bd33all)):
+		print(i,end='\r')
+		bd=bd33all[i]
+		res=genSol(bd,xxx,step=8,stateLimit=4095)
+		movesS=res['moves']
+		nodesS=res['nodes']
+		if 0<len(movesS): pass
+		else:
+			bd.print()
+			print()
 	#
 	exit()
 # TODO 
@@ -66,7 +75,7 @@ else:
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	bbb.print()
-	res=genSol(bbb,xxx,step=8)
+	res=genSol(bbb,xxx,step=8,stateLimit=4095)
 	movesS=res['moves']
 	nodesS=res['nodes']
 	print(nodesS)

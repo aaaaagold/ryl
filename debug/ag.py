@@ -5,7 +5,7 @@ from shorthand import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item='([\n]|^)([ \t]*[0-9]+|include)[ \t]([^\n]+)'
+token_item='([\n]|^)([ \t]*[0-9]+|include|gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'

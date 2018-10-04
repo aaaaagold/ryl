@@ -130,34 +130,36 @@ def genSol_bfsTopMatch(bfsRes,gt):
 	return matchGoaltree_trim(matches,gt)
 
 # TODO: try fixedBlockIts if unable to reach next subgoal
-def genSol_1(b,gt,step=8,fixedBlockIts=[]):
+def genSol_1(b,gt,step=8,stateLimit=4095,fixedBlockIts=[]):
 	# return: [ (goalName,[ (stateNum,(state,stepCnt,(move,stateNum))), ]) ]
-	bfsRes=b.bfs(step)
+	bfsRes=b.bfs(step,stateLimit=stateLimit)
 	mv=genSol_bfsTopMatch(bfsRes,gt)
 	return ([ (k,genSol_bfsMatchStates(bfsRes,gt.getGoals(k))) for k in mv ],bfsRes)
 
-def genSol(b,gt,step=8,currStep=0,fixedBlockIts=[],
+def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
 	_nodes=[],_rtvNodes=[],
 	__dummy=None):
 	# TODO should return each move
 	immediateMatched=matchGoaltree(b,gt)
-	print('genSol',immediateMatched)
-	b.print()
+	#print('genSol',immediateMatched) # debug
+	#b.print() # debug
 	finalGoals=gt.getFinals()
-	tmp,bfs=genSol_1(b,gt,step)
+	tmp,bfs=genSol_1(b,gt,step,stateLimit)
 	goalsInFinals=[ x for x in tmp if x[0] in finalGoals ]
 	if len(goalsInFinals)!=0:
 		minDistItem=min(goalsInFinals,key=(lambda x:x[1][0][1][1]))
-		print('goal!',minDistItem)
-		minDistItem[1][0][1][0].print()
+		#print('goal!',minDistItem) # debug
+		#minDistItem[1][0][1][0].print() # debug
 		_rtvMoves.append(_moves+bfs2moveSeq(bfs,minDistItem[1][0][0]))
 		_rtvNodes.append(_nodes+[minDistItem[0]])
 		#return [minDistItem]
 	else:
 		tmp=[ x for x in tmp if not x[0] in immediateMatched ]
-		res=[ genSol(x[1][0][1][0],gt,step,currStep=x[1][0][1][1],_isBegin=False,_moves=_moves+bfs2moveSeq(bfs,x[1][0][0]),_nodes=_nodes+[x[0]]) for x in tmp ]
+		res=[ genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],_isBegin=False,
+			_moves=_moves+bfs2moveSeq(bfs,x[1][0][0]),_rtvMoves=_rtvMoves,
+			_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes) for x in tmp ]
 		#return res
 	if _isBegin:
 		return {"moves":_rtvMoves,"nodes":_rtvNodes}
