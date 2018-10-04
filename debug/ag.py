@@ -39,7 +39,7 @@ class goal:
 		if self.maxLabel<label: self.maxLabel=label
 		if arrangeLater==False: self.arrange()
 		else: arrangeNeeded=arrangeLater
-	def fromStr(self,s):
+	def fromStr(self,s,cd='./'):
 		'''
 			character:'\r' is ommited
 			this function will NOT do the arrangement
@@ -71,7 +71,7 @@ class goal:
 				isKW=True
 				self.including=True
 				tmp=goaltree()
-				tmp.fromTxt(content)
+				tmp.fromTxt(content,_cd=cd)
 				self.add((content,tmp),self.__class__.KW_include_label,arrangeLater=True)
 			if isKW==False: self.add(content,int(label),arrangeLater=True)
 		'''
@@ -103,9 +103,10 @@ class goal:
 			tmpv.append("%*s\t%s"%(useLen,label,content))
 		rtv+='\n'.join(tmpv)
 		return rtv
-	def fromTxt(self,filename):
-		with open(filename,'rb') as f:
-			self.fromStr("".join(map(chr,f.read())))
+	def fromTxt(self,filename,_cd='./'):
+		cd=_cd+filename[:filename.rindex('/')+1] if '/' in filename else _cd
+		with open(_cd+filename,'rb') as f:
+			self.fromStr("".join(map(chr,f.read())),cd=cd)
 		return self
 
 class goaltree:
@@ -131,7 +132,7 @@ class goaltree:
 	def addgoal(self,goal,name,successorName):
 		# TODO
 		pass
-	def keys(self):
+	def keys(self,notBelow=None):
 		rtv=[k for k in self.sets]
 		rtv.sort()
 		return rtv
@@ -141,7 +142,7 @@ class goaltree:
 		return self.sets[k][1]
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
-	def fromStr(self,s):
+	def fromStr(self,s,cd='./'):
 		'''
 			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
@@ -162,7 +163,7 @@ class goaltree:
 			defined.add(curr)
 			succ = rs[i+1]
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+2])
-			data.append((curr,([ goal().fromStr(gs) for gs in gsv ],succ)))
+			data.append((curr,([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ)))
 		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
@@ -181,7 +182,7 @@ class goaltree:
 			tmpv.append('\n'.join([tmps,"\n\n".join(tmpgsv)]))
 		rtv+="\n\n\n".join(tmpv)
 		return rtv
-	def fromTxt(self,filename):
+	def fromTxt(self,filename,_cd='./'):
 		'''
 			concept:
 			a block with a name is a set of goal. that means reach one of them is a 'match', and can to further more (try the successor)
@@ -215,7 +216,8 @@ class goaltree:
 			in regex:
 			
 		'''
-		with open(filename,'rb') as f:
-			self.fromStr("".join(map(chr,f.read())))
+		cd=_cd+filename[:filename.rindex('/')+1] if '/' in filename else _cd
+		with open(_cd+filename,'rb') as f:
+			self.fromStr("".join(map(chr,f.read())),cd=cd)
 		return self
 
