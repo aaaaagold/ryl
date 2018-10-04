@@ -10,11 +10,30 @@ token_item='([\n]|^)([ \t]*[0-9]+|include|gonear)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
 
+class KWs:
+	def __init__(self,kwv):
+		self.data={}
+		self.__cnt=0
+		for kw in kwv:
+			self.__cnt+=1
+			tmp={"label":self.__cnt,"len":len(kw),"txt":kw}
+			self[kw]=tmp
+			self[self.__cnt]=tmp
+	def getKwData(self,i):
+		'''
+			isinstance(i)==int or isinstance(i)==str
+		'''
+		return self.data[i] if i in self.data else None
+
 class goal:
 	parser_item=re.compile(token_item)
+	#kwv=KWs(['include','gonear'])
 	KW_include_label=-1
 	KW_include_txt="include"
 	KW_include_lentxt=len(KW_include_txt)
+	KW_gonear_label=-2
+	KW_gonear_txt="gonear"
+	KW_gonear_lentxt=len(KW_gonear_txt)
 	# node
 	def __init__(self):
 		self.constraints=[] # [ (int(label),item) ... ]
@@ -73,6 +92,11 @@ class goal:
 				tmp=goaltree()
 				tmp.fromTxt(content,_cd=cd)
 				self.add((content,tmp),self.__class__.KW_include_label,arrangeLater=True)
+			if label==self.__class__.KW_gonear_txt:
+				isKW=True
+				label=self.__class__.KW_gonear_txt
+				tmp=None # TODO
+				self.add((content,tmp),self.__class__.KW_gonear_label,arrangeLater=True)
 			if isKW==False: self.add(content,int(label),arrangeLater=True)
 		'''
 		for line in lines:
@@ -97,8 +121,11 @@ class goal:
 				useLen=0
 				label=self.__class__.KW_include_txt
 				content=c[1][0]
-				if 0!=0:
-					tmpv.append(c[1][1].toStr(labelMinLen=length).split('\n')[1:])
+				#if 0!=0: tmpv.append(c[1][1].toStr(labelMinLen=length).split('\n')[1:])
+			if label==self.__class__.KW_gonear_label:
+				useLen=0
+				label=self.__class__.KW_gonear_txt
+				content=c[1][0]
 			label=str(label)
 			tmpv.append("%*s\t%s"%(useLen,label,content))
 		rtv+='\n'.join(tmpv)
@@ -133,13 +160,21 @@ class goaltree:
 		# TODO
 		pass
 	def keys(self,notBelow=None):
-		rtv=[k for k in self.sets]
-		rtv.sort()
-		return rtv
+		if isNone(notBelow):
+			rtv=[k for k in self.sets]
+			rtv.sort()
+			return rtv
+		else:
+			rtv=[k for k in self.sets if not self.getSucc(k) in notBelow]
+			rtv.sort()
+			return rtv
 	def getGoals(self,k):
 		return self.sets[k][0] if k in self.sets else None
 	def getSucc(self,k):
 		return self.sets[k][1]
+	def getPrecs(self,k):
+		# TODO
+		pass
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s,cd='./'):
