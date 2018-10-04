@@ -135,6 +135,13 @@ class goal:
 		with open(_cd+filename,'rb') as f:
 			self.fromStr("".join(map(chr,f.read())),cd=cd)
 		return self
+	def size(self):
+		rtv={"byname":0,"bygoal":1}
+		for c in self.constraints:
+			if c[0]=="include":
+				tmp=c[1][1].size()
+				for k,v in tmp.items(): rtv[k]+=v
+		return rtv
 
 class goaltree:
 	'''
@@ -255,4 +262,12 @@ class goaltree:
 		with open(_cd+filename,'rb') as f:
 			self.fromStr("".join(map(chr,f.read())),cd=cd)
 		return self
+	def size(self):
+		rtv={"byname":len(self.sets),"bygoal":0}
+		for _,d in self.sets.items():
+			arr=d[0]
+			for x in arr:
+				tmp=x.size()
+				for k,v in tmp.items(): rtv[k]+=v
+		return rtv
 

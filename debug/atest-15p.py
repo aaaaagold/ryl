@@ -15,6 +15,7 @@ xxx.fromStr(xxxtxt,cd='ainput-15p/')
 print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
+print("size:",xxx.size())
 bbb=board((4,4))
 if 0==0:
 	pass
