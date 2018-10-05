@@ -42,7 +42,7 @@ if 0==0:
 	print(len(bd33all))
 	#
 	#
-	for i in range(len(bd33all)):
+	for i in range(( int(sys.argv[1]) if len(sys.argv)>1 else 0 ),len(bd33all)):
 		print(i,end='\r')
 		bd=bd33all[i]
 		res=genSol(bd,xxx,step=8,stateLimit=4095)
@@ -51,22 +51,27 @@ if 0==0:
 		if 0<len(movesS): pass
 		else:
 			bd.print()
+			print(len(genSol(bd,xxx,step=8,stateLimit=65535,verbose=True)['moves']))
+			print(bd.rawBoard())
+			print(i)
 			print()
 	#
 	exit()
 # TODO 
 
-if 0!=0:
+if 0==0:
 	notSolved=[
 		[3,0,8,2,4,1,5,7,6],
 		[1,6,8,5,7,3,0,2,4],
+		[0, 1, 2, 8, 4, 3, 5, 7, 6],
 	]
 	for arr in notSolved:
 		print("notSolved")
 		bbb.setNums(arr,arr.index(8))
 		print(bbb.solvable())
 		bbb.print()
-		genSol(bbb,xxx,step=8)
+		res=genSol(bbb,xxx,step=8,verbose=True)
+		print(res['moves'])
 		print()
 else:
 	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
