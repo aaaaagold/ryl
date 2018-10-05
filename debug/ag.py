@@ -148,6 +148,7 @@ class goaltree:
 		definitions:
 			successor:
 				the next goal to match after matching a goal
+		closer the root(tree), closer the final goal
 	'''
 	parser_set=re.compile(token_goalset)
 	def __init__(self):
@@ -172,16 +173,24 @@ class goaltree:
 			rtv.sort()
 			return rtv
 		else:
-			rtv=[k for k in self.sets if not self.getSucc(k) in notBelow]
+			#rtv=[k for k in self.sets if not self.getSucc(k) in notBelow]
+			rtv=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
 			rtv.sort()
 			return rtv
 	def getGoals(self,k):
 		return self.sets[k][0] if k in self.sets else None
 	def getSucc(self,k):
 		return self.sets[k][1]
-	def getPrecs(self,k):
+	def _getSuccs(self,k):
 		# TODO
-		pass
+		rtv=set()
+		tmpsucc=self.getSucc(k)
+		while not ( tmpsucc=='-' or tmpsucc=='+' or (tmpsucc in rtv) ):
+			rtv.add(tmpsucc)
+			tmpsucc=self.getSucc(tmpsucc)
+		return rtv
+	def getSuccs(self,k):
+		return self.sets[k][2]
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s,cd='./'):
@@ -205,11 +214,12 @@ class goaltree:
 			defined.add(curr)
 			succ = rs[i+1]
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+2])
-			data.append((curr,([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ)))
+			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set()) ))
 		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
 		del data
+		for k,v in self.sets.items(): v[2].update(self._getSuccs(k))
 		return self
 	def toStr(self,labelMinLen=0):
 		kv=self.keys()
