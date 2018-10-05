@@ -144,6 +144,10 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	_nodes=[],_rtvNodes=[],
 	verbose=False,
 	__dummy=None):
+	if _isBegin:
+		del _rtvMoves,_rtvNodes
+		_rtvMoves=[]
+		_rtvNodes=[]
 	# TODO should return each move
 	immediateMatched=matchGoaltree(b,gt,notBelow)
 	notBelow = None if len(immediateMatched)==0 else set(immediateMatched)
