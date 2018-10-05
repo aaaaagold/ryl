@@ -32,6 +32,7 @@ if 0==0:
 				markedSelected[i]=False
 		innerFoo(rtv,[],[ False for _ in rg ])
 		return rtv
+	print(xxx.size())
 	tmp=permutationAll([ x for x in range(9)])
 	bd33all=[]
 	for x in tmp:
