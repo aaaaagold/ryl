@@ -319,15 +319,29 @@ include 1-1.txt
 0 12:8 8:12 3:2 2:3
 
 
-I_4b I_4
+I_4c I_4
 include 1-1.txt
-0 12:8 8:8 9:8 5:8
+0 12:8 13:8
+
+include 1-1.txt
+0 8:12 9:12
+
+include 1-1.txt
+0 3:2 7:2
+
+include 1-1.txt
+0 2:3 6:3
+
+
+I_4b I_4c
+include 1-1.txt
+0 12:8 8:8 9:8 13:8
 
 include 1-1.txt
 0 12:12 8:12 9:12 5:12
 
 include 1-1.txt
-0 3:2 2:2 6:2 5:2
+0 3:2 2:2 6:2 7:2
 
 include 1-1.txt
 0 3:3 2:3 6:3 5:3

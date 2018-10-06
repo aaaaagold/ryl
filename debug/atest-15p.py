@@ -27,6 +27,7 @@ if 0!=0:
 		#[0,1,2,3,4,8,15,12,6,9,14,7,10,11,5,13],
 		#[0,1,15,2,4,12,7,10,11,14,9,6,5,8,13,3],
 		#[0,1,15,12,4,14,13,7,11,6,9,10,8,2,5,3],
+		[0,1,8,7,4,3,5,13,15,11,2,9,6,14,12,10],
 	]
 	print("notSolved")
 	for i in range(len(notSolved)):
@@ -44,21 +45,27 @@ if 0!=0:
 else:
 	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
 	print("need appearing 'goal!'.  %s=%s"%("step",str(step)))
-	print("board.random()")
-	bbb.random()
-	while bbb.solvable()==False: bbb.random()
-	bbb.print()
-	res=genSol(bbb,xxx,step=8,stateLimit=4095,verbose=True)
-	movesS=res['moves']
-	nodesS=res['nodes']
-	print(nodesS)
-	print(movesS)
-	for i in range(len(nodesS)):
-		moves=movesS[i]
-		nodes=nodesS[i]
-		print(nodes)
-		print(moves)
+	while 0==0:
+		print("board.random()")
+		bbb.random()
+		while bbb.solvable()==False: bbb.random()
 		bbb.print()
-		bbb.moveSeq(moves)
-		print(len(moves))
+		res=genSol(bbb,xxx,step=8,stateLimit=4095)
+		if len(res['moves'])==0:
+			res=genSol(bbb,xxx,step=8,stateLimit=4095,verbose=True)
+			print(bbb.rawBoard())
+			break
+		elif 0!=0:
+			movesS=res['moves']
+			nodesS=res['nodes']
+			print(nodesS)
+			print(movesS)
+			for i in range(len(nodesS)):
+				moves=movesS[i]
+				nodes=nodesS[i]
+				print(nodes)
+				print(moves)
+				bbb.print()
+				bbb.moveSeq(moves)
+				print(len(moves))
 
