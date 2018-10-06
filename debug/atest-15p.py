@@ -60,9 +60,9 @@ else:
 		bbb.random()
 		while bbb.solvable()==False: bbb.random()
 		bbb.print()
-		res=genSol(bbb,xxx,step=8,stateLimit=4095)
+		res=genSol(bbb,xxx,step=step,stateLimit=4095)
 		if len(res['moves'])==0:
-			res=genSol(bbb,xxx,step=8,stateLimit=4095,verbose=True)
+			res=genSol(bbb,xxx,step=step,stateLimit=4095,verbose=True)
 			print(bbb.rawBoard())
 			break
 		elif 0!=0:
