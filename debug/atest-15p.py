@@ -8,11 +8,11 @@ from ab2g import *
 
 xxx=goaltree()
 xxx.fromTxt("ainput-15p/main.txt")
-print(xxx)
+#print(xxx)
 print("toStr")
 xxxtxt=xxx.toStr()
 xxx.fromStr(xxxtxt,cd='ainput-15p/')
-print(xxx.toStr())
+#print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
@@ -31,6 +31,8 @@ if 0!=0:
 		#[6, 5, 10, 4, 2, 0, 8, 11, 12, 9, 13, 3, 1, 15, 14, 7],
 		#[0, 12, 8, 3, 2, 7, 4, 15, 6, 5, 11, 1, 14, 10, 9, 13],
 		#[13, 2, 5, 4, 0, 8, 14, 6, 7, 11, 3, 10, 1, 15, 12, 9],
+		#[5, 10, 9, 12, 0, 6, 8, 1, 2, 4, 3, 15, 7, 13, 14, 11],
+		#[12, 15, 6, 9, 13, 3, 5, 7, 10, 4, 14, 11, 2, 8, 1, 0],
 	]
 	print("notSolved")
 	for i in range(len(notSolved)):
