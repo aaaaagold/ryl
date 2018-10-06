@@ -49,6 +49,7 @@ if 0==0:
 		res=genSol(bd,xxx,step=8,stateLimit=4095)
 		movesS=res['moves']
 		nodesS=res['nodes']
+		#print(len(movesS),' ')
 		if 0<len(movesS): pass
 		else:
 			bd.print()
