@@ -30,18 +30,24 @@ if 0!=0:
 		#[0,1,8,7,4,3,5,13,15,11,2,9,6,14,12,10],
 		#[6, 5, 10, 4, 2, 0, 8, 11, 12, 9, 13, 3, 1, 15, 14, 7],
 		#[0, 12, 8, 3, 2, 7, 4, 15, 6, 5, 11, 1, 14, 10, 9, 13],
+		#[13, 2, 5, 4, 0, 8, 14, 6, 7, 11, 3, 10, 1, 15, 12, 9],
 	]
 	print("notSolved")
 	for i in range(len(notSolved)):
 		arr=notSolved[i]
 		bbb.setNums(arr,arr.index(15))
 		print(bbb.solvable())
-		bbb.print()
-		res=genSol(bbb,xxx,step=8,verbose=True)
+		res=genSol(bbb,xxx,step=8)
 		movesS=res['moves']
 		nodesS=res['nodes']
-		print(movesS)
-		print(nodesS)
+		if len(movesS)==0:
+			bbb.print()
+			res=genSol(bbb,xxx,step=8,verbose=True)
+			movesS=res['moves']
+			nodesS=res['nodes']
+		else:
+			print(movesS)
+			print(nodesS)
 		print(i)
 		print()
 else:
