@@ -289,3 +289,142 @@ class goaltree:
 				for k,v in tmp.items(): rtv[k]+=v
 		return rtv
 
+###########
+
+def matchGoal_v1(b,g):
+	barr=b.rawBoard()
+	for x in g.constraints:
+		if str(barr[x[0]])!=str(x[1]):
+			return False
+	return True
+
+def matchGoal_v2(b,g):
+	barr=b.rawBoard()
+	print(g),exit()
+	for x in g.constraints:
+		p=re.compile("([0-9]+):([0-9]+)")
+		item=p.split(str(x[1]))
+		matched=False
+		for i in range(1,len(item),p.groups+1):
+			loc = int(item[i  ])
+			pn  = item[i+1]
+			if str(barr[loc])==str(pn):
+				matched=True
+				break
+		if matched==False:
+			return False
+	return True
+
+def matchGoal_v3(b,g):
+	barr=b.rawBoard()
+	for x in g.constraints:
+		isKW=False
+		matched=False # if a cosntraint is matched
+		if x[0]==g.__class__.KW_include_label:
+			isKW=True
+			for name in x[1][1].getFinals():
+				goals=x[1][1].getGoals(name)
+				if matchGoaltree_find_inSet(b,goals):
+					matched=True
+					break
+		if isKW==False:
+			p=re.compile("([0-9]+):([0-9]+)")
+			item=p.split(str(x[1])) # may have several constraints, just one of them
+			for i in range(1,len(item),p.groups+1):
+				loc = int(item[i  ])
+				pn  = item[i+1]
+				if str(barr[loc])==str(pn):
+					matched=True
+					break
+		if matched==False:
+			return False
+	return True
+
+matchGoal=matchGoal_v3
+
+def matchGoaltree_find_inSet(b,goals):
+	for g in goals:
+		if matchGoal(b,g):
+			return True
+	return False
+
+def matchGoaltree_find(b,gt,notBelow=None):
+	barr=b.rawBoard()
+	rtv=[]
+	for k in gt.keys(notBelow=notBelow):
+		if matchGoaltree_find_inSet(b,gt.getGoals(k)):
+			rtv.append(k)
+	return rtv
+
+def matchGoaltree_trim_v1(mv,gt):
+	#mv=set(mv)
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
+	rtv=[]
+	tmpv=[]
+	for k in mv:
+		tmps=""
+		tmpk=k
+		while 0==0:
+			tmps+=tmpk
+			succ=gt.getSucc(tmpk)
+			if succ=='-': break
+			tmpk=succ
+		tmpv.append((k,tmps))
+	# TODO: need suffix array to speedup
+	rg=range(len(tmpv))
+	delSet=set()
+	for i1 in rg:
+		for i2 in rg:
+			if i1==i2: continue
+			if tmpv[i1][1] in tmpv[i2][1]:
+				delSet.add(tmpv[i2][0])
+	rtv+=[ k for k in mv if not k in delSet]
+	return rtv
+
+def matchGoaltree_trim_v2(mv,gt):
+	#mv=set(mv)
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
+	sv=[ (gt.getSuccs(k)|set([k]),k) for k in mv]
+	#rtv=[]
+	delSet=set()
+	rg=range(len(sv))
+	for i1 in rg:
+		for i2 in rg:
+			if i1==i2: continue
+			s1,s2 = sv[i1][0],sv[i2][0]
+			ss=s1&s2
+			if len(ss)==len(s1): delSet.add(sv[i2][1])
+			#if len(ss)==len(s2): delSet.add(sv[i1][1])
+			del s1,s2,ss
+	rtv=[ k for k in mv if not k in delSet ]
+	return rtv
+
+def matchGoaltree_trim_v3(mv,gt):
+	#mv=list(set(mv))
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
+	sv=[ (gt.getSuccsStr(k),k) for k in mv]
+	# TODO: need suffix array to speedup
+	rg=range(len(mv))
+	delSet=set()
+	for i1 in rg:
+		for i2 in rg:
+			if i1==i2: continue
+			s1,s2 = sv[i1],sv[i2]
+			if s1[0] in s2[0]:
+				delSet.add(s2[1])
+			del s1,s2
+	rtv=[ k for k in mv if not k in delSet]
+	return rtv
+
+matchGoaltree_trim=matchGoaltree_trim_v3
+
+def matchGoaltree(b,gt,notBelow=None):
+	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)
+
+
