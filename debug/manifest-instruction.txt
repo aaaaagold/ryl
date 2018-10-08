@@ -12,8 +12,5 @@ rule
 3. * KWs *
 3-1. include: include a file.  'include' must appears at the start of a line
 3-2. gonear: apply a function to smoothen the goal.  'gonear' must appears at the start of a line.  NOT IMPLEMENTED YET.
-3-3. ~: negate, turn matches into not_allowed.
-3-3-1: int. label: allowed when not matching all of items in a line
-3-3-2: include: simply negate.  matching any goalset becomes not_allowed
-3-3-3: gonear: NOT IMPLEMENTED YET.
+3-3. ~: negate, turn matches into not_allowed. '~ ( A || B )' -> '~A && ~B'
 
