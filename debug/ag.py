@@ -5,10 +5,11 @@ from shorthand import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item='([\n]|^)([ \t]*[0-9]+|include|gonear)[ \t]([^\n]+)'
+token_item='([\n]|^)([ \t]*\~?[0-9]+|\~?include|\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
+sts=re.compile('[ \t]*')
 
 class KWs:
 	def __init__(self,kwv):
@@ -36,7 +37,7 @@ class goal:
 	KW_gonear_lentxt=len(KW_gonear_txt)
 	# node
 	def __init__(self):
-		self.constraints=[] # [ (int(label),item) ... ]
+		self.constraints=[] # [ (int(label),item,negate?) ... ]
 		self.maxLabel=-1
 		self.including=False
 		self.arrangeNeeded=False
@@ -51,10 +52,10 @@ class goal:
 	def arrange(self):
 		if self.arrangeNeeded!=False:
 			self.arrangeNeeded=False
-			self.constraints.sort()
-	def add(self,item,label=0,arrangeLater=False):
+			self.constraints.sort(key=lambda x:(x[2],x[:2]))
+	def add(self,item,label=0,negate=False,arrangeLater=False):
 		# label must be an integer
-		self.constraints.append((label,item))
+		self.constraints.append((label,item,negate))
 		if self.maxLabel<label: self.maxLabel=label
 		if arrangeLater==False: self.arrange()
 		else: arrangeNeeded=arrangeLater
@@ -68,7 +69,7 @@ class goal:
 			
 			format:
 			each line: label item
-			[ \t]*([0-9]+)[ \t]([^\n]+)
+			([ \t]*\~?[0-9]+|include|gonear)
 			lines not match will be omitted
 		'''
 		old=self.constraints
@@ -79,11 +80,15 @@ class goal:
 		rs=p.split(s)
 		#print('*'*11),pprint(rs) # debug
 		for i in range(1,len(rs),p.groups+1):
-			# not match , ([\n]|^) , [ \t]*[0-9]+|KWs , [^\n]+
+			# not match , ([\n]|^) , [ \t]*\~?[0-9]+|KWs , [^\n]+
 			# start from 1 =>
 			# ([\n]|^) , [ \t]*[0-9]+|KWs , [^\n]+ , not match
 			isKW=False
-			label=rs[i+1]
+			negate=False
+			label=sts.sub('',rs[i+1])
+			if label[0]=='~':
+				negate=True
+				label=label[1:]
 			content=rs[i+2]
 			#print(rs[i],rs[i+1]) # debug
 			if label==self.__class__.KW_include_txt:
@@ -91,13 +96,13 @@ class goal:
 				self.including=True
 				tmp=goaltree()
 				tmp.fromTxt(content,_cd=cd)
-				self.add((content,tmp),self.__class__.KW_include_label,arrangeLater=True)
+				self.add((content,tmp),self.__class__.KW_include_label,negate=negate,arrangeLater=True)
 			if label==self.__class__.KW_gonear_txt:
 				isKW=True
 				label=self.__class__.KW_gonear_txt
 				tmp=None # TODO
-				self.add((content,tmp),self.__class__.KW_gonear_label,arrangeLater=True)
-			if isKW==False: self.add(content,int(label),arrangeLater=True)
+				self.add((content,tmp),self.__class__.KW_gonear_label,negate=negate,arrangeLater=True)
+			if isKW==False: self.add(content,int(label),negate=negate,arrangeLater=True)
 		'''
 		for line in lines:
 			m=self.__class__.parser_item.match(line)
@@ -114,7 +119,7 @@ class goal:
 		rtv=""
 		tmpv=[]
 		for c in self.constraints:
-			useLen=length
+			useLen=length+c[2]
 			label=c[0]
 			content=c[1]
 			if label==self.__class__.KW_include_label:
@@ -126,7 +131,7 @@ class goal:
 				useLen=0
 				label=self.__class__.KW_gonear_txt
 				content=c[1][0]
-			label=str(label)
+			label=('~' if c[2] else '')+str(label)
 			tmpv.append("%*s\t%s"%(useLen,label,content))
 		rtv+='\n'.join(tmpv)
 		return rtv
