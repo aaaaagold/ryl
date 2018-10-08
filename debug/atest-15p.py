@@ -24,6 +24,7 @@ if 0==0:
 
 if 0!=0:
 	notSolved=[
+		#[15, 5, 10, 12, 1, 6, 11, 8, 4, 2, 9, 7, 3, 0, 13, 14],
 		#[2, 12, 13, 5, 9, 14, 6, 1, 11, 8, 4, 7, 15, 0, 10, 3],
 		#[0, 14, 3, 15, 12, 13, 9, 5, 8, 6, 11, 10, 7, 1, 2, 4],
 		#[15, 14, 4, 2, 1, 12, 6, 10, 5, 0, 9, 3, 8, 13, 7, 11],
@@ -65,7 +66,11 @@ if 0!=0:
 		print()
 else:
 	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
-	print("need appearing 'goal!'.  %s=%s"%("step",str(step)))
+	stateLimit=int(sys.argv[2]) if len(sys.argv)>2 and sys.argv[2].isdigit() else 4095
+	print("need appearing 'goal!'."+
+		("  %s=%s"%("step",str(step)))+
+		("  %s=%s"%("stateLimit",str(stateLimit)))
+		)
 	while 0==0:
 		print("board.random()")
 		bbb.random()
@@ -73,10 +78,10 @@ else:
 		bbb.print()
 		print(bbb.rawBoard())
 		t0=time.time()
-		res=genSol(bbb,xxx,step=step,stateLimit=4095)
+		res=genSol(bbb,xxx,step=step,stateLimit=stateLimit)
 		print(time.time()-t0)
 		if len(res['moves'])==0:
-			res=genSol(bbb,xxx,step=step,stateLimit=4095,verbose=True)
+			res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
 			break
 		elif 0!=0:
