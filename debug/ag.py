@@ -5,6 +5,8 @@ from shorthand import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
+token_itemWithouLabelSplit="([0-9]+):([^ \b\t\n\r]+)"
+parser_itemWithouLabelSplit=re.compile(token_itemWithouLabelSplit)
 token_item='([\n]|^)([ \t]*\~?[0-9]+|\~?include|\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
@@ -340,7 +342,8 @@ def matchGoal_v3(b,g):
 					matched=True
 					break
 		if isKW==False:
-			p=re.compile("([0-9]+):([0-9]+)")
+			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
+			p=parser_itemWithouLabelSplit
 			item=p.split(str(x[1])) # may have several constraints, just one of them
 			for i in range(1,len(item),p.groups+1):
 				loc = int(item[i  ])
