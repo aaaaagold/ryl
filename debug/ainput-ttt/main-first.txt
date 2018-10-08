@@ -1,10 +1,14 @@
 #-ttt-put-first
 Final -
-include main-first-3.txt
+include first-3.txt
+~include first-r3.txt
+~include first-r2.txt
 
 
 A Final
-include main-first-2.txt
+include first-2.txt
+~include first-r3.txt
+~include first-r2.txt
 
 
 B A
