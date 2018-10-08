@@ -1,18 +1,12 @@
 #!/bin/python3
 import re
-from ab import *
+from attt import *
 from ag import *
 
-def b2g(b,emptyAsGoal=False):
+# TODO: all
+
+def t2g(b,blocks=[]):
 	rtv=goal()
-	barr=b.rawBoard()
-	dcn=b.dontcareNum()
-	en=b.emptyNum()
-	for i in range(len(barr)):
-		x=barr[i]
-		if x!=dcn and ( x!=en or emptyAsGoal!=False ):
-			rtv.add(x,label=i,arrangeLater=True)
-	rtv.arrange()
 	return rtv
 
 ###########
@@ -82,7 +76,7 @@ def matchGoaltree_find(b,gt,notBelow=None):
 			rtv.append(k)
 	return rtv
 
-def matchGoaltree_trim(mv,gt):
+def matchGoaltree_trim_v1(mv,gt):
 	mv=set(mv)
 	rtv=[]
 	tmpv=[]
@@ -105,6 +99,26 @@ def matchGoaltree_trim(mv,gt):
 				delSet.add(tmpv[i2][0])
 	rtv+=[ k for k in mv if not k in delSet]
 	return rtv
+
+def matchGoaltree_trim_v2(mv,gt):
+	mv=set(mv)
+	#rtv=[]
+	delSet=set()
+	rg=range(len(mv)):
+	for k1 in mv:
+		for k2 in mv:
+			s1=gt.getSuccs(k1)
+			s2=gt.getSuccs(k2)
+			if len(s1&s2)!=0:
+				if len(s1)<len(s2):
+					delSet.add(k2)
+				else:
+					delSet.add(k1)
+	rtv=[ k for k in mv if not k in delSet ]
+	return rtv
+		
+
+matchGoaltree_trim=matchGoaltree_trim_v1
 
 def matchGoaltree(b,gt,notBelow=None):
 	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)

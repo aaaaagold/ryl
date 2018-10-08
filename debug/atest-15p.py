@@ -1,6 +1,7 @@
 #!/bin/python3
 import sys
 import copy
+import time
 
 from ag import *
 from ab import *
@@ -46,8 +47,10 @@ if 0!=0:
 	for i in range(len(notSolved)):
 		arr=notSolved[i]
 		bbb.setNums(arr,arr.index(15))
-		print(bbb.solvable())
+		print(i,bbb.solvable())
+		t0=time.time()
 		res=genSol(bbb,xxx,step=8)
+		print(time.time()-t0)
 		movesS=res['moves']
 		nodesS=res['nodes']
 		if len(movesS)==0:
@@ -68,7 +71,10 @@ else:
 		bbb.random()
 		while bbb.solvable()==False: bbb.random()
 		bbb.print()
+		print(bbb.rawBoard())
+		t0=time.time()
 		res=genSol(bbb,xxx,step=step,stateLimit=4095)
+		print(time.time()-t0)
 		if len(res['moves'])==0:
 			res=genSol(bbb,xxx,step=step,stateLimit=4095,verbose=True)
 			print(bbb.rawBoard())
