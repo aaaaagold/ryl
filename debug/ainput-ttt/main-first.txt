@@ -8,7 +8,7 @@ include main-first-2.txt
 
 
 B A
-~0 4:-1
+0 4:-1
 
 
 C B

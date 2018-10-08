@@ -93,16 +93,23 @@ class goal:
 			#print(rs[i],rs[i+1]) # debug
 			if label==self.__class__.KW_include_txt:
 				isKW=True
+				label=self.__class__.KW_include_label
 				self.including=True
 				tmp=goaltree()
 				tmp.fromTxt(content,_cd=cd)
-				self.add((content,tmp),self.__class__.KW_include_label,negate=negate,arrangeLater=True)
+				item=(content,tmp)
+
 			if label==self.__class__.KW_gonear_txt:
 				isKW=True
-				label=self.__class__.KW_gonear_txt
+				label=self.__class__.KW_gonear_label
 				tmp=None # TODO
-				self.add((content,tmp),self.__class__.KW_gonear_label,negate=negate,arrangeLater=True)
-			if isKW==False: self.add(content,int(label),negate=negate,arrangeLater=True)
+				item=(content,tmp)
+
+			if isKW==False:
+				item=content
+				label=int(label)
+
+			self.add(item,label,negate=negate,arrangeLater=True)
 		'''
 		for line in lines:
 			m=self.__class__.parser_item.match(line)

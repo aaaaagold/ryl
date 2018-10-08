@@ -1,0 +1,11 @@
+rule
+1. * seperate rule *
+1-1. seperated by line(s)
+1-2. a goalset is sep. by 2 or more lines
+1-3. a goal in a goalset is sep. by exactly 1 line
+
+2. * goal meaning *
+2-1. a goal is what to match
+2-2. matching any one or more goal(s) in a goalset matches the goalset
+2-3. a goalset starts with 2 item: its name and its successor. a successor is next goalset your algo. looking for
+
