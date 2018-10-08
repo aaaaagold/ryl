@@ -82,8 +82,11 @@ def matchGoaltree_find(b,gt,notBelow=None):
 			rtv.append(k)
 	return rtv
 
-def matchGoaltree_trim(mv,gt):
-	mv=set(mv)
+def matchGoaltree_trim_v1(mv,gt):
+	#mv=set(mv)
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
 	rtv=[]
 	tmpv=[]
 	for k in mv:
@@ -105,6 +108,47 @@ def matchGoaltree_trim(mv,gt):
 				delSet.add(tmpv[i2][0])
 	rtv+=[ k for k in mv if not k in delSet]
 	return rtv
+
+def matchGoaltree_trim_v2(mv,gt):
+	#mv=set(mv)
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
+	sv=[ (gt.getSuccs(k)|set([k]),k) for k in mv]
+	#rtv=[]
+	delSet=set()
+	rg=range(len(sv))
+	for i1 in rg:
+		for i2 in rg:
+			if i1==i2: continue
+			s1,s2 = sv[i1][0],sv[i2][0]
+			ss=s1&s2
+			if len(ss)==len(s1): delSet.add(sv[i2][1])
+			#if len(ss)==len(s2): delSet.add(sv[i1][1])
+			del s1,s2,ss
+	rtv=[ k for k in mv if not k in delSet ]
+	return rtv
+
+def matchGoaltree_trim_v3(mv,gt):
+	#mv=list(set(mv))
+	mv=[ x for x in mv ]
+	mv.sort()
+	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
+	sv=[ (gt.getSuccsStr(k),k) for k in mv]
+	# TODO: need suffix array to speedup
+	rg=range(len(mv))
+	delSet=set()
+	for i1 in rg:
+		for i2 in rg:
+			if i1==i2: continue
+			s1,s2 = sv[i1],sv[i2]
+			if s1[0] in s2[0]:
+				delSet.add(s2[1])
+			del s1,s2
+	rtv=[ k for k in mv if not k in delSet]
+	return rtv
+
+matchGoaltree_trim=matchGoaltree_trim_v3
 
 def matchGoaltree(b,gt,notBelow=None):
 	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)
