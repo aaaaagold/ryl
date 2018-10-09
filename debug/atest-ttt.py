@@ -17,7 +17,7 @@ print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 exit()
-bbb=board((4,4))
+bbb=ttt()
 if 0==0:
 	pass
 # TODO 
