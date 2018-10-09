@@ -1,17 +1,192 @@
 #-ttt-put-first
 Final -
 include first-3.txt
+0 4:-1
 ~include first-r3.txt
 ~include first-r2.txt
 
 
 A Final
 include first-2.txt
+0 4:-1
 ~include first-r3.txt
 ~include first-r2.txt
 
 
-Y A
+Ya A
+~include first-r3.txt
+~include first-r2.txt
+0 4:-1
+0 1:-1
+
+
+Ya2 Ya
+~include first-r3.txt
+~include first-r2.txt
+0 0:1
+0 1:0
+0 2:0
+
+~include first-r3.txt
+~include first-r2.txt
+0 0:0
+0 1:0
+0 2:1
+
+
+Yb A
+~include first-r3.txt
+~include first-r2.txt
+0 4:-1
+0 3:-1
+
+
+Yb2 Yb
+~include first-r3.txt
+~include first-r2.txt
+0 0:1
+0 3:0
+0 6:0
+
+~include first-r3.txt
+~include first-r2.txt
+0 0:0
+0 3:0
+0 6:1
+
+
+Yc A
+~include first-r3.txt
+~include first-r2.txt
+0 4:-1
+0 5:-1
+
+
+Yc2 Yc
+~include first-r3.txt
+~include first-r2.txt
+0 2:1
+0 5:0
+0 8:0
+
+~include first-r3.txt
+~include first-r2.txt
+0 2:0
+0 5:0
+0 8:1
+
+
+Yd A
+~include first-r3.txt
+~include first-r2.txt
+0 4:-1
+0 7:-1
+
+
+Yd2 Yd
+~include first-r3.txt
+~include first-r2.txt
+0 6:1
+0 7:0
+0 8:0
+
+~include first-r3.txt
+~include first-r2.txt
+0 6:0
+0 7:0
+0 8:1
+
+
+ZZ A
+~include first-r3.txt
+~include first-r2.txt
+0 4:-1
+
+
+
+ZZ2 ZZ
+0 0:1
+0 1:0
+0 2:0
+0 3:0
+0 4:-1
+0 5:0
+0 6:0
+0 7:0
+0 8:0
+
+0 0:0
+0 1:1
+0 2:0
+0 3:0
+0 4:-1
+0 5:0
+0 6:0
+0 7:0
+0 8:0
+
+0 0:0
+0 1:0
+0 2:1
+0 3:0
+0 4:-1
+0 5:0
+0 6:0
+0 7:0
+0 8:0
+
+0 0:0
+0 1:0
+0 2:0
+0 3:1
+0 4:-1
+0 5:0
+0 6:0
+0 7:0
+0 8:0
+
+0 0:0
+0 1:0
+0 2:0
+0 3:0
+0 4:-1
+0 5:1
+0 6:0
+0 7:0
+0 8:0
+
+0 0:0
+0 1:0
+0 2:0
+0 3:0
+0 4:-1
+0 5:0
+0 6:1
+0 7:0
+0 8:0
+
+0 0:0
+0 1:0
+0 2:0
+0 3:0
+0 4:-1
+0 5:0
+0 6:0
+0 7:1
+0 8:0
+
+0 0:0
+0 1:0
+0 2:0
+0 3:0
+0 4:-1
+0 5:0
+0 6:0
+0 7:0
+0 8:1
+
+
+Z ZZ
 0 0:0
 0 1:0
 0 2:0
@@ -23,7 +198,7 @@ Y A
 0 8:0
 
 
-Z Y
+Z2 Z
 0 0:0
 0 1:0
 0 2:0

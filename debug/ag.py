@@ -355,7 +355,35 @@ def matchGoal_v3(b,g):
 			return False
 	return True
 
-matchGoal=matchGoal_v3
+def matchGoal_v4(b,g):
+	barr=b.rawBoard()
+	for x in g.constraints:
+		isKW=False
+		negate=x[2]
+		matched=False # if a cosntraint is matched
+		if x[0]==g.__class__.KW_include_label:
+			isKW=True
+			for name in x[1][1].getFinals():
+				goals=x[1][1].getGoals(name)
+				if matchGoaltree_find_inSet(b,goals):
+					matched=True
+					break
+		if isKW==False:
+			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
+			p=parser_itemWithouLabelSplit
+			item=p.split(str(x[1])) # may have several constraints, just one of them
+			for i in range(1,len(item),p.groups+1):
+				loc = int(item[i  ])
+				pn  = item[i+1]
+				if str(barr[loc])==str(pn):
+					matched=True
+					break
+		#if (negate!=False and matched!=False) or (matched==False and negate==False):
+		if negate==matched:
+			return False
+	return True
+
+matchGoal=matchGoal_v4
 
 def matchGoaltree_find_inSet(b,goals):
 	for g in goals:

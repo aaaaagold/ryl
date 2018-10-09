@@ -60,13 +60,16 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
 	_nodes=[],_rtvNodes=[],
+	_possible=[],
 	verbose=False,
 	__dummy=None):
 	if _isBegin:
-		del _rtvMoves,_rtvNodes
+		del _rtvMoves,_rtvNodes,_possible
 		_rtvMoves=[]
 		_rtvNodes=[]
+		_possible=[]
 	#verbose=True # debug
+	#if verbose: print('_moves',_moves) # debug
 	#immediateMatched=matchGoaltree(b,gt,notBelow)
 	#notBelow = None if len(immediateMatched)==0 else set(immediateMatched)
 	#if verbose: print('genSol',immediateMatched) # debug
@@ -122,9 +125,12 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 				_isBegin=False,
 				_moves=_moves+bfs2moveSeq(bfs,x[1][0][0]),_rtvMoves=_rtvMoves,
 				_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
+				_possible=_possible,
 				verbose=verbose)
+		if len(_rtvMoves)==0:
+			_possible.append(_moves)
 		
 		#return res
 	if _isBegin:
-		return {"moves":_rtvMoves,"nodes":_rtvNodes}
+		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 

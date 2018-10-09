@@ -42,8 +42,8 @@ class ttt:
 		if self.__board[place]!=0: return True
 		if isNone(player):
 			player=self.turn()
-			self.__turn=-self.__turn
 		self.__board[place]=player
+		self.__turn=-player
 		return False
 	def move(self,m,*argv):
 		return self.put(m[1],m[0])

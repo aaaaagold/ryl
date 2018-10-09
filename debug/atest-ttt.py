@@ -4,6 +4,7 @@ import copy
 import time
 
 from ag import *
+from ab2g import *
 from attt import *
 
 xxx=goaltree()
@@ -16,10 +17,37 @@ print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
-exit()
 bbb=ttt()
 if 0==0:
+	step=3
+	stateLimit=4095
+	p=re.compile("^[ \t]*(q|quit|exit|[0-8])[ \t]*$")
+	bbb.print()
+	print("q to end")
+	print("loc(0..8)")
+	bye=False
+	while bye==False:
+		res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
+		moves=res['moves']
+		move=res['possible'][0][0] if len(moves)==0 else moves[0][0]
+		print(moves)
+		bbb.move(move)
+		while bye==False:
+			bbb.print()
+			print(bbb.turn())
+			try:
+				res=input("> ")
+			except EOFError:
+				bye=True
+			m=p.match(res)
+			if isNone(m): continue
+			s=m.group(0)
+			if not s.isdigit():
+				bye=True
+			elif bbb.move((None,int(s)))==False:
+				break
 	pass
+	exit()
 # TODO 
 
 if 0!=0:

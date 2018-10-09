@@ -19,7 +19,24 @@ print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
 if 0==0:
+	bbb.random()
+	while bbb.solvable()==False: bbb.random()
+	bbb.print()
+	t0=time.time()
+	res=genSol(bbb,xxx,step=8,stateLimit=4095)
+	print(time.time()-t0)
+	if len(res['moves'])==0:
+		print("GG")
+	else:
+		movesS=res['moves']
+		nodesS=res['nodes']
+		for m in movesS[0]:
+			time.sleep(0.5)
+			bbb.move(m)
+			bbb.print()
+			print()
 	pass
+	exit()
 # TODO 
 
 if 0!=0:
