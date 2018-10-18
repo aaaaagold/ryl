@@ -137,6 +137,13 @@ class board:
 			self.__emptyAt=near
 			return False
 		else: return True
+	def near1(self):
+		rtv=[]
+		for m in self.moves():
+			if self.move(m): continue
+			rtv.append(self.copy())
+			self.move(m^1)
+		return rtv
 	def __fac(self):
 		sz=self.size()
 		fac=[1]
@@ -161,7 +168,7 @@ class board:
 		return rtv
 	def hashMax(self):
 		return self.__fac()[-1]-1
-	def bfs(self,step=8,fixedBlockIts=[],stateLimit=4095):
+	def bfs(self,step=8,fixedBlockIts=[],stateLimit=4095,notViolate=[]):
 		#print(stateLimit) # debug
 		rtv={} if self.size()>=10 else [ None for _ in range(self.hashMax()+1) ]
 		rtvIsList=type(rtv)==type([])

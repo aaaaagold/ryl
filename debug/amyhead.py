@@ -4,6 +4,7 @@ import sys
 import time
 import random
 
+from shorthand import *
 
 class queue:
 	def __init__(self):
@@ -25,4 +26,23 @@ class queue:
 		return len(self.__contI)+len(self.__contO)
 	def toArr(self):
 		return self.__contO+self.__contI
+
+def bs(aList,val,se=None):
+	'''
+		return value: index(i) that either
+			aList[i]==val
+			(i==0 or aList[i-1]<val) and val<aList[i]
+	'''
+	if isNone(se): se=(0,len(aList))
+	if s[1]-s[0]<3:
+		for i in range(s[0],s[1]):
+			if aList[i]==val:
+				return i
+		for i in range(s[0],s[1]):
+			if val<aList[i]:
+				return i
+		return se[1]
+	m=int(sum(se))>>1
+	return bs(aList,val,(se[0],m)) if val<aList[m] else bs(aList,val,(m,se[1]))
+	
 

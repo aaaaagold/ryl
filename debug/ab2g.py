@@ -49,7 +49,7 @@ def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
 # TODO: try fixedBlockIts if unable to reach next subgoal
 def genSol_1(b,gt,step=8,stateLimit=4095,notBelow=None,fixedBlockIts=[]):
 	# return: [ (goalName,[ (stateNum,(state,stepCnt,(move,stateNum))), ]) ]
-	bfsRes=b.bfs(step,stateLimit=stateLimit)
+	bfsRes=b.bfs(step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
 	mvb=genSol_bfsTopMatch(bfsRes,gt,notBelow)
 	#return ([ (k,genSol_bfsMatchStates(bfsRes,gt.getGoals(k))) for k in mv ],bfsRes)
 	return (mvb,bfsRes)
@@ -127,7 +127,7 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 				_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
 				_possible=_possible,
 				verbose=verbose)
-		if len(_rtvMoves)==0:
+		if len(_rtvMoves)==0 and len(_moves)!=0:
 			_possible.append(_moves)
 		
 		#return res

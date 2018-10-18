@@ -1,9 +1,27 @@
 #-ttt-put-first
+dummy -
+~0 4:-1
+0 4:-1
+
+
+__notViolate dummy
+~include first-forbid.txt
+
+
+aaaaa dummy
+~include first-r2.txt
+~include first-r3.txt
+
+
+aaaaa2 aaaaa
+include first-r2.txt
+
+
+
+
 Final -
 include first-3.txt
 0 4:-1
-~include first-r3.txt
-~include first-r2.txt
 
 
 A Final
@@ -13,7 +31,7 @@ include first-2.txt
 ~include first-r2.txt
 
 
-Ya A
+Ya dummy
 ~include first-r3.txt
 ~include first-r2.txt
 0 4:-1
@@ -34,7 +52,7 @@ Ya2 Ya
 0 2:1
 
 
-Yb A
+Yb dummy
 ~include first-r3.txt
 ~include first-r2.txt
 0 4:-1
@@ -55,7 +73,7 @@ Yb2 Yb
 0 6:1
 
 
-Yc A
+Yc dummy
 ~include first-r3.txt
 ~include first-r2.txt
 0 4:-1
@@ -76,7 +94,7 @@ Yc2 Yc
 0 8:1
 
 
-Yd A
+Yd dummy
 ~include first-r3.txt
 ~include first-r2.txt
 0 4:-1
@@ -97,11 +115,10 @@ Yd2 Yd
 0 8:1
 
 
-ZZ A
+ZZ dummy
 ~include first-r3.txt
 ~include first-r2.txt
 0 4:-1
-
 
 
 ZZ2 ZZ

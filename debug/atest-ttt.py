@@ -28,9 +28,9 @@ if 0==0:
 	bye=False
 	while bye==False:
 		res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
-		moves=res['moves']
-		move=res['possible'][0][0] if len(moves)==0 else moves[0][0]
+		moves=res['moves'] if len(res['moves'])!=0 else res['possible']
 		print(moves)
+		move=res['possible'][0][0] if len(moves)==0 else moves[0][0]
 		bbb.move(move)
 		while bye==False:
 			bbb.print()

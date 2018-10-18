@@ -6,6 +6,7 @@ import random
 
 from shorthand import *
 from amyhead import *
+from ag import *
 
 class ttt:
 	'''
@@ -89,7 +90,7 @@ class ttt:
 				elif content==1: content='x'
 				print(content,end=' ')
 			print()
-	def bfs(self,step=8,turn=0,stateLimit=4095):
+	def bfs(self,step=8,turn=0,stateLimit=4095,notViolate=None):
 		# TODO
 		stateCnt=0
 		rtv={}
@@ -111,6 +112,8 @@ class ttt:
 			near1=currstat.near1()
 			for near in near1:
 				stat=near[2]
+				#if stat.turn()==-1 and not (isNone(notViolate) or matchGoaltree_find_inSet(stat,notViolate)):
+				#	continue
 				actinfo=near[:2] # (who does, does what)
 				if currstep<step:
 					q.push((stat,currstep+1,(actinfo,currstatNum)))
