@@ -34,11 +34,11 @@ def bs(aList,val,se=None):
 			(i==0 or aList[i-1]<val) and val<aList[i]
 	'''
 	if isNone(se): se=(0,len(aList))
-	if s[1]-s[0]<3:
-		for i in range(s[0],s[1]):
+	if se[1]-se[0]<3:
+		for i in range(se[0],se[1]):
 			if aList[i]==val:
 				return i
-		for i in range(s[0],s[1]):
+		for i in range(se[0],se[1]):
 			if val<aList[i]:
 				return i
 		return se[1]

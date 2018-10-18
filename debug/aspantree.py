@@ -34,12 +34,15 @@ class spantree:
 			undirected simplegraph
 			the parse will NOT check if the node number in [ 0 , N-1 ]
 		'''
-		lines=s.replace("\r","").split("\n")
+		tmp="\n"
+		tmp+=s
+		lines=re.split("[\n]+",re.sub("\n[ \t]*","\n",tmp.replace("\r","")))[1:]
 		self.nodes=int(lines[0])
 		parser=re.compile("[ \t]+")
 		tmp=[]
 		for i in range(1,len(lines)):
 			line=lines[i]
+			if line=='': continue
 			tokens=[ int(x) for x in parser.split(line) ]
 			tmp.append(tokens)
 		tmp.sort()
@@ -70,6 +73,9 @@ class spantreeState:
 				tmp[e2]=1
 			self._nodes=tmp
 		else: self._nodes=copy.deepcopy(visitNodes)
+	def hash(self):
+		rtv=sum([0]+[ 1<<i for i in self.chosen ])
+		return rtv
 	def copy(self):
 		rtv=spantreeState(self.referTree,self.chosen)
 		return rtv
@@ -81,16 +87,16 @@ class spantreeState:
 			tmp=spantreeState(self.referTree,self.chosen,self._nodes)
 			tmp.chosen.add(i)
 			for n in self.referTree.edges[i]: tmp._nodes[n]=1
-			rtv.append(tmp)
+			rtv.append((0,i,tmp))
 		return rtv
 	def near1(self):
 		rtv=[]
 		if len(self.chosen)==0:
-			for i in len(self.referTree.edges):
+			for i in range(len(self.referTree.edges)):
 				tmp=spantreeState(self.referTree,self.chosen,self._nodes)
 				tmp.chosen.add(i)
 				for n in self.referTree.edges[i]: tmp._nodes[n]=1
-				rtv.append(tmp)
+				rtv.append((0,i,tmp))
 		else:
 			newedges=set()
 			preparebs=[ 0 for _ in range(self.referTree.nodesize()) ]
@@ -118,7 +124,7 @@ class spantreeState:
 				tmp=spantreeState(self.referTree,self.chosen,self._nodes)
 				tmp.chosen.add(i)
 				for n in self.referTree.edges[i]: tmp._nodes[n]=1
-				rtv.append(tmp)
+				rtv.append((0,i,tmp))
 		return rtv
 	
 

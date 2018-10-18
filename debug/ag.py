@@ -2,6 +2,7 @@
 import re
 import sys
 from shorthand import *
+from amyhead import *
 from pprint import pprint
 
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
