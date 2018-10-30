@@ -11,15 +11,15 @@ from asol import *
 xxx=goaltree()
 xxx.fromTxt("ainput-15p/main.txt")
 #print(xxx)
-print("toStr")
-xxxtxt=xxx.toStr()
-xxx.fromStr(xxxtxt,cd='ainput-15p/')
+#print("toStr")
+#xxxtxt=xxx.toStr()
+#xxx.fromStr(xxxtxt,cd='ainput-15p/')
 #print(xxx.toStr())
 print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
-if 0==0:
+if 0!=0:
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	bbb.print()
@@ -92,6 +92,7 @@ else:
 		("  %s=%s"%("step",str(step)))+
 		("  %s=%s"%("stateLimit",str(stateLimit)))
 		)
+	succList=[]
 	while 0==0:
 		print("board.random()")
 		bbb.random()
@@ -100,6 +101,7 @@ else:
 		print(bbb.rawBoard())
 		t0=time.time()
 		res=genSol(bbb,xxx,step=step,stateLimit=stateLimit)
+		succList+=res['nodes']
 		print(time.time()-t0)
 		if len(res['moves'])==0:
 			res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
@@ -118,4 +120,13 @@ else:
 				bbb.print()
 				bbb.moveSeq(moves)
 				print(len(moves))
+		#print(res['nodes']) # debug - for developing learn file
+		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
+		print(len(succList))
+		if len(succList)>99:
+			xxx.saveNextGoal(succList)
+			succList=[]
+			tmp=xxx.saveNextGoalFile("test.learn-1")
+			print(tmp)
+			exit()
 

@@ -1,6 +1,8 @@
 #!/bin/python3
+import os
 import re
 import sys
+import json
 from pprint import pprint
 
 from shorthand import *
@@ -170,6 +172,9 @@ class goaltree:
 	parser_set=re.compile(token_goalset)
 	def __init__(self):
 		self.sets={}
+		self.filename=None
+		self.learned={"nextgoal":{}}
+		# learn file is self.filename+".learn", self.filename will be set after self.fromTxt()
 		pass
 	def __repr__(self):
 		rtv='{goaltree:\n'
@@ -220,7 +225,9 @@ class goaltree:
 			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
 		'''
-		old=self.sets
+		# unset filename
+		self.filename=None
+		#old=self.sets
 		p=self.__class__.parser_set
 		s=re.sub("(\n\r|\n|\r\n)[ \t]+(\n\r|\n|\r\n)","\n\n",s)
 		defined=set()
@@ -294,8 +301,10 @@ class goaltree:
 			
 		'''
 		cd=_cd+filename[:filename.rindex('/')+1] if '/' in filename else _cd
-		with open(_cd+filename,'rb') as f:
+		filename=_cd+filename
+		with open(filename,'rb') as f:
 			self.fromStr("".join(map(chr,f.read())),cd=cd)
+		self.filename=filename
 		return self
 	def size(self):
 		rtv={"byname":len(self.sets),"bygoal":0}
@@ -305,6 +314,49 @@ class goaltree:
 				tmp=x.size()
 				for k,v in tmp.items(): rtv[k]+=v
 		return rtv
+	'''
+		learn file
+		a learn file records ordered goals of the successful paths
+			probably
+	'''
+	def loadNextGoalFile(self,filename=None):
+		# return True on error
+		#  else False
+		if isNone(filename): filename=self.filename
+		if isNone(filename) or os.path.isfile(filename)==False: return True
+		with open(filename) as f:
+			self.learned["nextgoal"]=json.loads(f.read())["nextgoal"]
+		return False
+	def saveNextGoalFile(self,filename=None):
+		# filename
+		learnfile=""
+		if isNone(filename):
+			if isNone(self.filename):
+				t0=str(time.time())
+				t0+='0'*(t0.find('.')+8-len(t0))
+				self.filename=t0.replace('.','-')
+			learnfile+=self.filename+".learn"
+		else: learnfile+=filename
+		if os.path.isdir(learnfile): return True
+		with open(learnfile,"w") as f:
+			f.write(json.dumps(self.learned))
+		return False
+	def saveNextGoal(self,successSubgoalList):
+		'''
+			format of successSubgoalList is genSol()['nodes']
+			i.e. a list of successful paths
+		'''
+		# data
+		nextgoal=self.learned["nextgoal"]
+		for p in successSubgoalList:
+			for i in range(1,len(p)):
+				print(p[i-1])
+				if not p[i-1] in nextgoal: nextgoal[ p[i-1] ]={}
+				curr=nextgoal[ p[i-1] ]
+				if not p[i] in curr: curr[ p[i] ]=0
+				curr[ p[i] ]+=1
+		return False
+		
 
 ###########
 
