@@ -61,7 +61,7 @@ class spantree:
 
 class spantreeState:
 	def __init__(self,referTree,chosenEdges=None,visitNodes=None):
-		# chosenEdges is a list of int, x-th edge in referTree.edges
+		# chosenEdges is a list of int, x-th(0-index) edge in referTree.edges
 		self.referTree=referTree
 		if isNone(chosenEdges): self.chosen=set()
 		else: self.chosen=copy.deepcopy(set(chosenEdges))
@@ -89,6 +89,8 @@ class spantreeState:
 			for n in self.referTree.edges[i]: tmp._nodes[n]=1
 			rtv.append((0,i,tmp))
 		return rtv
+	def totalWeight(self):
+		return sum([ self.referTree.weights[i] for i in self.chosen ])
 	def near1(self):
 		rtv=[]
 		if len(self.chosen)==0:
@@ -96,7 +98,7 @@ class spantreeState:
 				tmp=spantreeState(self.referTree,self.chosen,self._nodes)
 				tmp.chosen.add(i)
 				for n in self.referTree.edges[i]: tmp._nodes[n]=1
-				rtv.append((0,i,tmp))
+				rtv.append((0,i,tmp)) # (turn,move,state)
 		else:
 			newedges=set()
 			preparebs=[ 0 for _ in range(self.referTree.nodesize()) ]

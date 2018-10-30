@@ -3,6 +3,9 @@ import copy
 import sys
 import time
 import random
+
+from shorthand import *
+from amyhead import *
 #from ah import *
 '''
 import resource
@@ -14,7 +17,7 @@ soft,hard=resource.getrlimit(rsrc)
 print("mem limit soft,hard",soft,hard)
 del soft,hard
 '''
-
+'''
 class queue:
 	def __init__(self):
 		self.__contI=[]
@@ -35,6 +38,7 @@ class queue:
 		return len(self.__contI)+len(self.__contO)
 	def toArr(self):
 		return self.__contO+self.__contI
+'''
 
 class hfunc:
 	def __init__(self,coefCnt):
@@ -99,7 +103,8 @@ class board:
 		'''
 		return [ i for i in range(4) ]
 	def moveSeq(self,mv,verbose=True):
-		for m in mv:
+		for msg in mv:
+			t,m,s=msg
 			self.move(m)
 			if verbose:
 				print(m)
@@ -141,7 +146,7 @@ class board:
 		rtv=[]
 		for m in self.moves():
 			if self.move(m): continue
-			rtv.append(self.copy())
+			rtv.append((0,m,self.copy()))
 			self.move(m^1)
 		return rtv
 	def __fac(self):
@@ -295,6 +300,7 @@ def p9(goal,strt):
 	for i in range(len(rtv)): rtv[i]^=1
 	return rtv
 
+'''
 def bfs2moveSeq(bfs,goalHash):
 	moves=[]
 	if (type(bfs)==type({}) and (goalHash in bfs)) or (type(bfs)==type([]) and type(bfs[goalHash])!=type(None)):
@@ -306,6 +312,7 @@ def bfs2moveSeq(bfs,goalHash):
 			preStat=pre[1]
 		moves.reverse()
 	return moves
+'''
 
 def test():
 	# test

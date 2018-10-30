@@ -4,7 +4,8 @@ import copy
 
 from ag import *
 from ab import *
-from ab2g import *
+#from ab2g import *
+from asol import *
 
 a=goal()
 b=goal()

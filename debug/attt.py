@@ -6,6 +6,7 @@ import random
 
 from shorthand import *
 from amyhead import *
+
 from ag import *
 
 class ttt:

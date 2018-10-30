@@ -5,7 +5,8 @@ import time
 
 from ag import *
 from ab import *
-from ab2g import *
+#from ab2g import *
+from asol import *
 
 xxx=goaltree()
 xxx.fromTxt("ainput-15p/main.txt")
@@ -29,10 +30,13 @@ if 0==0:
 		print("GG")
 	else:
 		movesS=res['moves']
+		print(movesS)
 		nodesS=res['nodes']
-		for m in movesS[0]:
+		for msg in movesS[0]:
+			print(msg)
+			move=msg[1]
 			time.sleep(0.5)
-			bbb.move(m)
+			bbb.move(move)
 			bbb.print()
 			print()
 	pass

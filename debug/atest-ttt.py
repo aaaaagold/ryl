@@ -4,8 +4,9 @@ import copy
 import time
 
 from ag import *
-from ab2g import *
+#from ab2g import *
 from attt import *
+from asol import *
 
 xxx=goaltree()
 xxx.fromTxt("ainput-ttt/main-first.txt")

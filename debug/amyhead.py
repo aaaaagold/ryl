@@ -46,3 +46,12 @@ def bs(aList,val,se=None):
 	return bs(aList,val,(se[0],m)) if val<aList[m] else bs(aList,val,(m,se[1]))
 	
 
+class avl:
+	class node:
+		def __init__(self,obj):
+			self.obj=obj
+			self.v=0
+	def __init__(self):
+		# TODO
+		pass
+

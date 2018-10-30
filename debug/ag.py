@@ -1,13 +1,12 @@
 #!/bin/python3
 import re
 import sys
-from shorthand import *
-from amyhead import *
 from pprint import pprint
 
+from shorthand import *
+from amyhead import *
+
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_itemWithouLabelSplit="([0-9]+):([^ \b\t\n\r]+)"
-parser_itemWithouLabelSplit=re.compile(token_itemWithouLabelSplit)
 token_item='([\n]|^)([ \t]*\~?[0-9]+|\~?include|\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
@@ -150,6 +149,9 @@ class goal:
 		with open(_cd+filename,'rb') as f:
 			self.fromStr("".join(map(chr,f.read())),cd=cd)
 		return self
+		# TODO:
+		with open(_cd+filename+".learn",'rb') as f:
+			pass
 	def size(self):
 		rtv={"byname":0,"bygoal":1}
 		for c in self.constraints:
@@ -305,203 +307,4 @@ class goaltree:
 		return rtv
 
 ###########
-
-def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
-	stateCnt=0
-	rtv={}
-	t=(obj.copy(),0,(-1,-1)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
-	q=queue()
-	q.push(t)
-	del t
-	while q.size()!=0:
-		t=q.pop()
-		currstat=t[0]
-		currstep=t[1]
-		last_put=t[2][0]
-		currstatNum=currstat.hash()
-		if currstatNum in rtv: continue
-		rtv[currstatNum]=t
-		del t
-		stateCnt+=1
-		if stateCnt>stateLimit: break
-		near1=currstat.near1()
-		for near in near1:
-			stat=near[2]
-			#if stat.turn()==-1 and not (isNone(notViolate) or matchGoaltree_find_inSet(stat,notViolate)):
-			#	continue
-			actinfo=near[:2] # (who does, does what)
-			if currstep<step:
-				q.push((stat,currstep+1,(actinfo,currstatNum)))
-	return rtv
-	pass
-
-###########
-
-def matchGoal_v1(b,g):
-	barr=b.rawBoard()
-	for x in g.constraints:
-		if str(barr[x[0]])!=str(x[1]):
-			return False
-	return True
-
-def matchGoal_v2(b,g):
-	barr=b.rawBoard()
-	print(g),exit()
-	for x in g.constraints:
-		p=re.compile("([0-9]+):([0-9]+)")
-		item=p.split(str(x[1]))
-		matched=False
-		for i in range(1,len(item),p.groups+1):
-			loc = int(item[i  ])
-			pn  = item[i+1]
-			if str(barr[loc])==str(pn):
-				matched=True
-				break
-		if matched==False:
-			return False
-	return True
-
-def matchGoal_v3(b,g):
-	barr=b.rawBoard()
-	for x in g.constraints:
-		isKW=False
-		matched=False # if a cosntraint is matched
-		if x[0]==g.__class__.KW_include_label:
-			isKW=True
-			for name in x[1][1].getFinals():
-				goals=x[1][1].getGoals(name)
-				if matchGoaltree_find_inSet(b,goals):
-					matched=True
-					break
-		if isKW==False:
-			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
-			p=parser_itemWithouLabelSplit
-			item=p.split(str(x[1])) # may have several constraints, just one of them
-			for i in range(1,len(item),p.groups+1):
-				loc = int(item[i  ])
-				pn  = item[i+1]
-				if str(barr[loc])==str(pn):
-					matched=True
-					break
-		if matched==False:
-			return False
-	return True
-
-def matchGoal_v4(b,g):
-	barr=b.rawBoard()
-	for x in g.constraints:
-		isKW=False
-		negate=x[2]
-		matched=False # if a cosntraint is matched
-		if x[0]==g.__class__.KW_include_label:
-			isKW=True
-			for name in x[1][1].getFinals():
-				goals=x[1][1].getGoals(name)
-				if matchGoaltree_find_inSet(b,goals):
-					matched=True
-					break
-		if isKW==False:
-			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
-			p=parser_itemWithouLabelSplit
-			item=p.split(str(x[1])) # may have several constraints, just one of them
-			for i in range(1,len(item),p.groups+1):
-				loc = int(item[i  ])
-				pn  = item[i+1]
-				if str(barr[loc])==str(pn):
-					matched=True
-					break
-		#if (negate!=False and matched!=False) or (matched==False and negate==False):
-		if negate==matched:
-			return False
-	return True
-
-matchGoal=matchGoal_v4
-
-def matchGoaltree_find_inSet(b,goals):
-	for g in goals:
-		if matchGoal(b,g):
-			return True
-	return False
-
-def matchGoaltree_find(b,gt,notBelow=None):
-	barr=b.rawBoard()
-	rtv=[]
-	for k in gt.keys(notBelow=notBelow):
-		if matchGoaltree_find_inSet(b,gt.getGoals(k)):
-			rtv.append(k)
-	return rtv
-
-def matchGoaltree_trim_v1(mv,gt):
-	#mv=set(mv)
-	mv=[ x for x in mv ]
-	mv.sort()
-	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
-	rtv=[]
-	tmpv=[]
-	for k in mv:
-		tmps=""
-		tmpk=k
-		while 0==0:
-			tmps+=tmpk
-			succ=gt.getSucc(tmpk)
-			if succ=='-': break
-			tmpk=succ
-		tmpv.append((k,tmps))
-	# TODO: need suffix array to speedup
-	rg=range(len(tmpv))
-	delSet=set()
-	for i1 in rg:
-		for i2 in rg:
-			if i1==i2: continue
-			if tmpv[i1][1] in tmpv[i2][1]:
-				delSet.add(tmpv[i2][0])
-	rtv+=[ k for k in mv if not k in delSet]
-	return rtv
-
-def matchGoaltree_trim_v2(mv,gt):
-	#mv=set(mv)
-	mv=[ x for x in mv ]
-	mv.sort()
-	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
-	sv=[ (gt.getSuccs(k)|set([k]),k) for k in mv]
-	#rtv=[]
-	delSet=set()
-	rg=range(len(sv))
-	for i1 in rg:
-		for i2 in rg:
-			if i1==i2: continue
-			s1,s2 = sv[i1][0],sv[i2][0]
-			ss=s1&s2
-			if len(ss)==len(s1): delSet.add(sv[i2][1])
-			#if len(ss)==len(s2): delSet.add(sv[i1][1])
-			del s1,s2,ss
-	rtv=[ k for k in mv if not k in delSet ]
-	return rtv
-
-def matchGoaltree_trim_v3(mv,gt):
-	#mv=list(set(mv))
-	mv=[ x for x in mv ]
-	mv.sort()
-	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
-	sv=[ (gt.getSuccsStr(k),k) for k in mv]
-	# TODO: need suffix array to speedup
-	rg=range(len(mv))
-	delSet=set()
-	for i1 in rg:
-		for i2 in rg:
-			if i1==i2: continue
-			s1,s2 = sv[i1],sv[i2]
-			if s1[0] in s2[0]:
-				delSet.add(s2[1])
-			del s1,s2
-	rtv=[ k for k in mv if not k in delSet]
-	return rtv
-
-matchGoaltree_trim=matchGoaltree_trim_v3
-
-def matchGoaltree(b,gt,notBelow=None):
-	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)
-
-def matchGoaltree_checkNegate(b,gt,k):
-	pass
 
