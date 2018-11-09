@@ -209,7 +209,7 @@ def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
 	rtvM2b={}
 	for i in bfsRes:
 		bRes=bfsRes[i]
-		mv=matchGoaltree(bRes[0],gt,notBelow)
+		mv=matchGoaltree(bRes[0],gt,notBelow) # try not match all, use previous experiences
 		mvt=matchGoaltree_trim(mv,gt)
 		matches+=mvt
 		for m in mvt:
