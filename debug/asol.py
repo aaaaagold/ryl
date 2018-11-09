@@ -96,7 +96,7 @@ def matchGoaltree_find_inSet(b,goals):
 	return False
 
 def matchGoaltree_find(b,gt,notBelow=None):
-	barr=b.rawBoard()
+	#barr=b.rawBoard()
 	rtv=[]
 	for k in gt.keys(notBelow=notBelow):
 		if matchGoaltree_find_inSet(b,gt.getGoals(k)):
@@ -170,6 +170,7 @@ def matchGoaltree_trim_v3(mv,gt):
 	return rtv
 
 matchGoaltree_trim=matchGoaltree_trim_v3
+# arg: match-v, goaltree
 
 def matchGoaltree(b,gt,notBelow=None):
 	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)
@@ -190,6 +191,19 @@ def genSol_bfsMatchStates(bfsRes,goals):
 	return [ x for x in cand if x[1][1]==minDist ]
 
 def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
+	'''
+		the function tries to match every results in limited bfs with a goal in gt.
+		if a goal is matched with by several results, it will choose the one with the least steps.
+		several results may be chosen if they have same steps.
+		stored in rtvM2b (i.e. rtv,matches to board)
+		;
+		problem: whole-goals search takes time.  nevertheless this will be operated after each limited bfs.
+		;
+		the upper layer function takes the result and choose the topper (of the goal tree) one
+		;
+		;
+		want the first choose is correct and do not need to match others in the same bfs results.
+	'''
 	#bfsRes=b.bfs(8)
 	matches=[]
 	rtvM2b={}
@@ -240,6 +254,16 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	if verbose: b.print() # debug
 	finalGoals=gt.getFinals()
 	matches,bfsRes=genSol_1(b,gt,step,stateLimit,notBelow=notBelow)
+	if 0==0:
+		pass
+		# TODO
+		'''
+			change matches to 
+				for g in goals:
+					if not match(g): continue
+			the order of goals is decided by experience
+			therefore, the following judge should be rewrited
+		'''
 	stateMatch=set([ (b[0],m[0]) for m in matches for b in m[1] ])
 	#stateMatch.sort()
 	goalsInFinals=[ x for x in matches if x[0] in finalGoals ]
@@ -274,6 +298,14 @@ def genSol(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		#	_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,
 		#	_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
 		#	verbose=verbose) for x in matches if not (x[1][0][0],x[0]) in lastMatch ]
+		
+		# TODO
+		'''
+			change to 
+				for g in goals:
+					if not match(g): continue
+			the order of goals is decided by experience
+		'''
 
 		for x in matches:
 			if len(_rtvMoves)!=0:
