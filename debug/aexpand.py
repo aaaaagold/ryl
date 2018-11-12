@@ -28,7 +28,7 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
 			actinfo=near[:2] # (who does, does what)
 			if currstep<step:
 				q.push((stat,currstep+1,(actinfo,currstatNum)))
-	return rtv
+	return rtv # rtv[stateHash]=(state,step,(actInfo,prevState))
 	pass
 
 def bfs2moveSeq(bfs,goalHash):

@@ -215,7 +215,7 @@ class board:
 					newrtv[i]=rtv[i]
 			del rtv
 			rtv=newrtv
-		return rtv
+		return rtv # rtv[stateHash]=(state,step,(move,prevState))
 	def sameCnt(self,rhs,onlyTheseIts=None):
 		sz=self.size()
 		if sz!=rhs.size(): return -1

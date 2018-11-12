@@ -332,7 +332,7 @@ def genSol_v1(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 
 def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	notBelow=None,
-	lastMatch=set(),
+	_lastMatch=set(),
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
 	_nodes=[],_rtvNodes=[],
@@ -392,19 +392,21 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 			_rtvNodes.append(_nodes+[minDistItem[0]])
 			#break
 		#
-		stateMatch=set([ (b[0],m[0]) for m in matches for b in m[1] ])
+		#stateMatch=set([ (b[0],m[0]) for m in matches for b in m[1] ])
+		stateMatch=dict([ ((b[0],m[0]),b[1][1]) for m in matches for b in m[1] ])
 		# TODO: add step record to stateMatch
 		# find path (dfs)
 		for x in matches:
 			if len(_rtvMoves)!=0:
 				# route to goal found
 				break
-			if (x[1][0][0],x[0]) in lastMatch:
+			curr_record=(x[1][0][0],x[0])
+			if curr_record in _lastMatch and _lastMatch[curr_record]<stateMatch[curr_record]:
 				# (statehash,matchGoalName) seen
 				continue
 			genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],
 				notBelow=notBelow,
-				lastMatch=stateMatch,
+				_lastMatch=stateMatch,
 				_isBegin=False,
 				_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,
 				_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
@@ -418,4 +420,5 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.
 
-genSol=genSol_v1
+genSol=genSol_v2
+
