@@ -374,11 +374,11 @@ class goaltree:
 		if isNone(notBelow): notBelow=set()
 		if type(notBelow)!=set: notBelow=set(notBelow)
 		# data
-		validKeys=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
+		#validKeys=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
 		nextgoal=self.learned["nextgoal"]
 		target=nextgoal[currentKey] if currentKey in nextgoal else {}
 		rtv=[ (v,k) for k,v in target.items() if len(self.getSuccs(k)&notBelow)==0 ]
-		rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
+		#rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
 		#rtv.sort(reverse=True) # leave it to caller
 		return rtv
 		

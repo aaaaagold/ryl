@@ -99,13 +99,14 @@ else:
 		print("board.random()")
 		bbb.random()
 		while bbb.solvable()==False: bbb.random()
-		boardInitHistory.append(bbb.copy())
 		bbb.print()
 		print(bbb.rawBoard())
 		t0=time.time()
 		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
 		succList+=res['nodes']
-		print(time.time()-t0)
+		t1=time.time()-t0
+		boardInitHistory.append((bbb.copy(),t1))
+		print(t1)
 		if len(res['moves'])==0:
 			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
@@ -126,7 +127,7 @@ else:
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>99:
+		if len(succList)>9:
 			xxx.saveNextGoal(succList)
 			succList=[]
 			tmp=xxx.saveNextGoalFile("test.learn-1")
@@ -134,13 +135,13 @@ else:
 			boardInitHistoryAll.append(boardInitHistory)
 			if 0==0:
 				#test
-				for b in boardInitHistory:
-					bbb=b.copy()
+				for h in boardInitHistory:
+					bbb=h[0].copy()
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
 					res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
-					print("test",time.time()-t0)
+					print("test",time.time()-t0,"prev",h[1])
 					print("test",res['nodes'])
 			boardInitHistory=[]
 			exit()
