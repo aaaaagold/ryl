@@ -241,6 +241,7 @@ def genSol_v1(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	verbose=False,
 	__internal_data=None,
 	__dummy=None):
+	genSol=genSol_v1
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible
 		_rtvMoves=[]
@@ -332,13 +333,13 @@ def genSol_v1(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 
 def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	notBelow=None,
-	_lastMatch=set(),
+	_lastMatches={},_lastMatch="",
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
 	_nodes=[],_rtvNodes=[],
 	_possible=[],
-	verbose=False,
 	__internal_data=None,
+	verbose=False,
 	__dummy=None):
 	genSol=genSol_v2
 	if _isBegin:
@@ -350,12 +351,16 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 			"finals":gt.getFinals(),
 			"__dummy":None}
 	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
-	keys=gt.keys_learnedtry() # [ (weight,nodeName) , ... ]
+	keys=gt.wkeys(_lastMatch) # [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
+	minProb=keys[len(keys)>>1][0]
 	matchesDict={}
 	matchedKeys=[]
-	for i in range((len(keys)+1)>>1):
-		key=keys[i]
+	for i in range(len(keys)):
+		if keys[i][0]<minProb:
+			break
+			# omit < 50%-th.  # keys is sorted
+		key=keys[i][1]
 		goalSet=gt.getGoals(key)
 		
 		#matches=genSol_bfsTopMatch(bfsRes,gt,notBelow)
@@ -379,7 +384,7 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		for k in matchesDict:
 			if k not in betterMatchedKeys:
 				delSet.add(k)
-		matches=[ (m,matchesDict[m]) for m in matchesDict if not m in delSet ]
+		matches=[ (k,matchesDict[k]) for k in matchesDict if not k in delSet ]
 		#
 		
 		# check if reach final
@@ -401,16 +406,17 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 				# route to goal found
 				break
 			curr_record=(x[1][0][0],x[0])
-			if curr_record in _lastMatch and _lastMatch[curr_record]<stateMatch[curr_record]:
+			if curr_record in _lastMatches and _lastMatches[curr_record]<stateMatch[curr_record]:
 				# (statehash,matchGoalName) seen
 				continue
 			genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],
 				notBelow=notBelow,
-				_lastMatch=stateMatch,
+				_lastMatches=stateMatch,_lastMatch=x[0],
 				_isBegin=False,
 				_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,
 				_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
 				_possible=_possible,
+				__internal_data=__internal_data,
 				verbose=verbose)
 		#
 		if len(_rtvMoves)==0 and len(_moves)!=0:

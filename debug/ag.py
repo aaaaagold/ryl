@@ -348,7 +348,8 @@ class goaltree:
 		'''
 		# data
 		nextgoal=self.learned["nextgoal"]
-		for p in successSubgoalList:
+		tmparr=[""]+successSubgoalList
+		for p in tmparr:
 			for i in range(1,len(p)):
 				print(p[i-1])
 				if not p[i-1] in nextgoal: nextgoal[ p[i-1] ]={}
@@ -356,6 +357,30 @@ class goaltree:
 				if not p[i] in curr: curr[ p[i] ]=0
 				curr[ p[i] ]+=1
 		return False
+	def wkeys(self,currentKey,notBelow=None):
+		'''
+		# ref-rtv
+		if isNone(notBelow):
+			rtv=[k for k in self.sets]
+			rtv.sort()
+			return rtv
+		else:
+			#rtv=[k for k in self.sets if not self.getSucc(k) in notBelow]
+			rtv=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
+			rtv.sort()
+			return rtv
+		'''
+		# TODO
+		if isNone(notBelow): notBelow=set()
+		if type(notBelow)!=set: notBelow=set(notBelow)
+		# data
+		validKeys=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
+		nextgoal=self.learned["nextgoal"]
+		target=nextgoal[currentKey] if currentKey in nextgoal else {}
+		rtv=[ (v,k) for k,v in target.items() if len(self.getSuccs(k)&notBelow)==0 ]
+		rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
+		#rtv.sort(reverse=True) # leave it to caller
+		return rtv
 		
 
 ###########

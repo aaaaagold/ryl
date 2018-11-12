@@ -93,18 +93,21 @@ else:
 		("  %s=%s"%("stateLimit",str(stateLimit)))
 		)
 	succList=[]
+	boardInitHistoryAll=[]
+	boardInitHistory=[]
 	while 0==0:
 		print("board.random()")
 		bbb.random()
 		while bbb.solvable()==False: bbb.random()
+		boardInitHistory.append(bbb.copy())
 		bbb.print()
 		print(bbb.rawBoard())
 		t0=time.time()
-		res=genSol(bbb,xxx,step=step,stateLimit=stateLimit)
+		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
 		succList+=res['nodes']
 		print(time.time()-t0)
 		if len(res['moves'])==0:
-			res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
+			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
 			break
 		elif 0!=0:
@@ -128,5 +131,17 @@ else:
 			succList=[]
 			tmp=xxx.saveNextGoalFile("test.learn-1")
 			print(tmp)
+			boardInitHistoryAll.append(boardInitHistory)
+			if 0==0:
+				#test
+				for b in boardInitHistory:
+					bbb=b.copy()
+					bbb.print()
+					print("test",bbb.rawBoard())
+					t0=time.time()
+					res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
+					print("test",time.time()-t0)
+					print("test",res['nodes'])
+			boardInitHistory=[]
 			exit()
 
