@@ -127,7 +127,7 @@ else:
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>9:
+		if len(succList)>99:
 			xxx.saveNextGoal(succList)
 			succList=[]
 			tmp=xxx.saveNextGoalFile("test.learn-1")
@@ -140,7 +140,7 @@ else:
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
-					res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
+					res=genSol_v2(bbb,xxx,step=step,stateLimit=stateLimit)
 					print("test",time.time()-t0,"prev",h[1])
 					print("test",res['nodes'])
 			boardInitHistory=[]

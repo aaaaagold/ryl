@@ -348,8 +348,8 @@ class goaltree:
 		'''
 		# data
 		nextgoal=self.learned["nextgoal"]
-		tmparr=[""]+successSubgoalList
-		for p in tmparr:
+		for arr in successSubgoalList:
+			p=[""]+arr
 			for i in range(1,len(p)):
 				print(p[i-1])
 				if not p[i-1] in nextgoal: nextgoal[ p[i-1] ]={}
