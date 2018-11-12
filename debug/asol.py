@@ -392,6 +392,7 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 			_rtvNodes.append(_nodes+[minDistItem[0]])
 			#break
 		#
+		stateMatch=set([ (b[0],m[0]) for m in matches for b in m[1] ])
 		# find path (dfs)
 		for x in matches:
 			if len(_rtvMoves)!=0:
