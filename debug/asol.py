@@ -369,16 +369,16 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		matchedBfsRes=[]
 		for i in bfsRes:
 			bRes=bfsRes[i]
-			#mv=matchGoaltree(bRes[0],gt,notBelow) # try not match all, use previous experiences
 			if matchGoaltree_find_inSet(bRes[0],goalSet):
 				# matched
 				if len(matchedBfsRes)==0 or bRes[1]<matchedBfsRes[0][1][1]:
 					matchedBfsRes=[(i,bRes)]
 				elif bRes[1]==matchedBfsRes[0][1][1]:
 					matchedBfsRes.append((i,bRes))
-		if len(matchedBfsRes)!=0:
-			matchesDict[key]=matchedBfsRes
-			matchedKeys.append(key)
+		if len(matchedBfsRes)==0: continue
+		# node appears
+		matchesDict[key]=matchedBfsRes
+		matchedKeys.append(key)
 
 	# choose only upper nodes
 	betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
