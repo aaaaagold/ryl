@@ -10,6 +10,7 @@ from asol import *
 
 xxx=goaltree()
 xxx.fromTxt("ainput-15p/main.txt")
+learnDir="alearn-15p/"
 #print(xxx)
 #print("toStr")
 #xxxtxt=xxx.toStr()
@@ -45,6 +46,7 @@ if 0!=0:
 
 if 0!=0:
 	notSolved=[
+		#[15, 5, 10, 4, 6, 14, 9, 8, 13, 0, 11, 1, 2, 7, 3, 12],
 		#[15, 5, 10, 12, 1, 6, 11, 8, 4, 2, 9, 7, 3, 0, 13, 14],
 		#[2, 12, 13, 5, 9, 14, 6, 1, 11, 8, 4, 7, 15, 0, 10, 3],
 		#[0, 14, 3, 15, 12, 13, 9, 5, 8, 6, 11, 10, 7, 1, 2, 4],
@@ -71,13 +73,13 @@ if 0!=0:
 		bbb.setNums(arr,arr.index(15))
 		print(i,bbb.solvable())
 		t0=time.time()
-		res=genSol(bbb,xxx,step=8)
+		res=genSol_v1(bbb,xxx,step=8)
 		print(time.time()-t0)
 		movesS=res['moves']
 		nodesS=res['nodes']
 		if len(movesS)==0:
 			bbb.print()
-			res=genSol(bbb,xxx,step=8,verbose=True)
+			res=genSol_v1(bbb,xxx,step=8,verbose=True)
 			movesS=res['moves']
 			nodesS=res['nodes']
 		else:
@@ -110,7 +112,8 @@ else:
 		if len(res['moves'])==0:
 			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
-			break
+			#break
+			boardInitHistory.pop()
 		elif 0!=0:
 			movesS=res['moves']
 			nodesS=res['nodes']
@@ -127,22 +130,34 @@ else:
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>99:
+		if len(succList)>11:
 			xxx.saveNextGoal(succList)
 			succList=[]
-			tmp=xxx.saveNextGoalFile("test.learn-1")
+			tmp=xxx.saveNextGoalFile(learnDir+"test.learn")
 			print(tmp)
 			boardInitHistoryAll.append(boardInitHistory)
 			if 0==0:
 				#test
+				logs=[("bylearn","notlearn")]
 				for h in boardInitHistory:
 					bbb=h[0].copy()
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
-					res=genSol_v2(bbb,xxx,step=step,stateLimit=stateLimit)
-					print("test",time.time()-t0,"prev",h[1])
+					res=genSol_v2(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60)
+					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
+					print("test",t1,"prev",h[1])
+					logs.append((t1,h[1]))
 					print("test",res['nodes'])
+				prefix=learnDir+"log/logs-"+str(time.time())
+				with open(prefix+"-time","w") as f:
+					for l in logs:
+						f.write(str(l[0])+"\t"+str(l[1])+"\n")
+				with open(prefix+"-board","w") as f:
+					f.write("[\n")
+					for h in boardInitHistory:
+						f.write("\t"+str(bbb.rawBoard())+",\n")
+					f.write("]")
 			boardInitHistory=[]
 			exit()
 

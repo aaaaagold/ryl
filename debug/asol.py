@@ -339,8 +339,10 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	_nodes=[],_rtvNodes=[],
 	_possible=[],
 	__internal_data=None,
+	endBefore=None,
 	verbose=False,
 	__dummy=None):
+	if not isNone(endBefore) and endBefore<time.time(): return
 	genSol=genSol_v2
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible,__internal_data
@@ -417,6 +419,7 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 				_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
 				_possible=_possible,
 				__internal_data=__internal_data,
+				endBefore=endBefore,
 				verbose=verbose)
 		#
 		if len(_rtvMoves)==0 and len(_moves)!=0:
