@@ -130,7 +130,7 @@ else:
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>99:
+		if len(succList)>11:
 			xxx.saveNextGoal(succList)
 			succList=[]
 			tmp=xxx.saveNextGoalFile(learnDir+"test.learn")
@@ -139,7 +139,9 @@ else:
 			if 0==0:
 				#test
 				logs=[("bylearn","notlearn")]
-				for h in boardInitHistory:
+				for i in range(len(boardInitHistory)):
+					print(i)
+					h=boardInitHistory[i]
 					bbb=h[0].copy()
 					bbb.print()
 					print("test",bbb.rawBoard())
@@ -157,7 +159,7 @@ else:
 					f.write("[\n")
 					for h in boardInitHistory:
 						f.write("\t"+str(h[0].rawBoard())+",\n")
-					f.write("]")
+					f.write("]\n")
 			boardInitHistory=[]
 			exit()
 

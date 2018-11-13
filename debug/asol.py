@@ -380,28 +380,25 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 			matchesDict[key]=matchedBfsRes
 			matchedKeys.append(key)
 
-		# choose only upper nodes
-		betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
-		delSet=set()
-		for k in matchesDict:
-			if k not in betterMatchedKeys:
-				delSet.add(k)
-		matches=[ (k,matchesDict[k]) for k in matchesDict if not k in delSet ]
-		#
-		
-		# check if reach final
-		hasFinals=[ x for x in matches if x[0] in __internal_data["finals"] ]
-		if len(hasFinals):
-			minDistItem=min(hasFinals,key=(lambda x:x[1][0][1][1]))
-			if verbose: print('goal!',minDistItem) # debug
-			if verbose: minDistItem[1][0][1][0].print() # debug
-			_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,minDistItem[1][0][0]))
-			_rtvNodes.append(_nodes+[minDistItem[0]])
-			#break
-		#
-		#stateMatch=set([ (b[0],m[0]) for m in matches for b in m[1] ])
+	# choose only upper nodes
+	betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
+	delSet=set()
+	for k in matchesDict:
+		if k not in betterMatchedKeys:
+			delSet.add(k)
+	matches=[ (k,matchesDict[k]) for k in matchesDict if not k in delSet ]
+	#
+	
+	# check if reach final
+	hasFinals=[ x for x in matches if x[0] in __internal_data["finals"] ]
+	if len(hasFinals):
+		minDistItem=min(hasFinals,key=(lambda x:x[1][0][1][1]))
+		if verbose: print('goal!',minDistItem) # debug
+		if verbose: minDistItem[1][0][1][0].print() # debug
+		_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,minDistItem[1][0][0]))
+		_rtvNodes.append(_nodes+[minDistItem[0]])
+	else:
 		stateMatch=dict([ ((b[0],m[0]),b[1][1]) for m in matches for b in m[1] ])
-		# TODO: add step record to stateMatch
 		# find path (dfs)
 		for x in matches:
 			if len(_rtvMoves)!=0:
