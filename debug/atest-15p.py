@@ -160,10 +160,10 @@ else:
 					for h in boardInitHistory:
 						f.write("\t"+str(h[0].rawBoard())+",\n")
 					f.write("]\n")
+				print("unseen boards")
 				for i in range(11):
 					bbb.random()
 					while bbb.solvable()==False: bbb.random()
-					print("unseen boards")
 					bbb.print()
 					t0=time.time()
 					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+60)
