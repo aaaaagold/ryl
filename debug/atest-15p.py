@@ -160,6 +160,16 @@ else:
 					for h in boardInitHistory:
 						f.write("\t"+str(h[0].rawBoard())+",\n")
 					f.write("]\n")
+				for i in range(11):
+					bbb.random()
+					while bbb.solvable()==False: bbb.random()
+					print("unseen boards")
+					bbb.print()
+					t0=time.time()
+					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+60)
+					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
+					print("u",t1)
+					print("test",res['nodes'])
 			boardInitHistory=[]
 			exit()
 
