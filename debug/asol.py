@@ -360,7 +360,8 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	matchedKeys=[]
 	for i in range(len(keys)):
 		if keys[i][0]<minProb:
-			break
+			#break
+			pass
 			# omit < 50%-th.  # keys is sorted
 		key=keys[i][1]
 		goalSet=gt.getGoals(key)
@@ -426,5 +427,130 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.
 
-genSol=genSol_v2
+def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
+	notBelow=None,
+	_lastMatches={},_lastMatch="",
+	_isBegin=True,
+	_moves=[],_rtvMoves=[],
+	_nodes=[],_rtvNodes=[],
+	_possible=[],
+	__internal_data=None,
+	endBefore=None,
+	verbose=False,
+	__dummy=None):
+	if not isNone(endBefore) and endBefore<time.time(): return
+	genSol=genSol_v3
+	if _isBegin:
+		del _rtvMoves,_rtvNodes,_possible,__internal_data
+		_rtvMoves=[]
+		_rtvNodes=[]
+		_possible=[]
+		__internal_data={
+			"finals":gt.getFinals(),
+			"__dummy":None}
+	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
+	keys=gt.wkeys(_lastMatch) # [ (weight,nodeName) , ... ]
+	keys.sort(reverse=True)
+	minProb=keys[len(keys)>>1][0]
+	matchesDict={}
+	matchedKeys=[]
+	for i in range(len(keys)):
+		if keys[i][0]<minProb:
+			break
+			# omit < 50%-th.  # keys is sorted
+		key=keys[i][1]
+		goalSet=gt.getGoals(key)
+		
+		#matches=genSol_bfsTopMatch(bfsRes,gt,notBelow)
+		matchedBfsRes=[]
+		for i in bfsRes:
+			bRes=bfsRes[i]
+			if matchGoaltree_find_inSet(bRes[0],goalSet):
+				# matched
+				if len(matchedBfsRes)==0 or bRes[1]<matchedBfsRes[0][1][1]:
+					matchedBfsRes=[(i,bRes)]
+				elif bRes[1]==matchedBfsRes[0][1][1]:
+					matchedBfsRes.append((i,bRes))
+		if len(matchedBfsRes)==0: continue
+		#
+		# check final
+		if key in __internal_data["finals"]:
+			_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,matchedBfsRes[0][0]))
+			_rtvNodes.append(_nodes+[key])
+			break
+			pass
+		else:
+			# find path (dfs)
+			for x in matchedBfsRes:
+				# {(stateHash,key):totalStep}
+				stateMatch={(x[0],key):currStep+x[1][1]}
+				stateMatch.update(_lastMatches)
+				genSol(x[1][0],gt,step,stateLimit=stateLimit,currStep=currStep+x[1][1],
+					notBelow=notBelow,
+					_lastMatches=stateMatch,_lastMatch=key,
+					_isBegin=False,
+					_moves=_moves+bfs2moveSeq(bfsRes,x[0]),_rtvMoves=_rtvMoves,
+					_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
+					_possible=_possible,
+					__internal_data=__internal_data,
+					endBefore=endBefore,
+					verbose=verbose)
+				if len(_rtvMoves)!=0: break
+			#
+		if len(_rtvMoves)!=0: break
+		#
+		# node appearsa, but previously path not found
+		matchesDict[key]=matchedBfsRes
+		matchedKeys.append(key)
+	if len(_rtvMoves)==0:
+		# all candidate nodes cannot find a path to final(s)
+		print("GG")
+		if 0!=0:
+			# choose only upper nodes
+			betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
+			delSet=set()
+			for k in matchesDict:
+				if k not in betterMatchedKeys:
+					delSet.add(k)
+			matches=[ (k,matchesDict[k]) for k in matchesDict if not k in delSet ]
+			#
+			# check if reach final
+			hasFinals=[ x for x in matches if x[0] in __internal_data["finals"] ]
+			if len(hasFinals):
+				minDistItem=min(hasFinals,key=(lambda x:x[1][0][1][1]))
+				if verbose: print('goal!',minDistItem) # debug
+				if verbose: minDistItem[1][0][1][0].print() # debug
+				_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,minDistItem[1][0][0]))
+				_rtvNodes.append(_nodes+[minDistItem[0]])
+			else:
+				stateMatch=dict([ ((b[0],m[0]),b[1][1]+currentStep) for m in matches for b in m[1] ])
+				# find path (dfs)
+				for x in matches:
+					if len(_rtvMoves)!=0:
+						# route to goal found
+						break
+					curr_record=(x[1][0][0],x[0])
+					if curr_record in _lastMatches and _lastMatches[curr_record]<stateMatch[curr_record]:
+						# (statehash,matchGoalName) seen
+						continue
+					genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],
+						notBelow=notBelow,
+						_lastMatches=stateMatch,_lastMatch=x[0],
+						_isBegin=False,
+						_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,
+						_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
+						_possible=_possible,
+						__internal_data=__internal_data,
+						endBefore=endBefore,
+						verbose=verbose)
+				#
+				if len(_rtvMoves)==0 and len(_moves)!=0:
+					_possible.append(_moves)
+		pass
+		#
+	if _isBegin:
+		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
+	# END OF FUNC.
+
+genSol=genSol_v3
 

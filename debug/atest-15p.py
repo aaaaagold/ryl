@@ -130,7 +130,7 @@ else:
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>11:
+		if len(succList)>99:
 			xxx.saveNextGoal(succList)
 			succList=[]
 			tmp=xxx.saveNextGoalFile(learnDir+"test.learn")
@@ -146,7 +146,7 @@ else:
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
-					res=genSol_v2(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60)
+					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60)
 					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
 					print("test",t1,"prev",h[1])
 					logs.append((t1,h[1]))
