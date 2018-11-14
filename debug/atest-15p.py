@@ -105,9 +105,9 @@ else:
 		print(bbb.rawBoard())
 		t0=time.time()
 		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
-		succList+=res['nodes']
 		t1=time.time()-t0
-		boardInitHistory.append((bbb.copy(),t1))
+		succList+=res['nodes']
+		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
 		print(t1)
 		if len(res['moves'])==0:
 			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
@@ -138,7 +138,8 @@ else:
 			boardInitHistoryAll.append(boardInitHistory)
 			if 0==0:
 				#test
-				logs=[("bylearn","notlearn")]
+				logs_time=[("bylearn","notlearn")]
+				logs_node=[("bylearn","notlearn")]
 				for i in range(len(boardInitHistory)):
 					print(i)
 					h=boardInitHistory[i]
@@ -149,27 +150,34 @@ else:
 					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60)
 					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
 					print("test",t1,"prev",h[1])
-					logs.append((t1,h[1]))
+					logs_time.append((t1,h[1]))
+					logs_node.append((res['nodes'],h[2]))
 					print("test",res['nodes'])
 				prefix=learnDir+"log/logs-"+str(time.time())
 				with open(prefix+"-time","w") as f:
-					for l in logs:
+					for l in logs_time:
 						f.write(str(l[0])+"\t"+str(l[1])+"\n")
+				with open(prefix+"-node","w") as f:
+					for l in logs_node:
+						f.write(str(l[0])+"\n"+str(l[1])+"\n\n")
 				with open(prefix+"-board","w") as f:
 					f.write("[\n")
 					for h in boardInitHistory:
 						f.write("\t"+str(h[0].rawBoard())+",\n")
 					f.write("]\n")
 				print("unseen boards")
-				for i in range(11):
-					bbb.random()
-					while bbb.solvable()==False: bbb.random()
-					bbb.print()
-					t0=time.time()
-					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+60)
-					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
-					print("u",t1)
-					print("test",res['nodes'])
+				with open(prefix+"-unseen","w") as f:
+					f.write("board"+"\t"+"time"+"\t"+"nodes"+"\n")
+					for i in range(100):
+						bbb.random()
+						while bbb.solvable()==False: bbb.random()
+						bbb.print()
+						t0=time.time()
+						res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+60)
+						t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
+						print("u",t1)
+						f.write(str(bbb.rawBoard())+"\t"+str(t1)+"\t"+str(res['nodes'])+"\n")
+						print("u",res['nodes'])
 			boardInitHistory=[]
 			exit()
 
