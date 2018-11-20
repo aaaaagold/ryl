@@ -90,47 +90,24 @@ if 0!=0:
 else:
 	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
 	stateLimit=int(sys.argv[2]) if len(sys.argv)>2 and sys.argv[2].isdigit() else 4095
+	learnFile=""
+	for i in range(len(sys.argv)):
+		if sys.argv[i]=="-l":
+			learnFile+=sys.argv[i+1]
+			break
 	print("need appearing 'goal!'."+
 		("  %s=%s"%("step",str(step)))+
-		("  %s=%s"%("stateLimit",str(stateLimit)))
+		("  %s=%s"%("stateLimit",str(stateLimit)))+
+		("  %s=%s"%("learnFile",learnFile))
 		)
 	succList=[]
 	boardInitHistoryAll=[]
 	boardInitHistory=[]
 	while 0==0:
-		print("board.random()")
-		bbb.random()
-		while bbb.solvable()==False: bbb.random()
-		bbb.print()
-		print(bbb.rawBoard())
-		t0=time.time()
-		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
-		t1=time.time()-t0
-		succList+=res['nodes']
-		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
-		print(t1)
-		if len(res['moves'])==0:
-			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
-			print(bbb.rawBoard())
-			#break
-			boardInitHistory.pop()
-		elif 0!=0:
-			movesS=res['moves']
-			nodesS=res['nodes']
-			print(nodesS)
-			print(movesS)
-			for i in range(len(nodesS)):
-				moves=movesS[i]
-				nodes=nodesS[i]
-				print(nodes)
-				print(moves)
-				bbb.print()
-				bbb.moveSeq(moves)
-				print(len(moves))
-		#print(res['nodes']) # debug - for developing learn file
-		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 		print(len(succList))
-		if len(succList)>99:
+		if len(succList)>99 or learnFile!="":
+			if learnFile!="":
+				xxx.loadNextGoalFile(learnFile)
 			xxx.saveNextGoal(succList)
 			succList=[]
 			tmp=xxx.saveNextGoalFile(learnDir+"test.learn")
@@ -180,4 +157,35 @@ else:
 						print("u",res['nodes'])
 			boardInitHistory=[]
 			exit()
+		print("board.random()")
+		bbb.random()
+		while bbb.solvable()==False: bbb.random()
+		bbb.print()
+		print(bbb.rawBoard())
+		t0=time.time()
+		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
+		t1=time.time()-t0
+		succList+=res['nodes']
+		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
+		print(t1)
+		if len(res['moves'])==0:
+			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
+			print(bbb.rawBoard())
+			#break
+			boardInitHistory.pop()
+		elif 0!=0:
+			movesS=res['moves']
+			nodesS=res['nodes']
+			print(nodesS)
+			print(movesS)
+			for i in range(len(nodesS)):
+				moves=movesS[i]
+				nodes=nodesS[i]
+				print(nodes)
+				print(moves)
+				bbb.print()
+				bbb.moveSeq(moves)
+				print(len(moves))
+		#print(res['nodes']) # debug - for developing learn file
+		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 

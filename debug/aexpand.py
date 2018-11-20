@@ -6,11 +6,17 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
 	stateCnt=0
 	rtv={}
 	t=(obj.copy(),0,(-1,-1)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
-	q=queue()
-	q.push(t)
+	#q=queue()
+	#q.push(t)
+	orderNum=0
+	heap=[]
+	heappush(heap,(orderNum,t))
+	orderNum+=1
 	del t
-	while q.size()!=0:
-		t=q.pop()
+	#while q.size()!=0:
+	while len(heap)!=0:
+		#t=q.pop()
+		t=heappop(heap)[1]
 		currstat=t[0]
 		currstep=t[1]
 		last_put=t[2][0]
@@ -27,7 +33,9 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
 			#	continue
 			actinfo=near[:2] # (who does, does what)
 			if currstep<step:
-				q.push((stat,currstep+1,(actinfo,currstatNum)))
+				#q.push((stat,currstep+1,(actinfo,currstatNum)))
+				heappush(heap,( orderNum , (stat,currstep+1,(actinfo,currstatNum)) ))
+				orderNum+=1
 	return rtv # rtv[stateHash]=(state,step,(actInfo,prevState))
 	pass
 
