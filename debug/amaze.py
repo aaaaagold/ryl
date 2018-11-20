@@ -12,16 +12,24 @@ class maze:
 	def __init__(self):
 		# const
 		self._size=(0,0) # (x,y)
-		self._adj=[] # 2-dim
+		self._adj=[] # [ set() , ... ]
 		# changable
 		self.pos=(0,0)
+	def _toAdjIdx(self,pos):
+		return pos[1]*self._size[0]+pos[0]
 	def fromFile(self,fileName,strtPos=(0,0)):
 		self.pos=copy.deepcopy(strtPos)
 		txt=""
 		with open(fileName,"r"):
 			txt+=f.read()
 		lines=txt.replace("\r","").split("\n")
-		pass
+		spaceEliminator=re.compile("[ \t]+")
+		self.pos=tuple([ int(x) for x in spaceEliminator.split(lines[0]) ])
+		self._adj=[ [] for _ in range(self.pos[0]*self.pos[1]) ]
+		for i in range(1,len(lines)):
+			pts=[int(x) for x in spaceEliminator.split(lines[i])]
+			self._adj[pts[0]].add(pts[1])
+			self._adj[pts[1]].add(pts[0])
 	def copy(self):
 		rtv=maze()
 		rtv._size=self._size
@@ -31,7 +39,7 @@ class maze:
 	def rawBoard(self):
 		return self.pos
 	def random(self):
-		self.pos=(random.randint(self.size[0]),random.randint(self.size[1]))
+		self.pos=(random.randint(0,self.size[0]),random.randint(0,self.size[1]))
 	def moves(self):
 		return [ i for i in range(4) ]
 	def moveSeq(self,mv,verbose=True):
@@ -44,12 +52,13 @@ class maze:
 	def move(self,m):
 		rtv=False
 		newPos=[ x for x in self.pos ]
+		
 		# 0z:R+L- 1z:D+U-
 		idx=(m&2)==0
 		if (m&1)==0: newPos[idx]+=1
 		else: newPos[idx]-=1
 		rtv=(newPos[idx]<0)|(newPos[idx]>=self._size[idx]) # err
-		if rtv==False:
+		if rtv==False and self._toAdjIdx(newPos) in self._adj[self._toAdjIdx(self.pos)]:
 			# no err, move
 			self.pos=tuple(newPos)
 			return False
@@ -67,7 +76,7 @@ class maze:
 			if (m&1)==0: newPos[1]+=1
 			else: newPos[1]-=1
 			rtv=(newPos[1]<0)|(newPos[1]>=self._size[1]) # err
-		if rtv==False:
+		if rtv==False and self._toAdjIdx(newPos) in self._adj[self._toAdjIdx(self.pos)]:
 			# no err, move
 			self.pos=tuple(newPos)
 			return False
@@ -80,7 +89,7 @@ class maze:
 			self.move(m^1)
 		return rtv
 	def hash(self):
-		return self.pos[1]*self._size[0]+self.pos[0]
+		return self._toAdjIdx(self.pos)
 
 
 if __name__=='__main__':
