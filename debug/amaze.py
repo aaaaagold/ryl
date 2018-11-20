@@ -34,6 +34,13 @@ class maze:
 		self.pos=(random.randint(self.size[0]),random.randint(self.size[1]))
 	def moves(self):
 		return [ i for i in range(4) ]
+	def moveSeq(self,mv,verbose=True):
+		for msg in mv:
+			t,m,s=msg
+			self.move(m)
+			if verbose:
+				print(m)
+				self.print('\n')
 	def move(self,m):
 		rtv=False
 		newPos=[ x for x in self.pos ]
@@ -72,6 +79,8 @@ class maze:
 			rtv.append((0,m,self.copy()))
 			self.move(m^1)
 		return rtv
+	def hash(self):
+		return self.pos[1]*self._size[0]+self.pos[0]
 
 
 if __name__=='__main__':
