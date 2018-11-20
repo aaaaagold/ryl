@@ -67,8 +67,10 @@ class maze:
 		else: return True
 	def near1(self):
 		rtv=[]
-		
+		for m in self.moves():
+			if self.move(m): continue
 			rtv.append((0,m,self.copy()))
+			self.move(m^1)
 		return rtv
 
 
