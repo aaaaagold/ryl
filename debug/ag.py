@@ -12,7 +12,7 @@ from amyhead import *
 token_item='([\n]|^)([ \t]*\~?[0-9]+|\~?include|\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
-token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]([A-Za-z0-9_$]+|-)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
+token_goalset='[ \t]*([A-Za-z0-9_$]+)[ \t]+([A-Za-z0-9_$]+|-)(([ \t]+[A-Za-z0-9_$]+)*)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
 sts=re.compile('[ \t]*')
 
 class KWs:
@@ -233,16 +233,18 @@ class goaltree:
 		defined=set()
 		data=[]
 		rs=p.split(s) # cut via "\n\n\n"
+		#print(rs[0:p.groups+1]),exit()
 		for i in range(1,len(rs),p.groups+1):
-			# not match , currName , succName , goals , others
+			# not match , currName , succName , precNames , precName_Last , goals , others
 			# start from 1 =>
-			# currName , succName , goals , others
+			# currName , succName , precNames , precName , goals , others
 			curr=rs[i  ]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")
 			defined.add(curr)
 			succ = rs[i+1]
-			gsv  = re.split("[\n][ \t]*[\n]",rs[i+2])
+			prec = re.split("[ \t]+",rs[i+2])[1:] # or
+			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # and
 			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set(),['']) ))
 		#data.sort()
 		#pprint(data) # debug
