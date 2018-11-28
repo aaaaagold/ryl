@@ -246,7 +246,7 @@ class goaltree:
 			prec = re.split("[ \t]+",rs[i+2])[1:] # or
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # and
 			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set(),[''],prec) ))
-			# curr:( goal()s , succ , succSet , succCatStr , prec )
+			# curr:( goal()s , succ , succSet , succStrs , prec )
 		#data.sort()
 		#pprint(data) # debug
 		self.sets=dict(data)
