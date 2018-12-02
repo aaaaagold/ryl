@@ -63,8 +63,7 @@ class maze:
 		
 		# 0z:R+L- 1z:D+U-
 		idx=(m&2)==0
-		if (m&1)==0: newPos[idx]+=1
-		else: newPos[idx]-=1
+		newPos[idx]+=((0==(m&1))<<1)-1
 		rtv=(newPos[idx]<0)|(newPos[idx]>=self._size[idx]) # err
 		#print(self.pos)
 		if rtv==False and self._toAdjIdx(newPos) in self._adj[self._toAdjIdx(self.pos)]:

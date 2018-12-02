@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{position:relative;}
+.btn{border:1px solid grey;text-align:center;}
+.btn *{display:inline-block;width:100%;height:100%;}
+.btn:hover{background-color:rgba(111,111,0,0.5);}
+#maze-blk{
+	display:inline-block;
+	border-left:1px solid black;
+	border-top:1px solid black;
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+.row{margin:0px;padding:0px;border:0px solid black;}
+.cell{position:relative;display:inline-block;width:23px;height:23px;
+	margin:0px;padding:0px;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+	color:rgba(0,0,0,0);
+}
+.cell-inner{
+	position:absolute;
+	display:block;
+	width:100%;
+	height:100%;
+}
+</style>
+</head>
+<body>
+<div id="root">
+<div id="adjlist"><div>adj-list</div><div><textarea tabindex=1></textarea></div></div>
+<div id="1demo"><div>1demo-py-out</div><div><textarea tabindex=2></textarea></div></div>
+<div id="confirm" class="btn"><a tabindex=3 href="javascript:void(0);">confirm</a></div>
+<div id="maze"><div>maze</div><div id="maze-blk"></div></div>
+</div>
+<script>
+let ge=(i)=>{return document.getElementById(i);};
+let ce=(t)=>{return document.createElement(t);};
+HTMLElement.prototype.ac=function(c){this.appendChild(c);return this;};
+HTMLElement.prototype.sa=function(a,v){this.setAttribute(a,v);return this;};
+HTMLElement.prototype.ga=function(a){return this.getAttribute(a);};
+HTMLElement.prototype.atxt=function(t){this.appendChild(document.createTextNode(t));return this;};
+let adjlist=ge("adjlist").childNodes[1].childNodes[0];
+let demoOut=ge("1demo").childNodes[1].childNodes[0];
+let confirmBtn=ge("confirm");
+let mazeblk=ge("maze-blk");
+confirmBtn.onclick=()=>{
+	if(mazeblk.itvl!==undefined) clearInterval(mazeblk.itvl);
+	let getCell=(xy)=>{return mazeblk.childNodes[xy[1]].childNodes[xy[0]];};
+	let mxy;
+// maze
+{
+	let data=adjlist.value.split("\n");
+	data.forEach((ele,key,arr)=>{
+		let tmp=ele.split(" ");tmp.forEach((e,k,a)=>{a[k]=parseInt(e);});
+		arr[key]=tmp;
+	});
+	mxy=data[0];
+	mazeblk.innerHTML="";
+	for(let y=mxy[1];y--;){
+		let div=ce("div").sa("class","row");
+		//for(let x=mxy[0];x--;) div.ac(ce("div").sa("class","cell").atxt("."));
+		for(let x=mxy[0];x--;) div.ac(ce("div").sa("class","cell").ac(ce("div").sa("class","cell-inner")).atxt("."));
+		mazeblk.ac(div);
+	}
+	for(let i=1;i<data.length;++i){
+		let tmp=Math.min(data[i][0],data[i][1]);
+		let topLeft=[tmp%mxy[0]]; topLeft.push(parseInt((tmp-topLeft[0])/mxy[0]));
+		let node=getCell(topLeft);
+		let lastStyle=node.ga("style"); if(lastStyle==null) lastStyle="";
+		if(Math.abs(data[i][0]-data[i][1])==1){
+			lastStyle+="border-right:1px solid rgba(0,0,0,0);";
+		}else{
+			lastStyle+="border-bottom:1px solid rgba(0,0,0,0);";
+		}
+		node.sa("style",lastStyle);
+	}
+}
+
+// locs
+{
+	let getPos=(str)=>{
+		let s=str.indexOf("pos");
+		let L=str.indexOf("(",s)+1;
+		let R=str.indexOf(")",s);
+		rtv=str.slice(L,R).split(",");
+		rtv.forEach((e,k,a)=>{a[k]=parseInt(e);});
+		return rtv;
+	};
+	let strt=getPos(demoOut.value);
+	let s=demoOut.value.indexOf("msg\n");
+	let ss=demoOut.value.slice(s);
+	let data=ss.split("\nmsg\n");
+	data.forEach((ele,key,arr)=>{arr[key]=getPos(ele);});
+	let ende=data.pop();
+	getCell(strt).childNodes[0].sa("style","background-color:rgba(0,255,0,0.5);");
+	getCell(ende).childNodes[0].sa("style","background-color:rgba(255,0,0,0.5);");
+	let idx=0;
+	getCell(data[idx]).childNodes[0].sa("style","background-color:rgba(233,233,0,0.75);");
+	mazeblk.itvl=setInterval(()=>{
+		getCell(data[idx]).childNodes[0].sa("style","");
+		idx+=1; if(idx==data.length) idx=0;
+		getCell(data[idx]).childNodes[0].sa("style","background-color:rgba(233,233,0,0.75);");
+	},500);
+}
+
+};
+</script>
+</body>
+</html>

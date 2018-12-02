@@ -218,6 +218,8 @@ class goaltree:
 		return self.sets[k][2]
 	def getSuccsStr(self,k):
 		return self.sets[k][3][0]
+	def getPrecs(self,k):
+		return self.sets[k][4]
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s,cd='./'):
@@ -243,7 +245,7 @@ class goaltree:
 				raise TypeError("Error: '"+curr+"' is defined twice")
 			defined.add(curr)
 			succ = rs[i+1]
-			prec = re.split("[ \t]+",rs[i+2])[1:] # or
+			prec = set(re.split("[ \t]+",rs[i+2])[1:]) # or
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # and
 			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set(),[''],prec) ))
 			# curr:( goal()s , succ , succSet , succStrs , prec )
@@ -360,8 +362,9 @@ class goaltree:
 				if not p[i] in curr: curr[ p[i] ]=0
 				curr[ p[i] ]+=1
 		return False
-	def wkeys(self,currentKey,notBelow=None):
+	def wkeys(self,currentKey,beforeKeys=[],notBelow=None):
 		'''
+		* weighted keys *
 		# ref-rtv
 		if isNone(notBelow):
 			rtv=[k for k in self.sets]
@@ -373,14 +376,17 @@ class goaltree:
 			rtv.sort()
 			return rtv
 		'''
-		# TODO
+		# inter-func.
+		def valid_prec(k):
+			precs=self.getPrecs(k)
+			return len(precs)==0 or len(precs&beforeKeys)!=0
 		if isNone(notBelow): notBelow=set()
 		if type(notBelow)!=set: notBelow=set(notBelow)
 		# data
 		#validKeys=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
 		nextgoal=self.learned["nextgoal"]
 		target=nextgoal[currentKey] if currentKey in nextgoal else {}
-		rtv=[ (v,k) for k,v in target.items() if len(self.getSuccs(k)&notBelow)==0 ]
+		rtv=[ (v,k) for k,v in target.items() if len(self.getSuccs(k)&notBelow)==0 and valid_prec(k) ]
 		#rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
 		#rtv.sort(reverse=True) # leave it to caller
 		return rtv

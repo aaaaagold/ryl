@@ -19,13 +19,13 @@ learnDir="alearn-maze/"
 print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
-bbb=maze().fromFile("ainput-maze/mazes/m-1-adjlist")
-if 0!=0:
+bbb=maze().fromFile("ainput-maze/mazes/m-1-adjlist.txt")
+if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	#while bbb.solvable()==False: bbb.random()
 	bbb.print()
 	t0=time.time()
-	res=genSol(bbb,xxx,step=8,stateLimit=4095)
+	res=genSol_v1(bbb,xxx,step=8,stateLimit=4095)
 	print(time.time()-t0)
 	if len(res['moves'])==0:
 		print("GG")
@@ -34,10 +34,12 @@ if 0!=0:
 		print(movesS)
 		nodesS=res['nodes']
 		for msg in movesS[0]:
+			print("msg")
 			print(msg)
 			move=msg[1]
 			time.sleep(0.5)
 			bbb.move(move)
+			print("board")
 			bbb.print()
 			print()
 	pass

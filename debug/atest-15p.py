@@ -20,7 +20,7 @@ print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
-if 0!=0:
+if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	bbb.print()
@@ -34,10 +34,12 @@ if 0!=0:
 		print(movesS)
 		nodesS=res['nodes']
 		for msg in movesS[0]:
+			print("msg")
 			print(msg)
 			move=msg[1]
 			time.sleep(0.5)
 			bbb.move(move)
+			print("board")
 			bbb.print()
 			print()
 	pass

@@ -449,7 +449,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 			"finals":gt.getFinals(),
 			"__dummy":None}
 	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
-	keys=gt.wkeys(_lastMatch) # [ (weight,nodeName) , ... ]
+	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
 	minProb=keys[len(keys)>>1][0]
 	matchesDict={}
