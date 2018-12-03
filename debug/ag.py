@@ -189,7 +189,7 @@ class goaltree:
 	def addgoal(self,goal,name,successorName):
 		# TODO
 		pass
-	def keys(self,notBelow=None):
+	def keys(self,notBelow=None,beforeKeys=[]):
 		if isNone(notBelow):
 			rtv=[k for k in self.sets]
 			rtv.sort()
@@ -362,7 +362,7 @@ class goaltree:
 				if not p[i] in curr: curr[ p[i] ]=0
 				curr[ p[i] ]+=1
 		return False
-	def wkeys(self,currentKey,beforeKeys=[],notBelow=None):
+	def wkeys(self,currentKey,notBelow=None,beforeKeys=[]):
 		'''
 		* weighted keys *
 		# ref-rtv

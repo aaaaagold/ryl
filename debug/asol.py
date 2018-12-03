@@ -95,10 +95,10 @@ def matchGoaltree_find_inSet(b,goals):
 			return True
 	return False
 
-def matchGoaltree_find(b,gt,notBelow=None):
+def matchGoaltree_find(b,gt,notBelow=None,beforeKeys=[]):
 	#barr=b.rawBoard()
 	rtv=[]
-	for k in gt.keys(notBelow=notBelow):
+	for k in gt.keys(notBelow=notBelow,beforeKeys=beforeKeys):
 		if matchGoaltree_find_inSet(b,gt.getGoals(k)):
 			rtv.append(k)
 	return rtv
@@ -172,8 +172,8 @@ def matchGoaltree_trim_v3(mv,gt):
 matchGoaltree_trim=matchGoaltree_trim_v3
 # arg: match-v, goaltree
 
-def matchGoaltree(b,gt,notBelow=None):
-	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow),gt)
+def matchGoaltree(b,gt,notBelow=None,beforeKeys=[]):
+	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow,beforeKeys=beforeKeys),gt)
 
 def matchGoaltree_checkNegate(b,gt,k):
 	pass
@@ -190,7 +190,7 @@ def genSol_bfsMatchStates(bfsRes,goals):
 	minDist=min([ x[1][1] for x in cand ])
 	return [ x for x in cand if x[1][1]==minDist ]
 
-def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
+def genSol_bfsTopMatch(bfsRes,gt,notBelow=None,beforeKeys=[]):
 	'''
 		the function tries to match every results in limited bfs with a goal in gt.
 		if a goal is matched with by several results, it will choose the one with the least steps.
@@ -209,7 +209,7 @@ def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
 	rtvM2b={}
 	for i in bfsRes:
 		bRes=bfsRes[i]
-		mv=matchGoaltree(bRes[0],gt,notBelow) # try not match all, use previous experiences
+		mv=matchGoaltree(bRes[0],gt,notBelow,beforeKeys=beforeKeys) # try not match all, use previous experiences
 		mvt=mv #mvt=matchGoaltree_trim(mv,gt) # matchGoaltree_trim is in matchGoaltree
 		matches+=mvt
 		for m in mvt:
@@ -223,11 +223,11 @@ def genSol_bfsTopMatch(bfsRes,gt,notBelow=None):
 	return rtv
 
 # TODO: try fixedBlockIts if unable to reach next subgoal
-def genSol_1(b,gt,step=8,stateLimit=4095,notBelow=None,fixedBlockIts=[]):
+def genSol_1(b,gt,step=8,stateLimit=4095,notBelow=None,beforeKeys=[],fixedBlockIts=[]):
 	# return: [ (goalName,[ (stateNum,(state,stepCnt,(move,stateNum))), ]) ]
 	#bfsRes=b.bfs(step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
 	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
-	mvb=genSol_bfsTopMatch(bfsRes,gt,notBelow)
+	mvb=genSol_bfsTopMatch(bfsRes,gt,notBelow,beforeKeys=beforeKeys)
 	#return ([ (k,genSol_bfsMatchStates(bfsRes,gt.getGoals(k))) for k in mv ],bfsRes)
 	return (mvb,bfsRes)
 
