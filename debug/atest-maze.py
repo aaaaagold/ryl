@@ -8,8 +8,14 @@ from amaze import *
 #from ab2g import *
 from asol import *
 
+filepairs=[
+{"goaltree":"ainput-maze/main.txt","maze":"ainput-maze/mazes/m-1-adjlist.txt"},
+{"goaltree":"ainput-maze/main-nowall.txt","maze":"ainput-maze/mazes/m-nowall-adjlist.txt"},
+]
+filepairsIt=0 if len(sys.argv)<3 or sys.argv[1]!="1demo" else int(sys.argv[2])
+
 xxx=goaltree()
-xxx.fromTxt("ainput-maze/main.txt")
+xxx.fromTxt(filepairs[filepairsIt]["goaltree"])
 learnDir="alearn-maze/"
 #print(xxx)
 #print("toStr")
@@ -19,7 +25,7 @@ learnDir="alearn-maze/"
 print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
-bbb=maze().fromFile("ainput-maze/mazes/m-1-adjlist.txt")
+bbb=maze().fromFile(filepairs[filepairsIt]["maze"])
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	#while bbb.solvable()==False: bbb.random()
@@ -170,4 +176,3 @@ else:
 				print(len(moves))
 		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
-
