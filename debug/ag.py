@@ -190,13 +190,16 @@ class goaltree:
 		# TODO
 		pass
 	def keys(self,notBelow=None,beforeKeys=[]):
+		def valid_prec(k):
+			precs=self.getPrecs(k)
+			return len(precs)==0 or len(precs&beforeKeys)!=0
 		if isNone(notBelow):
 			rtv=[k for k in self.sets]
 			rtv.sort()
 			return rtv
 		else:
 			#rtv=[k for k in self.sets if not self.getSucc(k) in notBelow]
-			rtv=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
+			rtv=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0 and valid_prec(k)]
 			rtv.sort()
 			return rtv
 	def getGoals(self,k):
