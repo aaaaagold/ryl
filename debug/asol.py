@@ -95,7 +95,7 @@ def matchGoaltree_find_inSet(b,goals):
 			return True
 	return False
 
-def matchGoaltree_find(b,gt,notBelow=None,beforeKeys=[]):
+def matchGoaltree_find(b,gt,notBelow=None,beforeKeys=set()):
 	#barr=b.rawBoard()
 	rtv=[]
 	for k in gt.keys(notBelow=notBelow,beforeKeys=beforeKeys):
@@ -172,7 +172,7 @@ def matchGoaltree_trim_v3(mv,gt):
 matchGoaltree_trim=matchGoaltree_trim_v3
 # arg: match-v, goaltree
 
-def matchGoaltree(b,gt,notBelow=None,beforeKeys=[]):
+def matchGoaltree(b,gt,notBelow=None,beforeKeys=set()):
 	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow,beforeKeys=beforeKeys),gt)
 
 def matchGoaltree_checkNegate(b,gt,k):
@@ -190,7 +190,7 @@ def genSol_bfsMatchStates(bfsRes,goals):
 	minDist=min([ x[1][1] for x in cand ])
 	return [ x for x in cand if x[1][1]==minDist ]
 
-def genSol_bfsTopMatch(bfsRes,gt,notBelow=None,beforeKeys=[]):
+def genSol_bfsTopMatch(bfsRes,gt,notBelow=None,beforeKeys=set()):
 	'''
 		the function tries to match every results in limited bfs with a goal in gt.
 		if a goal is matched with by several results, it will choose the one with the least steps.
@@ -223,7 +223,7 @@ def genSol_bfsTopMatch(bfsRes,gt,notBelow=None,beforeKeys=[]):
 	return rtv
 
 # TODO: try fixedBlockIts if unable to reach next subgoal
-def genSol_1(b,gt,step=8,stateLimit=4095,notBelow=None,beforeKeys=[],fixedBlockIts=[]):
+def genSol_1(b,gt,step=8,stateLimit=4095,notBelow=None,beforeKeys=set(),fixedBlockIts=[]):
 	# return: [ (goalName,[ (stateNum,(state,stepCnt,(move,stateNum))), ]) ]
 	#bfsRes=b.bfs(step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
 	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
@@ -255,7 +255,7 @@ def genSol_v1(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	if verbose: print('genSol',lastMatch) # debug
 	if verbose: b.print() # debug
 	finalGoals=gt.getFinals()
-	matches,bfsRes=genSol_1(b,gt,step,stateLimit,notBelow=notBelow)
+	matches,bfsRes=genSol_1(b,gt,step,stateLimit,notBelow=notBelow,beforeKeys=set(_nodes))
 	if 0==0:
 		pass
 		# TODO
@@ -554,4 +554,3 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	# END OF FUNC.
 
 genSol=genSol_v3
-
