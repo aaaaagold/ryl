@@ -116,10 +116,13 @@ confirmBtn.onclick=()=>{
 	getCell(ende).childNodes[0].sa("style","background-color:rgba(255,0,0,0.5);");
 	let idx=0;
 	getCell(data[idx]).childNodes[0].sa("style","background-color:rgba(233,233,0,0.75);");
-	mazeblk.itvl=setInterval(()=>{
-		getCell(data[idx]).childNodes[0].sa("style","");
+	mazeblk.itvl=setInterval(()=>{  let cell;
+		cell=getCell(data[idx]).childNodes[0];
+		cell.sa("style",cell.style_prev);
 		idx+=1; if(idx==data.length) idx=0;
-		getCell(data[idx]).childNodes[0].sa("style","background-color:rgba(233,233,0,0.75);");
+		cell=getCell(data[idx]).childNodes[0];
+		cell.style_prev=cell.ga("style");
+		cell.sa("style","background-color:rgba(233,233,0,0.75);");
 	},500);
 }
 
