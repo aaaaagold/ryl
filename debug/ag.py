@@ -174,6 +174,7 @@ class goaltree:
 		self.sets={}
 		self.filename=None
 		self.learned={"nextgoal":{}}
+		self.isSuccsOf={}
 		# learn file is self.filename+".learn", self.filename will be set after self.fromTxt()
 		pass
 	def __repr__(self):
@@ -207,14 +208,18 @@ class goaltree:
 	def getSucc(self,k):
 		return self.sets[k][1]
 	def _getSuccs(self,k):
-		# TODO
 		rtvSet=set()
 		rtvStr=k
 		tmpsucc=self.getSucc(k)
 		while not ( tmpsucc=='-' or tmpsucc=='+' or (tmpsucc in rtvSet) ):
+			# rtv
 			rtvSet.add(tmpsucc)
 			rtvStr+='-'
 			rtvStr+=tmpsucc
+			# reversed succs
+			#if not tmpsucc in self.isSuccsOf: self.isSuccsOf[tmpsucc]=set() # is set before
+			self.isSuccsOf[tmpsucc].add(k)
+			# next
 			tmpsucc=self.getSucc(tmpsucc)
 		return rtvSet,rtvStr
 	def getSuccs(self,k):
@@ -256,18 +261,21 @@ class goaltree:
 		#pprint(data) # debug
 		self.sets=dict(data)
 		del data
+		self.isSuccsOf=dict([(k,set()) for k in self.sets])
 		for k,v in self.sets.items():
 			succSet,succStr=self._getSuccs(k)
 			v[2].update(succSet)
 			v[3][0]+=succStr
-		allKeys=set([k for k in self.sets])
+		'''
 		isSuccsOf=dict([(k,set()) for k in allKeys])
 		for k in allKeys:
 			succs=self.getSuccs(k)
 			for kk in succs:
 				isSuccsOf[kk].add(k)
+		'''
+		allKeys=set([k for k in self.sets])
 		for k in allKeys:
-			self.learned["nextgoal"][k]=dict([ (kk,-len(self.getSuccs(kk))) for kk in allKeys-isSuccsOf[k] if kk!=k ])
+			self.learned["nextgoal"][k]=dict([ (kk,-len(self.getSuccs(kk))) for kk in allKeys-self.isSuccsOf[k] if kk!=k ])
 		self.learned["nextgoal"][""]=dict([ (k,-len(self.getSuccs(k))) for k in allKeys if len(self.getPrecs(k))==0 ])
 		return self
 	def toStr(self,labelMinLen=0):
