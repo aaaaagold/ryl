@@ -31,7 +31,7 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#while bbb.solvable()==False: bbb.random()
 	bbb.print()
 	t0=time.time()
-	res=genSol_v1(bbb,xxx,step=8,stateLimit=4095)
+	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095)
 	print(time.time()-t0)
 	if len(res['moves'])==0:
 		print("GG")

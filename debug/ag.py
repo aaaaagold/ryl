@@ -260,6 +260,8 @@ class goaltree:
 			succSet,succStr=self._getSuccs(k)
 			v[2].update(succSet)
 			v[3][0]+=succStr
+			self.learned["nextgoal"][k]=dict([ (k,0) for k in succSet ])
+		self.learned["nextgoal"][""]=dict([ (k,0) for k in self.sets if len(self.getPrecs(k))==0 ])
 		return self
 	def toStr(self,labelMinLen=0):
 		kv=self.keys()
