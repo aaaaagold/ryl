@@ -75,13 +75,13 @@ if 0!=0:
 		bbb.setNums(arr,arr.index(15))
 		print(i,bbb.solvable())
 		t0=time.time()
-		res=genSol_v1(bbb,xxx,step=8)
+		res=genSol_v3(bbb,xxx,step=8)
 		print(time.time()-t0)
 		movesS=res['moves']
 		nodesS=res['nodes']
 		if len(movesS)==0:
 			bbb.print()
-			res=genSol_v1(bbb,xxx,step=8,verbose=True)
+			res=genSol_v3(bbb,xxx,step=8,verbose=True)
 			movesS=res['moves']
 			nodesS=res['nodes']
 		else:
@@ -165,13 +165,13 @@ else:
 		bbb.print()
 		print(bbb.rawBoard())
 		t0=time.time()
-		res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit)
+		res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit)
 		t1=time.time()-t0
 		succList+=res['nodes']
 		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
 		print(t1)
 		if len(res['moves'])==0:
-			res=genSol_v1(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
+			res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
 			#break
 			boardInitHistory.pop()
