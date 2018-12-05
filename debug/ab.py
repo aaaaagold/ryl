@@ -45,6 +45,7 @@ class hfunc:
 		self.coefs=[ 0 for i in range(coefCnt) ]
 
 class board:
+	# a "question" like a 15-puzzle
 	def size(self):
 		return self.__wh[0]*self.__wh[1]
 	def wh(self):
@@ -91,6 +92,12 @@ class board:
 		rtv.__emptyNum=copy.deepcopy(self.__emptyNum)
 		rtv.__emptyAt=copy.deepcopy(self.__emptyAt)
 		return rtv
+	def setAs(self,rhs,noCopy=False):
+		tmp=rhs.copy() if noCopy==False else rhs
+		self.__board=tmp.__board
+		self.__emptyNum=tmp.__emptyNum
+		self.__emptyAt=tmp.__emptyAt
+		return self
 	def __init__(self,wh):
 		self.__wh=(wh[0],wh[1])
 		sz=self.size()
@@ -101,15 +108,18 @@ class board:
 		'''
 			return moves including invalid moves
 		'''
-		return [ i for i in range(4) ]
-	def moveSeq(self,mv,verbose=True):
-		for msg in mv:
-			t,m,s=msg
-			self.move(m)
+		# return several move sequences
+		# for example, 1 step forms a sequence
+		# can be customized, or like a hypothesis, just return possible move sequences
+		return [ [i] for i in range(4) ]
+	def moveSeq(self,msgv,verbose=True):
+		for msg in msgv:
+			t,mSeq,s=msg
+			self.move(mSeq)
 			if verbose:
-				print(m)
+				print(mSeq)
 				self.print('\n')
-	def move(self,m,fixedBlockIts=[]):
+	def move1(self,m,fixedBlockIts=[]):
 		'''
 			m = an int means what kind of moves to take
 			return True if ERROR else False
@@ -142,12 +152,33 @@ class board:
 			self.__emptyAt=near
 			return False
 		else: return True
+	def move(self,move_seq,fixedBlockIts=[]):
+		if (len(move_seq)<<1)<len(self.rawBoard()):
+			for i in range(len(move_seq)):
+				m=move_seq[i]
+				if self.move1(m,fixedBlockIts=fixedBlockIts):
+					for j in range(i-1,-1,-1):
+						self.move1(move_seq[j]^1)
+					return True
+			return False
+		oriStat=self.copy()
+		for m in move_seq:
+			if self.move1(m,fixedBlockIts=fixedBlockIts):
+				# invalid move, recover
+				self.setAs(oriStat,noCopy=True)
+				return True
+		# all moves are valid
+		return False
+	def moveR(self,move_seq):
+		# reversed move of the move sequence
+		moveSeqR=[ move_seq[i]^1 for i in range(-len(move_seq),0) ]
+		return self.move(moveSeqR)
 	def near1(self):
 		rtv=[]
-		for m in self.moves():
-			if self.move(m): continue
-			rtv.append((0,m,self.copy()))
-			self.move(m^1)
+		for mSeq in self.moves():
+			if self.move(mSeq): continue
+			rtv.append((0,mSeq,self.copy()))
+			self.moveR(mSeq)
 		return rtv
 	def __fac(self):
 		sz=self.size()
