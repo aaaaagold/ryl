@@ -448,7 +448,12 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		__internal_data={
 			"finals":gt.getFinals(),
 			"__dummy":None}
-	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'))
+	expInfo={
+		"finals":__internal_data["finals"],
+		"nodes":_nodes,
+		"__dummy":None}
+	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=expInfo)
+	del expInfo
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
 	#if _isBegin: print(keys) # debug

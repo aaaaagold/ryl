@@ -2,7 +2,7 @@
 from shorthand import *
 from amyhead import *
 
-def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
+def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info=None):
 	stateCnt=0
 	rtv={}
 	t=(obj.copy(),0,(-1,-1)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
@@ -26,7 +26,7 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None):
 		del t
 		stateCnt+=1
 		if stateCnt>stateLimit: break
-		near1=currstat.near1()
+		near1=currstat.near1(info=info)
 		for near in near1:
 			stat=near[2]
 			#if stat.turn()==-1 and not (isNone(notViolate) or matchGoaltree_find_inSet(stat,notViolate)):

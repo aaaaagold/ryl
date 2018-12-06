@@ -62,7 +62,7 @@ class maze:
 	def random(self):
 		self.pos=(random.randint(0,self._size[0]-1),random.randint(0,self._size[1]-1))
 		return self
-	def moves(self):
+	def moves(self,info=None):
 		# return several move sequences
 		# for example, 1 step forms a sequence
 		# can be customized, or like a hypothesis, just return possible move sequences
@@ -127,9 +127,9 @@ class maze:
 		# reversed move of the move sequence
 		moveSeqR=[ move_seq[i]^1 for i in range(-len(move_seq),0) ]
 		return self.move(moveSeqR)
-	def near1(self):
+	def near1(self,info=None):
 		rtv=[]
-		for mSeq in self.moves():
+		for mSeq in self.moves(info=info):
 			if self.move(mSeq): continue
 			rtv.append((0,mSeq,self.copy()))
 			self.moveR(mSeq)
