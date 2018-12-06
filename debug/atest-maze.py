@@ -43,7 +43,7 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 			print("msg")
 			print(msg)
 			move=msg[1]
-			time.sleep(0.5)
+			time.sleep(0.25)
 			bbb.move(move)
 			print("board")
 			bbb.print()

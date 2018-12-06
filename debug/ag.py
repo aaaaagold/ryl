@@ -239,7 +239,7 @@ class goaltree:
 		self.filename=None
 		#old=self.sets
 		p=self.__class__.parser_set
-		s=re.sub("(\n\r|\n|\r\n)[ \t]+(\n\r|\n|\r\n)","\n\n",s)
+		s=re.sub("(\n\r|\n|\r\n)[ \t]*(\n\r|\n|\r\n)","\n\n",s)
 		defined=set()
 		data=[]
 		rs=p.split(s) # cut via "\n\n\n"
@@ -254,7 +254,7 @@ class goaltree:
 			defined.add(curr)
 			succ = rs[i+1]
 			prec = set(re.split("[ \t]+",rs[i+2])[1:]) # or
-			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # and
+			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # or
 			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set(),[''],prec) ))
 			# curr:( goal()s , succ , succSet , succStrs , prec )
 		#data.sort()

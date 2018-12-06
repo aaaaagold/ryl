@@ -1,5 +1,6 @@
 #!/bin/python3
 import re
+#import decimal
 
 from shorthand import *
 from amyhead import *
@@ -8,56 +9,9 @@ from aexpand import *
 
 token_itemWithouLabelSplit="([0-9]+):([^ \b\t\n\r]+)"
 parser_itemWithouLabelSplit=re.compile(token_itemWithouLabelSplit)
-
-def matchGoal_v1(b,g):
-	barr=b.rawBoard()
-	for x in g.constraints:
-		if str(barr[x[0]])!=str(x[1]):
-			return False
-	return True
-
-def matchGoal_v2(b,g):
-	barr=b.rawBoard()
-	print(g),exit()
-	for x in g.constraints:
-		p=re.compile("([0-9]+):([0-9]+)")
-		item=p.split(str(x[1]))
-		matched=False
-		for i in range(1,len(item),p.groups+1):
-			loc = int(item[i  ])
-			pn  = item[i+1]
-			if str(barr[loc])==str(pn):
-				matched=True
-				break
-		if matched==False:
-			return False
-	return True
-
-def matchGoal_v3(b,g):
-	barr=b.rawBoard()
-	for x in g.constraints:
-		isKW=False
-		matched=False # if a cosntraint is matched
-		if x[0]==g.__class__.KW_include_label:
-			isKW=True
-			for name in x[1][1].getFinals():
-				goals=x[1][1].getGoals(name)
-				if matchGoaltree_find_inSet(b,goals):
-					matched=True
-					break
-		if isKW==False:
-			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
-			p=parser_itemWithouLabelSplit
-			item=p.split(str(x[1])) # may have several constraints, just one of them
-			for i in range(1,len(item),p.groups+1):
-				loc = int(item[i  ])
-				pn  = item[i+1]
-				if str(barr[loc])==str(pn):
-					matched=True
-					break
-		if matched==False:
-			return False
-	return True
+token_itemVal_number="(-?[0-9]+\.?[0-9]*)"
+token_itemVal_rangeNum=token_itemVal_number+","+token_itemVal_number
+parser_itemVal_rangeNum=re.compile("^"+token_itemVal_rangeNum+"$")
 
 def matchGoal_v4(b,g):
 	barr=b.rawBoard()
@@ -78,8 +32,18 @@ def matchGoal_v4(b,g):
 			item=p.split(str(x[1])) # may have several constraints, just one of them
 			for i in range(1,len(item),p.groups+1):
 				loc = int(item[i  ])
-				pn  = item[i+1]
-				if str(barr[loc])==str(pn):
+				val = item[i+1]
+				isOneObj=True
+				# min,max
+				try_rangeNum=parser_itemVal_rangeNum.split(val)
+				if len(try_rangeNum)==parser_itemVal_rangeNum.groups+2:
+					isOneObj=False
+					rg=[ float(n) for n in try_rangeNum[1:3] ]
+					if rg[0]<=barr[loc]<=rg[1]:
+						matched=True
+						break
+				# a string
+				if isOneObj and str(barr[loc])==str(val):
 					matched=True
 					break
 		#if (negate!=False and matched!=False) or (matched==False and negate==False):
@@ -438,7 +402,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 	endBefore=None,
 	verbose=False,
 	__dummy=None):
-	if not isNone(endBefore) and endBefore<time.time(): return
+	if isNone(endBefore)==False and endBefore<time.time(): return
 	genSol=genSol_v3
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible,__internal_data
