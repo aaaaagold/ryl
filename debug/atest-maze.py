@@ -29,7 +29,10 @@ bbb=maze().fromFile(filepairs[filepairsIt]["maze"])
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	#while bbb.solvable()==False: bbb.random()
+	#arr=[0,0]
+	#bbb.setBoard(arr)
 	bbb.print()
+	print(bbb.rawBoard())
 	t0=time.time()
 	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095)
 	print(time.time()-t0)
