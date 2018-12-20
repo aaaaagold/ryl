@@ -23,7 +23,10 @@ bbb=board((4,4))
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
+	arr=[1, 3, 7, 12, 5, 15, 10, 0, 2, 4, 8, 11, 9, 6, 13, 14]
+	bbb.setNums(arr,arr.index(15))
 	bbb.print()
+	print(bbb.rawBoard())
 	t0=time.time()
 	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095)
 	print(time.time()-t0)
