@@ -1,4 +1,5 @@
 #!/bin/python3
+# defines/usages
 import copy
 import sys
 import time
@@ -6,6 +7,8 @@ import random
 from heapq import heappush , heappop # min heap
 
 from shorthand import *
+
+charset_namespace="[A-Za-z0-9_$]+"
 
 class queue:
 	def __init__(self):
