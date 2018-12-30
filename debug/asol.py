@@ -7,7 +7,7 @@ from amyhead import *
 
 from aexpand import *
 
-token_itemWithouLabelSplit="([0-9]+):([^ \b\t\n\r]+)"
+token_itemWithouLabelSplit="([0-9]+|" + charset_namespace + "):([^ \b\t\n\r]+)"
 parser_itemWithouLabelSplit=re.compile(token_itemWithouLabelSplit)
 token_itemVal_number="(-?[0-9]+\.?[0-9]*)"
 token_itemVal_rangeNum=token_itemVal_number+","+token_itemVal_number
