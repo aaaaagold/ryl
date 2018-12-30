@@ -24,6 +24,7 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	#arr=[1, 3, 7, 12, 5, 15, 10, 0, 2, 4, 8, 11, 9, 6, 13, 14]
+	#arr=[12, 8, 7, 6, 9, 13, 15, 3, 0, 1, 11, 10, 2, 14, 5, 4]
 	#bbb.setNums(arr,arr.index(15))
 	bbb.print()
 	print(bbb.rawBoard())

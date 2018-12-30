@@ -1,12 +1,19 @@
 #!/bin/python3
 # defines/usages
-import copy
+## sys
 import sys
+import os
 import time
+## python
+import copy
+import importlib.util
+## algo./calc.
 import random
 from heapq import heappush , heappop # min heap
-
+## author's laziness
 from shorthand import *
+
+## defines/usages
 
 charset_namespace="[A-Za-z0-9_$]+"
 

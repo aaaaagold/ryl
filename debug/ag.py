@@ -32,6 +32,7 @@ class KWs:
 		return self.data[i] if i in self.data else None
 
 class goal:
+	# is a sub-class of goaltree and should not be use directly
 	parser_item=re.compile(token_item)
 	#kwv=KWs(['include','gonear'])
 	KW_include_label=-1
@@ -46,6 +47,7 @@ class goal:
 		self.maxLabel=-1
 		self.including=False
 		self.arrangeNeeded=False
+		self.extendedView=None # inherit from goaltree
 	def __eq__(self,rhs):
 		self.arrange()
 		if isinstance(rhs,self.__class__):
@@ -64,7 +66,7 @@ class goal:
 		if self.maxLabel<label: self.maxLabel=label
 		if arrangeLater==False: self.arrange()
 		else: arrangeNeeded=arrangeLater
-	def fromStr(self,s,cd='./'):
+	def fromStr(self,s,cd='./',extView=None):
 		'''
 			character:'\r' is ommited
 			this function will NOT do the arrangement
@@ -77,9 +79,13 @@ class goal:
 			([ \t]*\~?[0-9]+|include|gonear)
 			lines not match will be omitted
 		'''
+		# preserve
 		old=self.constraints
+		# clean
 		self.constraints=[]
 		self.maxLabel=-1
+		self.extendedView=extView
+		# start
 		lines=s.split('\n')
 		p=self.__class__.parser_item
 		rs=p.split(s)
@@ -103,17 +109,17 @@ class goal:
 				tmp=goaltree()
 				tmp.fromTxt(content,_cd=cd)
 				item=(content,tmp)
-
+			
 			if label==self.__class__.KW_gonear_txt:
 				isKW=True
 				label=self.__class__.KW_gonear_label
 				tmp=None # TODO
 				item=(content,tmp)
-
+			
 			if isKW==False:
 				item=content
 				label=int(label)
-
+			
 			self.add(item,label,negate=negate,arrangeLater=True)
 		'''
 		for line in lines:
@@ -147,11 +153,18 @@ class goal:
 			tmpv.append("%*s\t%s"%(useLen,label,content))
 		rtv+='\n'.join(tmpv)
 		return rtv
-	def fromTxt(self,filename,_cd='./'):
+	def fromTxt(self,filename,_cd='./',extView=None):
 		cd=_cd+filename[:filename.rindex('/')+1] if '/' in filename else _cd
 		with open(_cd+filename,'rb') as f:
-			self.fromStr("".join(map(chr,f.read())),cd=cd)
+			self.fromStr("".join(map(chr,f.read())),cd=cd,extView=extView)
 		return self
+		try:
+			path=self.filename+".py"
+			if os.path.isfile(path):
+				importlib.util.spec_from_file_location("",path)
+				self.extendedView=importlib.import_module(path)
+		except:
+			print("WARNING: file exists but it cannot be import:",path)
 		# TODO:
 		with open(_cd+filename+".learn",'rb') as f:
 			pass
@@ -174,6 +187,13 @@ class goaltree:
 	def __init__(self):
 		self.sets={}
 		self.filename=None
+		self.extendedView=None
+		# an extendedView is an importlib.import_module() object
+		# this can only be used when using 'fromTxt'
+		# using 'fromStr' will remove (=None) previous extendedView from 'fromTxt'
+		# file name is '_cd' and 'filename' given to 'fromTxt' concatenate '.py'
+		# i.e. _cd+filename+".py"
+		## it is recommended to construct a hashtable ( key is tuple(*.outputs()) or you can specify other methods ) with timeout to prevent re-calculating same condition within the same goal
 		self.learned={"nextgoal":{}}
 		self.isSuccsOf={}
 		# learn file is self.filename+".learn", self.filename will be set after self.fromTxt()
@@ -231,13 +251,14 @@ class goaltree:
 		return self.sets[k][4]
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
-	def fromStr(self,s,cd='./'):
+	def fromStr(self,s,cd='./',extView=None):
 		'''
 			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
 		'''
 		# unset filename
 		self.filename=None
+		self.extendedView=extView
 		#old=self.sets
 		p=self.__class__.parser_set
 		s=re.sub("(\n\r|\n|\r\n)[ \t]*(\n\r|\n|\r\n)","\n\n",s)
@@ -256,7 +277,7 @@ class goaltree:
 			succ = rs[i+1]
 			prec = set(re.split("[ \t]+",rs[i+2])[1:]) # or
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # or
-			data.append((curr, ([ goal().fromStr(gs,cd=cd) for gs in gsv ],succ,set(),[''],prec) ))
+			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec) ))
 			# curr:( goal()s , succ , succSet , succStrs , prec )
 		#data.sort()
 		#pprint(data) # debug
@@ -322,8 +343,16 @@ class goaltree:
 		'''
 		cd=_cd+filename[:filename.rindex('/')+1] if '/' in filename else _cd
 		filename=_cd+filename
+		try:
+			path=filename+".py"
+			if os.path.isfile(path):
+				spec = importlib.util.spec_from_file_location(filename,path)
+				self.extendedView = importlib.util.module_from_spec(spec)
+				spec.loader.exec_module(self.extendedView)
+		except:
+			print("WARNING: file exists but it cannot be import:",path)
 		with open(filename,'rb') as f:
-			self.fromStr("".join(map(chr,f.read())),cd=cd)
+			self.fromStr("".join(map(chr,f.read())),cd=cd,extView=self.extendedView)
 		self.filename=filename
 		return self
 	def size(self):

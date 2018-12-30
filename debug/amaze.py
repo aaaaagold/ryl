@@ -59,6 +59,13 @@ class maze:
 	def rawBoard(self):
 		# returns something that can be changed in this "question"
 		return self.pos
+	def output(self,argv=()):
+		return ()
+	def outputs(self,argv=()):
+		rtv=[]
+		rtv+=self.output(argv)
+		rtv+=self.rawBoard()
+		return rtv
 	def random(self):
 		self.pos=(random.randint(0,self._size[0]-1),random.randint(0,self._size[1]-1))
 		return self

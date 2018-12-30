@@ -86,6 +86,13 @@ class board:
 		return copy.deepcopy(self.__board)
 	def rawBoard(self):
 		return self.__board
+	def output(self,argv=()):
+		return ()
+	def outputs(self,argv=()):
+		rtv=[]
+		rtv+=self.output(argv)
+		rtv+=self.rawBoard()
+		return rtv
 	def copy(self):
 		rtv=board(self.__wh)
 		rtv.__board=self.copyBoard()

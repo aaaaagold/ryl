@@ -14,7 +14,7 @@ token_itemVal_rangeNum=token_itemVal_number+","+token_itemVal_number
 parser_itemVal_rangeNum=re.compile("^"+token_itemVal_rangeNum+"$")
 
 def matchGoal_v4(b,g):
-	barr=b.rawBoard()
+	oarr=b.outputs()
 	for x in g.constraints:
 		isKW=False
 		negate=x[2]
@@ -31,21 +31,37 @@ def matchGoal_v4(b,g):
 			p=parser_itemWithouLabelSplit
 			item=p.split(str(x[1])) # may have several constraints, just one of them
 			for i in range(1,len(item),p.groups+1):
-				loc = int(item[i  ])
-				val = item[i+1]
-				isOneObj=True
-				# min,max
-				try_rangeNum=parser_itemVal_rangeNum.split(val)
-				if len(try_rangeNum)==parser_itemVal_rangeNum.groups+2:
-					isOneObj=False
-					rg=[ float(n) for n in try_rangeNum[1:3] ]
-					if rg[0]<=barr[loc]<=rg[1]:
+				err=False
+				isDirect=item[i].isdigit()
+				if isDirect:
+					#view = int(item[i])
+					observedVal = oarr[int(item[i])]
+				elif (not isNone(g.extendedView)) and hasattr(g.extendedView,item[i]):
+					#view = getattr(g.extendedView,item[i])
+					observedVal = getattr(g.extendedView,item[i])(oarr)
+				else:
+					print("WARNING: cannot find",item[i],"in",g.filename+".py")
+					print("\t constraint omitted")
+					err=True
+				if err: matched=not negate
+				else:
+					targetVal = item[i+1]
+					isOneObj=True
+					# min,max
+					p=parser_itemVal_rangeNum
+					try_rangeNum=p.split(targetVal)
+					if len(try_rangeNum)==p.groups+2:
+						# is rangeNum: matched exactly 1
+						isOneObj=False
+						rg=[ float(n) for n in try_rangeNum[1:3] ]
+						if rg[0]<=observedVal<=rg[1]:
+							matched=True
+							break
+					# a string
+					if isOneObj and str(observedVal)==str(targetVal):
 						matched=True
 						break
-				# a string
-				if isOneObj and str(barr[loc])==str(val):
-					matched=True
-					break
+				####
 		#if (negate!=False and matched!=False) or (matched==False and negate==False):
 		if negate==matched:
 			return False
@@ -475,7 +491,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		matchedKeys.append(key)
 	if len(_rtvMoves)==0:
 		# all candidate nodes cannot find a path to final(s)
-		print("GG")
+		print("GG") # debug
 		if 0!=0:
 			# choose only upper nodes
 			betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
