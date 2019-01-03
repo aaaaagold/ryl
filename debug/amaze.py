@@ -73,7 +73,7 @@ class maze:
 		# return several move sequences
 		# for example, 1 step forms a sequence
 		# can be customized, or like a hypothesis, just return possible move sequences
-		return [ [i] for i in range(4) ]
+		return [ [i,] for i in range(4) ]
 	def moveSeq(self,msgv,verbose=True):
 		for msg in msgv:
 			t,mSeq,s=msg
@@ -118,8 +118,7 @@ class maze:
 			for i in range(len(move_seq)):
 				m=move_seq[i]
 				if self.move1(m):
-					for j in range(i-1,-1,-1):
-						self.move1(move_seq[j]^1)
+					self.moveR(move_seq[:i])
 					return True
 			return False
 		oriStat=self.copy()
@@ -132,7 +131,7 @@ class maze:
 		return False
 	def moveR(self,move_seq):
 		# reversed move of the move sequence
-		moveSeqR=[ move_seq[i]^1 for i in range(-len(move_seq),0) ]
+		moveSeqR=[ move_seq[i]^1 for i in range(len(move_seq)-1,-1,-1) ]
 		return self.move(moveSeqR)
 	def near1(self,info=None):
 		rtv=[]

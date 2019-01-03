@@ -43,6 +43,7 @@ def matchGoal_v4(b,g):
 					print("WARNING: cannot find",item[i],"in",g.filename+".py")
 					print("\t constraint omitted")
 					err=True
+				#print(observedVal),exit() # debug
 				if err: matched=not negate
 				else:
 					targetVal = item[i+1]
@@ -83,60 +84,15 @@ def matchGoaltree_find(b,gt,notBelow=None,beforeKeys=set()):
 			rtv.append(k)
 	return rtv
 
-def matchGoaltree_trim_v1(mv,gt):
-	#mv=set(mv)
-	mv=[ x for x in mv ]
-	mv.sort()
-	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
-	rtv=[]
-	tmpv=[]
-	for k in mv:
-		tmps=""
-		tmpk=k
-		while 0==0:
-			tmps+=tmpk
-			succ=gt.getSucc(tmpk)
-			if succ=='-': break
-			tmpk=succ
-		tmpv.append((k,tmps))
-	# TODO: need suffix array to speedup
-	rg=range(len(tmpv))
-	delSet=set()
-	for i1 in rg:
-		for i2 in rg:
-			if i1==i2: continue
-			if tmpv[i1][1] in tmpv[i2][1]:
-				delSet.add(tmpv[i2][0])
-	rtv+=[ k for k in mv if not k in delSet]
-	return rtv
-
-def matchGoaltree_trim_v2(mv,gt):
-	#mv=set(mv)
-	mv=[ x for x in mv ]
-	mv.sort()
-	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
-	sv=[ (gt.getSuccs(k)|set([k]),k) for k in mv]
-	#rtv=[]
-	delSet=set()
-	rg=range(len(sv))
-	for i1 in rg:
-		for i2 in rg:
-			if i1==i2: continue
-			s1,s2 = sv[i1][0],sv[i2][0]
-			ss=s1&s2
-			if len(ss)==len(s1): delSet.add(sv[i2][1])
-			#if len(ss)==len(s2): delSet.add(sv[i1][1])
-			del s1,s2,ss
-	rtv=[ k for k in mv if not k in delSet ]
-	return rtv
-
 def matchGoaltree_trim_v3(mv,gt):
+	# preserve topest matched node(s)
+	# i.e. trim below node(s)
 	#mv=list(set(mv))
 	mv=[ x for x in mv ]
 	mv.sort()
 	mv=[ mv[i] for i in range(len(mv)) if i==0 or mv[i-1]!=mv[i] ]
 	sv=[ (gt.getSuccsStr(k),k) for k in mv]
-	# TODO: need suffix array to speedup
+	# TODO?: need suffix array to speedup
 	rg=range(len(mv))
 	delSet=set()
 	for i1 in rg:
@@ -151,6 +107,19 @@ def matchGoaltree_trim_v3(mv,gt):
 
 matchGoaltree_trim=matchGoaltree_trim_v3
 # arg: match-v, goaltree
+
+def matchGoaltree_trim_selectPossible(possibleV,gt):
+	rtv=[]
+	tmparr=[]
+	lessNode={}
+	for p in possibleV:
+		if len(p)==0: continue
+		if (not p[-1] in lessNode) or len(lessNode[p[-1]])>len(p):
+			lessNode[p[-1]]=p
+	res=matchGoaltree_trim([ n for n in lessNode ],gt)
+	for n in res:
+		rtv.append(lessNode[n])
+	return rtv
 
 def matchGoaltree(b,gt,notBelow=None,beforeKeys=set()):
 	return matchGoaltree_trim(matchGoaltree_find(b,gt,notBelow,beforeKeys=beforeKeys),gt)
@@ -407,8 +376,9 @@ def genSol_v2(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.
 
-def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
+def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	notBelow=None,
+	info={},
 	_lastMatches={},_lastMatch="",
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
@@ -432,7 +402,8 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		"finals":__internal_data["finals"],
 		"nodes":_nodes,
 		"__dummy":None}
-	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=expInfo)
+	info.update(expInfo)
+	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=info)
 	del expInfo
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
@@ -491,7 +462,12 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 		matchedKeys.append(key)
 	if len(_rtvMoves)==0:
 		# all candidate nodes cannot find a path to final(s)
-		print("GG") # debug
+		print("GG",_nodes) # debug
+		_possible.append(_nodes)
+		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
+		_possible.clear()
+		_possible.extend(newPoss)
+		#
 		if 0!=0:
 			# choose only upper nodes
 			betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
@@ -522,6 +498,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,fixedBlockIts=[],
 						continue
 					genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],
 						notBelow=notBelow,
+						info=info,
 						_lastMatches=stateMatch,_lastMatch=x[0],
 						_isBegin=False,
 						_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,

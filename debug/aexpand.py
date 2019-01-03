@@ -5,7 +5,7 @@ from amyhead import *
 def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info=None):
 	stateCnt=0
 	rtv={}
-	t=(obj.copy(),0,(-1,-1)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
+	t=(obj.copy(),0,(-1,None)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
 	#q=queue()
 	#q.push(t)
 	orderNum=0
@@ -44,10 +44,12 @@ def bfs2moveSeq(bfs,goalHash):
 	if (type(bfs)==type({}) and (goalHash in bfs)) or (type(bfs)==type([]) and type(bfs[goalHash])!=type(None)):
 		pre=bfs[goalHash][2]
 		preStat=pre[1]
-		while preStat>=0:
+		#print(type(preStat)),exit() # debug
+		while not isNone(preStat):
 			moves.append(pre[0])
 			pre=bfs[preStat][2]
 			preStat=pre[1]
+		#print("preStat",preStat),exit() # debug
 		moves.reverse()
 	return moves
 

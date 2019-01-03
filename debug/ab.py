@@ -164,8 +164,7 @@ class board:
 			for i in range(len(move_seq)):
 				m=move_seq[i]
 				if self.move1(m,fixedBlockIts=fixedBlockIts):
-					for j in range(i-1,-1,-1):
-						self.move1(move_seq[j]^1)
+					self.moveR(move_seq[:i])
 					return True
 			return False
 		oriStat=self.copy()
@@ -178,7 +177,7 @@ class board:
 		return False
 	def moveR(self,move_seq):
 		# reversed move of the move sequence
-		moveSeqR=[ move_seq[i]^1 for i in range(-len(move_seq),0) ]
+		moveSeqR=[ move_seq[i]^1 for i in range(len(move_seq)-1,-1,-1) ]
 		return self.move(moveSeqR)
 	def near1(self,info=None):
 		rtv=[]
