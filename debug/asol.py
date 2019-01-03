@@ -388,7 +388,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	endBefore=None,
 	verbose=False,
 	__dummy=None):
-	if isNone(endBefore)==False and endBefore<time.time(): return
+	# init
 	genSol=genSol_v3
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible,__internal_data
@@ -397,14 +397,31 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		_possible=[]
 		__internal_data={
 			"finals":gt.getFinals(),
+			"fail":{
+				"arr":[],
+				"set":set(),
+				"cnt":1023
+			},
 			"__dummy":None}
+	# skip by time
+	if isNone(endBefore)==False and endBefore<time.time():
+		print("skip by time") # debug
+		return
+	# skip by seen
+	currentRawBoard=tuple(b.rawBoard())
+	if (currentRawBoard,_lastMatch) in __internal_data["fail"]["set"]:
+		#print("skip by seen") # debug
+		return
+	# start
 	expInfo={
 		"finals":__internal_data["finals"],
 		"nodes":_nodes,
 		"__dummy":None}
-	info.update(expInfo)
-	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=info)
-	del expInfo
+	INFO={}
+	INFO.update(info)
+	INFO.update(expInfo)
+	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
+	del expInfo,INFO
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
 	#if _isBegin: print(keys) # debug
@@ -445,6 +462,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 				stateMatch.update(_lastMatches)
 				genSol(x[1][0],gt,step,stateLimit=stateLimit,currStep=currStep+x[1][1],
 					notBelow=notBelow,
+					info=info,
 					_lastMatches=stateMatch,_lastMatch=key,
 					_isBegin=False,
 					_moves=_moves+bfs2moveSeq(bfsRes,x[0]),_rtvMoves=_rtvMoves,
@@ -460,58 +478,45 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		# node appearsa, but previously path not found
 		matchesDict[key]=matchedBfsRes
 		matchedKeys.append(key)
-	if len(_rtvMoves)==0:
+	if len(_rtvMoves)==0: # try next
+		sureFail=False
+		if "next" in info:
+			# try next
+			INFO={}
+			INFO.update(info)
+			res=info["next"](INFO)
+			if res:
+				genSol(b,gt,step=step,stateLimit=stateLimit,currStep=currStep,
+					notBelow=notBelow,
+					info=INFO,
+					_lastMatches=_lastMatches,_lastMatch=_lastMatch,
+					_isBegin=False,
+					_moves=_moves,_rtvMoves=_rtvMoves,
+					_nodes=_nodes,_rtvNodes=_rtvNodes,
+					_possible=_possible,
+					__internal_data=__internal_data,
+					endBefore=endBefore,
+					verbose=verbose)
+			else:
+				sureFail|=True
+			del INFO
+		else:
+			sureFail|=True
+		if sureFail:
+			failinfo=__internal_data["fail"]
+			failkey=(currentRawBoard,_lastMatch)
+			heappush(failinfo["arr"],(time.time(),failkey))
+			failinfo["set"].add(failkey)
+			if len(failinfo["set"])>failinfo["cnt"]:
+				tmp=heappop(failinfo["arr"])
+				failinfo["set"].remove(tmp[1])
+	if len(_rtvMoves)==0: # after try next
 		# all candidate nodes cannot find a path to final(s)
 		print("GG",_nodes) # debug
 		_possible.append(_nodes)
 		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
 		_possible.clear()
 		_possible.extend(newPoss)
-		#
-		if 0!=0:
-			# choose only upper nodes
-			betterMatchedKeys=set(matchGoaltree_trim(matchedKeys,gt))
-			delSet=set()
-			for k in matchesDict:
-				if k not in betterMatchedKeys:
-					delSet.add(k)
-			matches=[ (k,matchesDict[k]) for k in matchesDict if not k in delSet ]
-			#
-			# check if reach final
-			hasFinals=[ x for x in matches if x[0] in __internal_data["finals"] ]
-			if len(hasFinals):
-				minDistItem=min(hasFinals,key=(lambda x:x[1][0][1][1]))
-				if verbose: print('goal!',minDistItem) # debug
-				if verbose: minDistItem[1][0][1][0].print() # debug
-				_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,minDistItem[1][0][0]))
-				_rtvNodes.append(_nodes+[minDistItem[0]])
-			else:
-				stateMatch=dict([ ((b[0],m[0]),b[1][1]+currentStep) for m in matches for b in m[1] ])
-				# find path (dfs)
-				for x in matches:
-					if len(_rtvMoves)!=0:
-						# route to goal found
-						break
-					curr_record=(x[1][0][0],x[0])
-					if curr_record in _lastMatches and _lastMatches[curr_record]<stateMatch[curr_record]:
-						# (statehash,matchGoalName) seen
-						continue
-					genSol(x[1][0][1][0],gt,step,stateLimit=stateLimit,currStep=x[1][0][1][1],
-						notBelow=notBelow,
-						info=info,
-						_lastMatches=stateMatch,_lastMatch=x[0],
-						_isBegin=False,
-						_moves=_moves+bfs2moveSeq(bfsRes,x[1][0][0]),_rtvMoves=_rtvMoves,
-						_nodes=_nodes+[x[0]],_rtvNodes=_rtvNodes,
-						_possible=_possible,
-						__internal_data=__internal_data,
-						endBefore=endBefore,
-						verbose=verbose)
-				#
-				if len(_rtvMoves)==0 and len(_moves)!=0:
-					_possible.append(_moves)
-		pass
-		#
 	if _isBegin:
 		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.

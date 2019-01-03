@@ -51,23 +51,28 @@ def move1(xxx,foo,info={},rtv={}):
 		moving(res['moves'],foo)
 	return False
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
+	def nextArgs(info):
+		ok=(1<<8)*info['precision']>1
+		info['precision']/=2.0
+		return ok
 	moves=[]
 	nodes=[]
 	possi=[]
-	prcs=[]
+	prcsv=[]
 	t0=time.time()
 	for i in range(len(xxxv)):
 		print("xxxv",i)
 		res={}
 		tmp_possi=[]
 		err=True
-		info={"precision":2**3}
-		for _ in range(11):
+		info={"precision":2**23,"next":nextArgs}
+		for _ in range(33):
+			print("prcs",info["precision"])
 			flag=move1(xxxv[i],foo,info=info,rtv=res)
 			err&=flag
 			if flag==False: break
 			info["precision"]/=2.0
-			tmp_possi.append(res['res']['possible'])
+			tmp_possi.extend(res['res']['possible'])
 		tmp_possi=matchGoaltree_trim_selectPossible(tmp_possi,xxxv[i])
 		if err:
 			possi.append(tmp_possi)
@@ -76,13 +81,13 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 		nodes.append(res['res']['nodes'][0])
 		moves.append(res['res']['moves'][0])
 		possi.append(tmp_possi)
-		prcs.append(info["precision"])
+		prcsv.append(info["precision"])
 		foo.nextStage()
 	from pprint import pprint
 	pprint(nodes)
 	pprint(moves)
 	pprint(possi)
-	pprint(prcs)
+	pprint(prcsv)
 	t1=time.time()
 	print("time:",t1-t0,"sec.")
 	exit()
