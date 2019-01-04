@@ -10,7 +10,7 @@ from asol import *
 
 xxx=goaltree()
 xxx.fromTxt("ainput-15p-sparse/main.txt")
-learnDir="alearn-15p/"
+learnDir="alearn-15p-sparse/"
 #print(xxx)
 #print("toStr")
 #xxxtxt=xxx.toStr()
@@ -112,6 +112,7 @@ else:
 	while 0==0:
 		print(len(succList))
 		if len(succList)>99 or learnFile!="":
+			exit() # TODO
 			if learnFile!="":
 				xxx.loadNextGoalFile(learnFile)
 			xxx.saveNextGoal(succList)
@@ -130,7 +131,7 @@ else:
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
-					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60)
+					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60,info={"failmemCnt":32767})
 					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
 					print("test",t1,"prev",h[1])
 					logs_time.append((t1,h[1]))

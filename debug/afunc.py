@@ -58,8 +58,8 @@ class func:
 		rtv+=self.output()
 		rtv+=self.rawBoard()
 		return rtv
-	def random(self,info=None):
-		scale = info["scale"] if type(info)==dict and "scale" in info else 1024
+	def random(self,info={}):
+		scale = info["scale"] if "scale" in info else 1024
 		self.x = [ x+(random.random()*2-1)*scale for x in self.x ]
 	def print(self,end=''):
 		print("x:",self.x,"t:",self.t,end=end)
@@ -82,10 +82,10 @@ class func:
 			func_exp1(deltaV,_midx=_midx,_xIt=_xIt+1,_deltaVchV=_deltaVchV,_rtv=_rtv)
 			_deltaVchV.pop()
 		return _rtv
-	def moves(self,info=None):
+	def moves(self,info={}):
 		# return move sequences
-		width=info["width"] if type(info)==dict and "width" in info else 11
-		precision=info["precision"] if type(info)==dict and "precision" in info else 0.1
+		width=info["width"] if "width" in info else 11
+		precision=info["precision"] if "precision" in info else 0.1
 		#
 		if width<=0 or precision<=0: return []
 		midx=self.x if (width&1)!=0 else [ x-precision/2.0 for x in self.x ]
@@ -100,12 +100,12 @@ class func:
 			if verbose:
 				print(mSeq)
 				self.print('\n')
-	def move1(self,m,info=None):
+	def move1(self,m,info={}):
 		# 1-step basic move
 		rtv=False
 		self.x = [ self.x[i]+m[i] for i in range(len(m)) ]
 		return rtv
-	def move(self,move_seq,info=None):
+	def move(self,move_seq,info={}):
 		# move according to 1 sequence
 		if (len(move_seq)<<1)<len(self.rawBoard()):
 			for i in range(len(move_seq)):
