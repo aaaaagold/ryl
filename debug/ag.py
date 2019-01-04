@@ -158,13 +158,6 @@ class goal:
 		with open(_cd+filename,'rb') as f:
 			self.fromStr("".join(map(chr,f.read())),cd=cd,extView=extView)
 		return self
-		try:
-			path=self.filename+".py"
-			if os.path.isfile(path):
-				importlib.util.spec_from_file_location("",path)
-				self.extendedView=importlib.import_module(path)
-		except:
-			print("WARNING: file exists but it cannot be import:",path)
 		# TODO:
 		with open(_cd+filename+".learn",'rb') as f:
 			pass

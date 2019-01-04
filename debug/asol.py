@@ -40,7 +40,7 @@ def matchGoal_v4(b,g):
 					#view = getattr(g.extendedView,item[i])
 					observedVal = getattr(g.extendedView,item[i])(oarr)
 				else:
-					print("WARNING: cannot find",item[i],"in",g.filename+".py")
+					print("WARNING: cannot find",item[i])
 					print("\t constraint omitted")
 					err=True
 				#print(observedVal),exit() # debug
@@ -400,7 +400,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			"fail":{
 				"arr":[],
 				"set":set(),
-				"cnt":1023
+				"cnt":info["failmemCnt"] if ("failmemCnt" in info) else 1023
 			},
 			"__dummy":None}
 	# skip by time

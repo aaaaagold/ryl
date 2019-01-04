@@ -111,7 +111,7 @@ class board:
 		self.__board=[ i for i in range(sz) ]
 		self.__emptyNum=self.__board[-1]
 		self.__emptyAt=sz-1
-	def moves(self,info=None):
+	def moves(self,info={}):
 		'''
 			return moves including invalid moves
 		'''
@@ -179,7 +179,7 @@ class board:
 		# reversed move of the move sequence
 		moveSeqR=[ move_seq[i]^1 for i in range(len(move_seq)-1,-1,-1) ]
 		return self.move(moveSeqR)
-	def near1(self,info=None):
+	def near1(self,info={}):
 		rtv=[]
 		for mSeq in self.moves(info=info):
 			if self.move(mSeq): continue
