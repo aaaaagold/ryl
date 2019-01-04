@@ -507,12 +507,14 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			failkey=(currentRawBoard,_lastMatch)
 			heappush(failinfo["arr"],(time.time(),failkey))
 			failinfo["set"].add(failkey)
-			if len(failinfo["set"])>failinfo["cnt"]:
+			while len(failinfo["set"])>failinfo["cnt"]:
 				tmp=heappop(failinfo["arr"])
 				failinfo["set"].remove(tmp[1])
 	if len(_rtvMoves)==0: # after try next
 		# all candidate nodes cannot find a path to final(s)
-		if verbose: print("GG",_nodes) # debug
+		if verbose:
+			print("GG",_nodes) # debug
+			b.print()
 		_possible.append(_nodes)
 		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
 		_possible.clear()

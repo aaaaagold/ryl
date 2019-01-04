@@ -25,11 +25,16 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	while bbb.solvable()==False: bbb.random()
 	#arr=[1, 3, 7, 12, 5, 15, 10, 0, 2, 4, 8, 11, 9, 6, 13, 14]
 	#arr=[12, 8, 7, 6, 9, 13, 15, 3, 0, 1, 11, 10, 2, 14, 5, 4]
+	#arr=[3, 0, 1, 6, 12, 7, 9, 11, 5, 10, 8, 15, 14, 2, 13, 4]
+	#arr=[3, 10, 13, 1, 9, 4, 12, 7, 15, 14, 6, 0, 11, 8, 5, 2]
+	#arr=[8, 13, 9, 5, 3, 15, 1, 11, 10, 14, 12, 7, 6, 4, 0, 2]
+	#arr=[8, 5, 15, 4, 13, 1, 10, 7, 12, 3, 6, 9, 11, 2, 0, 14]
+	#arr=[11, 1, 7, 13, 5, 6, 12, 10, 15, 8, 0, 2, 9, 14, 3, 4]
 	#bbb.setNums(arr,arr.index(15))
 	bbb.print()
 	print(bbb.rawBoard())
 	t0=time.time()
-	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095)
+	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095,verbose=True)
 	print(time.time()-t0)
 	if len(res['moves'])==0:
 		print("GG")
@@ -112,7 +117,9 @@ else:
 	while 0==0:
 		print(len(succList))
 		if len(succList)>99 or learnFile!="":
-			exit() # TODO
+			from pprint import pprint
+			#pprint([ t[1] for t in boardInitHistory ]),exit() # TODO
+			pprint(boardInitHistory),exit() # TODO
 			if learnFile!="":
 				xxx.loadNextGoalFile(learnFile)
 			xxx.saveNextGoal(succList)
@@ -131,7 +138,7 @@ else:
 					bbb.print()
 					print("test",bbb.rawBoard())
 					t0=time.time()
-					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60,info={"failmemCnt":32767})
+					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60,info={"failmemCnt":1023})
 					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
 					print("test",t1,"prev",h[1])
 					logs_time.append((t1,h[1]))
@@ -174,9 +181,9 @@ else:
 		t1=time.time()-t0
 		succList+=res['nodes']
 		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
-		print(t1)
+		print(t1,(res['moves']))
 		if len(res['moves'])==0:
-			res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
+			#res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
 			#break
 			boardInitHistory.pop()
