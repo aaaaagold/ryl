@@ -1,5 +1,6 @@
 **/__pycache__
 **/.*.swp
+/debug/_note.txt.bak
 /debug/ainput-func/tmp.txt
 /debug/alearn-15p/test.learn
 /debug/alearn-maze/test.learn
