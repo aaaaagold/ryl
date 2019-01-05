@@ -117,9 +117,9 @@ else:
 	while 0==0:
 		print(len(succList))
 		if len(succList)>99 or learnFile!="":
-			from pprint import pprint
-			#pprint([ t[1] for t in boardInitHistory ]),exit() # TODO
-			pprint(boardInitHistory),exit() # TODO
+			for t in boardInitHistory:
+				print(t)
+			exit() # TODO
 			if learnFile!="":
 				xxx.loadNextGoalFile(learnFile)
 			xxx.saveNextGoal(succList)

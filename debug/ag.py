@@ -13,7 +13,7 @@ from amyhead import *
 token_item='([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
-token_goalset = '[ \t]*(' + charset_namespace + ')[ \t]+(' + charset_namespace + '|-)(([ \t]+' + charset_namespace + ')*)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
+token_goalset = '(^|(\#[^\n]*[\n])*)[ \t]*(' + charset_namespace + ')[ \t]+(' + charset_namespace + '|-)(([ \t]+' + charset_namespace + ')*)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
 sts=re.compile('[ \t]*')
 
 class KWs:
@@ -260,16 +260,16 @@ class goaltree:
 		rs=p.split(s) # cut via "\n\n\n"
 		#print(rs[0:p.groups+1]),exit()
 		for i in range(1,len(rs),p.groups+1):
-			# not match , currName , succName , precNames , precName_Last , goals , others
+			# not match , (^|(\#[^\n]*[\n])*) , (\#[^\n]*[\n]) , currName , succName , precNames , precName_Last , goals , others
 			# start from 1 =>
-			# currName , succName , precNames , precName , goals , others
-			curr=rs[i  ]
+			# (^|(\#[^\n]*[\n])*) , (\#[^\n]*[\n]) , currName , succName , precNames , precName , goals , others
+			curr=rs[i+2]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")
 			defined.add(curr)
-			succ = rs[i+1]
-			prec = set(re.split("[ \t]+",rs[i+2])[1:]) # or
-			gsv  = re.split("[\n][ \t]*[\n]",rs[i+4]) # or
+			succ = rs[i+3]
+			prec = set(re.split("[ \t]+",rs[i+4])[1:]) # or
+			gsv  = re.split("[\n][ \t]*[\n]",rs[i+6]) # or
 			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec) ))
 			# curr:( goal()s , succ , succSet , succStrs , prec )
 		#data.sort()
@@ -342,6 +342,7 @@ class goaltree:
 				spec = importlib.util.spec_from_file_location(filename,path)
 				self.extendedView = importlib.util.module_from_spec(spec)
 				spec.loader.exec_module(self.extendedView)
+				#print(inspect.getsource(self.extendedView)) # debug
 		except:
 			print("WARNING: file exists but it cannot be import:",path)
 		with open(filename,'rb') as f:

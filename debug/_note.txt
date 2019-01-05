@@ -1,0 +1,2 @@
+TODO:15p:self-extract-subgoal(may use ad hoc hypothesis)(via differences between matched and not-matched) ; features/eigens of matching on a node
+TODO:add goaltree to info when bfs, trim below nodes, a state match a node in a 'near1' which is nearest will be extracted first
