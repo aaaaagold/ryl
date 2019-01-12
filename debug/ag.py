@@ -431,3 +431,17 @@ class goaltree:
 		
 
 ###########
+
+class goaltree_byweight:
+	def __init__(self,goaltree):
+		self.goal_final=[]
+		tmp=[]
+		for goalnode_key in goaltree.sets:
+			goalnode=goaltree.sets[goalnode_key]
+			goalset=goalnode[0]
+			succ=goalnode[1]
+			if succ!='-': tmp.append(([0],goalset))
+			else: self.goal_final.append(goalset)
+		self.goalsets=tmp
+	def _init_setWeight(self):
+		pass
