@@ -34,7 +34,10 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[11, 1, 7, 13, 5, 6, 12, 10, 15, 8, 0, 2, 9, 14, 3, 4]
 	#arr=[9, 3, 2, 7, 11, 4, 14, 8, 13, 10, 1, 15, 6, 0, 5, 12]
 	#arr=[14, 13, 12, 1, 7, 3, 15, 10, 4, 5, 0, 11, 6, 9, 2, 8]
-	#arr=[0, 4, 14, 2, 13, 1, 10, 15, 11, 8, 3, 7, 6, 12, 9, 5] ## the manifest is 3 then 2 but this suits "2 then 3"
+	#arr=[0, 4, 14, 2, 13, 1, 10, 15, 11, 8, 3, 7, 6, 12, 9, 5] # cause: the manifest is 3 then 2 but this suits "2 then 3"
+	#arr=[7, 6, 15, 11, 8, 1, 2, 5, 9, 14, 10, 12, 0, 4, 3, 13] # slow # appear exactly same board in the solution path.
+	#arr=[13, 14, 0, 4, 5, 1, 15, 7, 6, 10, 12, 8, 9, 11, 2, 3] # slow # appear exactly same board in the solution path.
+	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
@@ -125,7 +128,7 @@ else:
 		print(len(succList))
 		if len(succList)>99 or learnFile!="":
 			for t in boardInitHistory:
-				print(t)
+				print(t[0].rawBoard(),t[1],t[2])
 			print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) )
 			exit() # TODO
 			if learnFile!="":
