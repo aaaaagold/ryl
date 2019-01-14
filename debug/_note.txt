@@ -1,2 +1,12 @@
 TODO:15p:self-extract-subgoal(may use ad hoc hypothesis)(via differences between matched and not-matched) ; features/eigens of matching on a node
 TODO:add goaltree to info when bfs, trim below nodes, a state match a node in a 'near1' which is nearest will be extracted first
+
+exec
+python3 atest-*.py [ 1demo ]
+
+exp. data
+	15p-rev:
+	#arr=[7, 6, 15, 11, 8, 1, 2, 5, 9, 14, 10, 12, 0, 4, 3, 13] # slow # appear exactly same board in the solution path.
+	#arr=[13, 14, 0, 4, 5, 1, 15, 7, 6, 10, 12, 8, 9, 11, 2, 3] # slow # appear exactly same board in the solution path.
+	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
+
