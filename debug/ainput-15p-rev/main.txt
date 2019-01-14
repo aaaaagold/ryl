@@ -1,9 +1,9 @@
 # eventually, it's not sparsed
-Final -
+Final - -pull corner1 corner2
 0 corner3:1
 
 
-A Final
+A Final -pull corner1
 0 corner2:1
 
 

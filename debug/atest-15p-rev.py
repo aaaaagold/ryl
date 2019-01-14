@@ -126,6 +126,7 @@ else:
 		if len(succList)>99 or learnFile!="":
 			for t in boardInitHistory:
 				print(t)
+			print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) )
 			exit() # TODO
 			if learnFile!="":
 				xxx.loadNextGoalFile(learnFile)
@@ -188,7 +189,7 @@ else:
 		t1=time.time()-t0
 		succList+=res['nodes']
 		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
-		print(t1,(res['moves']))
+		print(t1,(res['moves']),max([len(mv) for mv in res['moves']]+[-1]))
 		if len(res['moves'])==0:
 			#res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())

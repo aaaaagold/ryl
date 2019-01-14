@@ -251,6 +251,10 @@ class goaltree:
 		return self.sets[k][3][0]
 	def getPrecs(self,k):
 		return self.sets[k][4]
+	def getOpts(self,k):
+		rtv=dict(self.sets[k][5])
+		for i in rtv: rtv[i]=rtv[i][1]
+		return rtv
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s,cd='./',extView=None):
@@ -283,13 +287,15 @@ class goaltree:
 			#print(i,curr,defined) # debug
 			succ = rs[i+2]
 			prec = set(sts.split(rs[i+3])[1:]) # or
-			opts = {"-push":{},"-pull":{}} # {fooNames,fooContent}
+			opts = {"-push":(set(),[]),"-pull":(set(),[])} # (fooNamesLookup,fooContent)
 			for opt in nodeopt.split(rs[i+5])[1::nodeopt.groups+1]:
 				arr=sts.split(opt)
 				dest=[k for k in opts if arr[0]==k]
 				if len(dest)==0: raise TypeError("Error: "+arr[0]+" is not an option")
 				arr,dst=tuple(arr[1:]),opts[dest[0]]
-				if not (arr in dst): dst[arr]=[getattr(self.extendedView,f) for f in arr]
+				if not (arr in dst[0]):
+					dst[0].add(arr)
+					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
 			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
@@ -456,6 +462,8 @@ class goaltree:
 		#rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
 		#rtv.sort(reverse=True) # leave it to caller
 		return rtv
+	def pulls(self,currentKey,notBelow=None,beforeKeys=set()):
+		return [ self.getOpts(x[1])["-pull"] for x in self.wkeys(currentKey,notBelow=notBelow,beforeKeys=beforeKeys) ]
 		
 
 ###########
