@@ -13,8 +13,17 @@ from amyhead import *
 token_item='([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
-token_goalset = '(^|(\#[^\n]*[\n])*)[ \t]*(' + charset_namespace + ')[ \t]+(' + charset_namespace + '|-)(([ \t]+' + charset_namespace + ')*)[ \t]*(([\n][\n]?[^\n]+)*)([\n][\n][\n]+|[\n]?[\n]?$)'
-sts=re.compile('[ \t]*')
+token_nodeopt='(-pull|-push)([ \t]+'+charset_namespace+')*'
+token_goalset = '(^|[\n])[ \t]*' # start : 1
+token_goalset+= '('+charset_namespace+')[ \t]+('+charset_namespace+'|-)' # name,succ : 2
+token_goalset+= '(([ \t]+'+charset_namespace+')*)' # pres : 2
+token_goalset+= '(([ \t]+'+token_nodeopt+')*)' # pu** : 4
+token_goalset+= '[ \t]*' # tailing
+token_goalset+= '(([\n][\n]?[^\n]+)*)' # contentInSameNode : 2
+token_goalset+= '([\n]+[\n](?=[\n])|[\n]?[\n]?$)' # sep : 2
+# '(?=...)'Matches if ... matches next, but doesn’t consume any of the string.
+sts=re.compile('[ \t]+')
+nodeopt=re.compile('('+token_nodeopt+')')
 
 class KWs:
 	def __init__(self,kwv):
@@ -258,21 +267,36 @@ class goaltree:
 		defined=set()
 		data=[]
 		rs=p.split(s) # cut via "\n\n\n"
-		#print(rs[0:p.groups+1]),exit()
+		#print(p.groups+1),print(rs[1:1+p.groups+1]),print(rs[1+(p.groups+1)*1:1+(p.groups+1)*2]),exit()
+		#print(rs[0]),exit() # debug
 		for i in range(1,len(rs),p.groups+1):
-			# not match , (^|(\#[^\n]*[\n])*) , (\#[^\n]*[\n]) , currName , succName , precNames , precName_Last , goals , others
+			# rs[0] is "not match", omitted
 			# start from 1 =>
-			# (^|(\#[^\n]*[\n])*) , (\#[^\n]*[\n]) , currName , succName , precNames , precName , goals , others
-			curr=rs[i+2]
+			# (^|[\n]) , currName , succName , precNames , precName_last , pu** , pu**_last , (-pull|-push) , pu**_func_last , goals , others
+			#    +0    ,    +1    ,    +2    ,    +3     ,      +4       ,  +5  ,    +6     ,      +7       ,       +8       ,  +9   ,  + >=10
+			#print(i,p.groups+1,rs[i-1]),print(rs[i:i+p.groups+1]) # debug
+			#if i>p.groups: exit() # debug
+			curr=rs[i+1]
 			if curr in defined:
 				raise TypeError("Error: '"+curr+"' is defined twice")
 			defined.add(curr)
-			succ = rs[i+3]
-			prec = set(re.split("[ \t]+",rs[i+4])[1:]) # or
-			gsv  = re.split("[\n][ \t]*[\n]",rs[i+6]) # or
-			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec) ))
-			# curr:( goal()s , succ , succSet , succStrs , prec )
+			#print(i,curr,defined) # debug
+			succ = rs[i+2]
+			prec = set(sts.split(rs[i+3])[1:]) # or
+			opts = {"-push":{},"-pull":{}} # {fooNames,fooContent}
+			for opt in nodeopt.split(rs[i+5])[1::nodeopt.groups+1]:
+				arr=sts.split(opt)
+				dest=[k for k in opts if arr[0]==k]
+				if len(dest)==0: raise TypeError("Error: "+arr[0]+" is not an option")
+				arr,dst=tuple(arr[1:]),opts[dest[0]]
+				if not (arr in dst): dst[arr]=[getattr(self.extendedView,f) for f in arr]
+				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
+			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
+			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
+			# curr:( goal()s , succ , succSet , succStrs , prec , opts)
 		#data.sort()
+		#print(defined),exit() # debug
+		#print(sorted(list(defined))) # debug
 		#pprint(data) # debug
 		self.sets=dict(data)
 		del data
@@ -284,6 +308,7 @@ class goaltree:
 		# basic keys
 		allKeys=set([k for k in self.sets])
 		for k in allKeys:
+			# all lower nodes
 			self.learned["nextgoal"][k]=dict([ (kk,(0.0-len(self.getSuccs(kk)))/len(allKeys)) for kk in allKeys-self.isSuccsOf[k] if kk!=k ])
 		self.learned["nextgoal"][""]=dict([ (k,(0.0-len(self.getSuccs(k)))/len(allKeys)) for k in allKeys if len(self.getPrecs(k))==0 ])
 		return self
@@ -416,6 +441,9 @@ class goaltree:
 		'''
 		# inter-func.
 		def valid_prec(k):
+			# control upper nodes to return
+			# True === valid , i.e. will be return from 'wkeys'
+			# it takes 'beforeKeys' to check if there's at least 1 presenting in 'precs'
 			precs=self.getPrecs(k)
 			return len(precs)==0 or len(precs&beforeKeys)!=0
 		if isNone(notBelow): notBelow=set()
