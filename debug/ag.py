@@ -462,8 +462,18 @@ class goaltree:
 		#rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
 		#rtv.sort(reverse=True) # leave it to caller
 		return rtv
-	def pulls(self,currentKey,notBelow=None,beforeKeys=set()):
-		return [ self.getOpts(x[1])["-pull"] for x in self.wkeys(currentKey,notBelow=notBelow,beforeKeys=beforeKeys) ]
+	def pulls(self,currentKey,notBelow=None,beforeKeys=set(),wkeys=None):
+		# return how other nodes can pull
+		# if 'wkeys' is not None: notBelow && beforeKeys will be omitted
+		#   note: if wkeys is not sublist from self.wkeys, it might cause errors
+		if isNone(wkeys):
+			wkeys=self.wkeys(currentKey,notBelow=notBelow,beforeKeys=beforeKeys)
+			wkeys.sort()
+		return [ self.getOpts(x[1])["-pull"] for x in wkeys ]
+	def pushs(self,currentKey):
+		# return how can the node push
+		rtv=[] if not currentKey in self.sets else self.getOpts(currentKey)["-push"]
+		return rtv
 		
 
 ###########

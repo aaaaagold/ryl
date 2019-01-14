@@ -416,14 +416,17 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	expInfo={
 		"finals":__internal_data["finals"],
 		"nodes":_nodes,
+		#"opts":{"-push":gt.pushs(_lastMatch),"-pull":gt.pulls(currentKey=_lastMatch,beforeKeys=set(_nodes))},
 		"__dummy":None}
+	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
+	keys.sort(reverse=True)
+	hv=gt.pulls(currentKey=_lastMatch,wkeys=keys)+gt.pushs(currentKey=_lastMatch)
 	INFO={}
 	INFO.update(info)
 	INFO.update(expInfo)
+	#INFO["h"]=hv[x]
 	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
 	del expInfo,INFO
-	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
-	keys.sort(reverse=True)
 	#if _isBegin: print(keys) # debug
 	minProb=keys[len(keys)>>1][0]
 	matchesDict={}

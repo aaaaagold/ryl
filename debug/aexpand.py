@@ -3,6 +3,7 @@ from shorthand import *
 from amyhead import *
 
 def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
+	#if "h" in info: print(info["h"]) # debug
 	stateCnt=0
 	rtv={}
 	t=(obj.copy(),0,(-1,None)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
