@@ -420,99 +420,110 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		"__dummy":None}
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
-	hv=gt.pulls(currentKey=_lastMatch,wkeys=keys)+gt.pushs(currentKey=_lastMatch)
+	hvv=gt.pulls(currentKey=_lastMatch,wkeys=keys)+gt.pushs(currentKey=_lastMatch)
+	# [ [foo1,foo2, ... ] , [foo3,foo4, ... ] , ... ]
 	INFO={}
 	INFO.update(info)
 	INFO.update(expInfo)
-	#INFO["h"]=hv[x]
-	bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
-	del expInfo,INFO
-	#if _isBegin: print(keys) # debug
-	minProb=keys[len(keys)>>1][0]
-	matchesDict={}
-	matchedKeys=[]
-	for i in range(len(keys)):
-		if keys[i][0]<minProb:
-			#break
-			pass
-			# omit < 50%-th.  # keys is sorted
-		key=keys[i][1]
-		goalSet=gt.getGoals(key)
-		
-		#matches=genSol_bfsTopMatch(bfsRes,gt,notBelow)
-		matchedBfsRes=[]
-		for i in bfsRes:
-			bRes=bfsRes[i]
-			if matchGoaltree_find_inSet(bRes[0],goalSet):
-				# matched
-				if len(matchedBfsRes)==0 or bRes[1]<matchedBfsRes[0][1][1]:
-					matchedBfsRes=[(i,bRes)]
-				elif bRes[1]==matchedBfsRes[0][1][1]:
-					matchedBfsRes.append((i,bRes))
-		if len(matchedBfsRes)==0: continue
+	for _ in range(len(hvv)+1):
 		#
-		# check final
-		if key in __internal_data["finals"]:
-			_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,matchedBfsRes[0][0]))
-			_rtvNodes.append(_nodes+[key])
-			break
-			pass
+		#
+		#INFO["h"]=hv[x]
+		if _!=0: break # debug
+		if _==len(hvv): del INFO["hvv"]
 		else:
-			# find path (dfs)
-			for x in matchedBfsRes:
-				# {(stateHash,key):totalStep}
-				stateMatch={(x[0],key):currStep+x[1][1]}
-				stateMatch.update(_lastMatches)
-				genSol(x[1][0],gt,step,stateLimit=stateLimit,currStep=currStep+x[1][1],
-					notBelow=notBelow,
-					info=info,
-					_lastMatches=stateMatch,_lastMatch=key,
-					_isBegin=False,
-					_moves=_moves+bfs2moveSeq(bfsRes,x[0]),_rtvMoves=_rtvMoves,
-					_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
-					_possible=_possible,
-					__internal_data=__internal_data,
-					endBefore=endBefore,
-					verbose=verbose)
-				if len(_rtvMoves)!=0: break
+			INFO["hvvit"]=_
+			INFO["hvv"]=hvv
+		bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
+		#del expInfo,INFO ####
+		#if _isBegin: print(keys) # debug
+		minProb=keys[len(keys)>>1][0]
+		matchesDict={}
+		matchedKeys=[]
+		for i in range(len(keys)):
+			if keys[i][0]<minProb:
+				#break
+				pass
+				# omit < 50%-th.  # keys is sorted
+			key=keys[i][1]
+			goalSet=gt.getGoals(key)
+			
+			#matches=genSol_bfsTopMatch(bfsRes,gt,notBelow)
+			matchedBfsRes=[]
+			for i in bfsRes:
+				bRes=bfsRes[i]
+				if matchGoaltree_find_inSet(bRes[0],goalSet):
+					# matched
+					if len(matchedBfsRes)==0 or bRes[1]<matchedBfsRes[0][1][1]:
+						matchedBfsRes=[(i,bRes)]
+					elif bRes[1]==matchedBfsRes[0][1][1]:
+						matchedBfsRes.append((i,bRes))
+			if len(matchedBfsRes)==0: continue
 			#
-		if len(_rtvMoves)!=0: break
-		#
-		# node appearsa, but previously path not found
-		matchesDict[key]=matchedBfsRes
-		matchedKeys.append(key)
-	if len(_rtvMoves)==0: # try next
-		sureFail=False
-		if "next" in info:
-			# try next
-			INFO={}
-			INFO.update(info)
-			res=info["next"](INFO)
-			if res:
-				genSol(b,gt,step=step,stateLimit=stateLimit,currStep=currStep,
-					notBelow=notBelow,
-					info=INFO,
-					_lastMatches=_lastMatches,_lastMatch=_lastMatch,
-					_isBegin=False,
-					_moves=_moves,_rtvMoves=_rtvMoves,
-					_nodes=_nodes,_rtvNodes=_rtvNodes,
-					_possible=_possible,
-					__internal_data=__internal_data,
-					endBefore=endBefore,
-					verbose=verbose)
+			# check final
+			if key in __internal_data["finals"]:
+				_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,matchedBfsRes[0][0]))
+				_rtvNodes.append(_nodes+[key])
+				break
+				pass
+			else:
+				# find path (dfs)
+				for x in matchedBfsRes:
+					# {(stateHash,key):totalStep}
+					stateMatch={(x[0],key):currStep+x[1][1]}
+					stateMatch.update(_lastMatches)
+					genSol(x[1][0],gt,step,stateLimit=stateLimit,currStep=currStep+x[1][1],
+						notBelow=notBelow,
+						info=info,
+						_lastMatches=stateMatch,_lastMatch=key,
+						_isBegin=False,
+						_moves=_moves+bfs2moveSeq(bfsRes,x[0]),_rtvMoves=_rtvMoves,
+						_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
+						_possible=_possible,
+						__internal_data=__internal_data,
+						endBefore=endBefore,
+						verbose=verbose)
+					if len(_rtvMoves)!=0: break
+				#
+			if len(_rtvMoves)!=0: break
+			#
+			# node appearsa, but previously path not found
+			matchesDict[key]=matchedBfsRes
+			matchedKeys.append(key)
+		if len(_rtvMoves)==0: # try next
+			sureFail=False
+			if "next" in info:
+				# try next
+				tryInfo={}
+				tryInfo.update(info)
+				res=info["next"](tryInfo)
+				if res:
+					genSol(b,gt,step=step,stateLimit=stateLimit,currStep=currStep,
+						notBelow=notBelow,
+						info=tryInfo,
+						_lastMatches=_lastMatches,_lastMatch=_lastMatch,
+						_isBegin=False,
+						_moves=_moves,_rtvMoves=_rtvMoves,
+						_nodes=_nodes,_rtvNodes=_rtvNodes,
+						_possible=_possible,
+						__internal_data=__internal_data,
+						endBefore=endBefore,
+						verbose=verbose)
+				else:
+					sureFail|=True
+				del tryInfo
 			else:
 				sureFail|=True
-			del INFO
-		else:
-			sureFail|=True
-		if sureFail:
-			failinfo=__internal_data["fail"]
-			failkey=(currentRawBoard,_lastMatch)
-			heappush(failinfo["arr"],(time.time(),failkey))
-			failinfo["set"].add(failkey)
-			while len(failinfo["set"])>failinfo["cnt"]:
-				tmp=heappop(failinfo["arr"])
-				failinfo["set"].remove(tmp[1])
+			if sureFail:
+				# fail situation cache
+				failinfo=__internal_data["fail"]
+				failkey=(currentRawBoard,_lastMatch)
+				heappush(failinfo["arr"],(time.time(),failkey))
+				failinfo["set"].add(failkey)
+				while len(failinfo["set"])>failinfo["cnt"]:
+					tmp=heappop(failinfo["arr"])
+					failinfo["set"].remove(tmp[1])
+	del expInfo,INFO ####
 	if len(_rtvMoves)==0: # after try next
 		# all candidate nodes cannot find a path to final(s)
 		if verbose:

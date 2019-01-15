@@ -4,14 +4,19 @@ from amyhead import *
 
 def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 	#if "h" in info: print(info["h"]) # debug
+	hvv=info["hvv"] if "hvv" in info else []
+	hv=[ h for hv in hvv for h in hv ]
 	stateCnt=0
 	rtv={}
 	t=(obj.copy(),0,(-1,None)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
 	#q=queue()
 	#q.push(t)
 	orderNum=0
+	#hInfo=tuple([0 for _ in range(len(hv))])
+	hInfo=tuple([0 for _ in range(len(hv))])
+	cmpInfo=(hInfo,orderNum)
 	heap=[]
-	heappush(heap,(orderNum,t))
+	heappush(heap,(cmpInfo,t))
 	orderNum+=1
 	del t
 	#while q.size()!=0:
@@ -35,7 +40,9 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 			actinfo=near[:2] # (who does, does what)
 			if currstep<step:
 				#q.push((stat,currstep+1,(actinfo,currstatNum)))
-				heappush(heap,( orderNum , (stat,currstep+1,(actinfo,currstatNum)) ))
+				hInfo=tuple([ h(stat.outputs()) for h in hv ])
+				cmpInfo=(hInfo,orderNum)
+				heappush(heap,( cmpInfo , (stat,currstep+1,(actinfo,currstatNum)) ))
 				orderNum+=1
 	return rtv # rtv[stateHash]=(state,step,(actInfo,prevState))
 	pass
