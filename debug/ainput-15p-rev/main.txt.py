@@ -4,6 +4,14 @@
 outputCnt=16
 
 def corner(ov,width):
+	self=corner
+	if not hasattr(self,"last"): self.last={}
+	tov=tuple(ov)
+	if tov in self.last: return self.last[tov]
+	else:
+		del self.last
+		self.last={}
+	
 	rtv=True
 	target=[ i for i in range(16) ]
 	msk=[ 0 for _ in range(16) ]
@@ -11,7 +19,9 @@ def corner(ov,width):
 		for x in range(4):
 			if min(x,y)<width:
 				msk[y*4+x]|=1
-	return (sum([ target[i]!=ov[i+outputCnt] for i in range(16) if msk[i]!=0 ])==0)+0
+	rtv=(sum([ target[i]!=ov[i+outputCnt] for i in range(16) if msk[i]!=0 ])==0)+0
+	self.last[tov]=rtv
+	return rtv
 def corner1(ov): return corner(ov,1)
 def corner2(ov): return corner(ov,2)
 def corner3(ov): return corner(ov,3)
