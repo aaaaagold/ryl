@@ -44,6 +44,7 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # not solved
 	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # test: 91@step=8 79@step=79
 	#arr=[4, 9, 6, 14, 11, 2, 1, 8, 7, 15, 12, 3, 10, 13, 0, 5] # test: 91@step=8 123@step=23
+	#arr=[10, 7, 15, 14, 11, 12, 2, 6, 9, 5, 4, 13, 3, 1, 8, 0] # test: 98@step=8 150@step=23
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
@@ -137,7 +138,12 @@ else:
 		if len(succList)>99 or learnFile!="":
 			for t in boardInitHistory:
 				print(t[0].rawBoard(),t[1],t[2])
-			print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) )
+			def getmmm(arr):
+				sarr=sorted(arr)
+				return sarr[-1],sarr[len(sarr)>>1],sarr[0]
+			print("time: max,mid,min =",getmmm([x[1] for x in boardInitHistory]))
+			print("step: max,mid,min =",getmmm([x[3] for x in boardInitHistory]))
+			#print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) ) # deprecated
 			exit() # TODO
 			if learnFile!="":
 				xxx.loadNextGoalFile(learnFile)
@@ -199,8 +205,9 @@ else:
 		res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit)
 		t1=time.time()-t0
 		succList+=res['nodes']
-		boardInitHistory.append((bbb.copy(),t1,res['nodes']))
-		print(t1,(res['moves']),max([len(mv) for mv in res['moves']]+[-1]))
+		mml=max([len(mv) for mv in res['moves']]+[-1])
+		boardInitHistory.append((bbb.copy(),t1,res['nodes'],mml))
+		print(t1,(res['moves']),mml)
 		if len(res['moves'])==0:
 			#res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
