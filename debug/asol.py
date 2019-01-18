@@ -416,24 +416,22 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	expInfo={
 		"finals":__internal_data["finals"],
 		"nodes":_nodes,
-		#"opts":{"-push":gt.pushs(_lastMatch),"-pull":gt.pulls(currentKey=_lastMatch,beforeKeys=set(_nodes))},
 		"__dummy":None}
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
-	hvv=gt.pulls(currentKey=_lastMatch,wkeys=keys)+gt.pushs(currentKey=_lastMatch)
+	hvv=[]
+	hvv+=gt.pushs(currentKey=_lastMatch)+gt.pulls(currentKey=_lastMatch,wkeys=keys) # it's slow
 	# [ [foo1,foo2, ... ] , [foo3,foo4, ... ] , ... ]
+	# will be used in min heap, so the value is the smaller the better
 	INFO={}
 	INFO.update(info)
 	INFO.update(expInfo)
+	INFO['hvv']=hvv
 	for _ in range(len(hvv)+1):
 		#
 		#
 		#INFO["h"]=hv[x]
 		if _!=0: break # debug
-		if _==len(hvv): del INFO["hvv"]
-		else:
-			INFO["hvvit"]=_
-			INFO["hvv"]=hvv
 		bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
 		#del expInfo,INFO ####
 		#if _isBegin: print(keys) # debug
@@ -527,7 +525,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	if len(_rtvMoves)==0: # after try next
 		# all candidate nodes cannot find a path to final(s)
 		if verbose:
-			print("GG",_nodes) # debug
+			print("GG",_nodes,len(hvv)) # debug
 			b.print()
 		_possible.append(_nodes)
 		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)

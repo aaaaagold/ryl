@@ -2,10 +2,11 @@
 from shorthand import *
 from amyhead import *
 
-def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
+def _bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 	#if "h" in info: print(info["h"]) # debug
-	hvv=info["hvv"] if "hvv" in info else []
-	hv=[ h for hv in hvv for h in hv ]
+	#hvv=info["hvv"] if "hvv" in info else []
+	#hv=[ h for hv in hvv for h in hv ]
+	hv=info['hv']
 	stateCnt=0
 	rtv={}
 	t=(obj.copy(),0,(-1,None)) # ( ; , total_puts , ((turn,last_put_loc) , lastStatHash) )
@@ -14,6 +15,7 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 	orderNum=0
 	#hInfo=tuple([0 for _ in range(len(hv))])
 	hInfo=tuple([0 for _ in range(len(hv))])
+	hDistinct,hDF=[[],[]],[min,max] # [ min_arr , max_arr ]
 	cmpInfo=(hInfo,orderNum)
 	heap=[]
 	heappush(heap,(cmpInfo,t))
@@ -41,11 +43,38 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 			if currstep<step:
 				#q.push((stat,currstep+1,(actinfo,currstatNum)))
 				hInfo=tuple([ h(stat.outputs()) for h in hv ])
+				if len(hDistinct[0])==0:
+					for arr in hDistinct:
+						arr.extend(hInfo)
+				else:
+					for m in range(len(hDF)):
+						for i in range(len(hInfo)):
+							hDistinct[m][i]=hDF[m](hDistinct[m][i],hInfo[i])
 				cmpInfo=(hInfo,orderNum)
 				heappush(heap,( cmpInfo , (stat,currstep+1,(actinfo,currstatNum)) ))
 				orderNum+=1
+	return (rtv,hDistinct)
 	return rtv # rtv[stateHash]=(state,step,(actInfo,prevState))
+	# hDistinct = [ [min_of_hi_appeared],[max_of_hi_appeared] ]
 	pass
+
+def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
+	rtv={}
+	INFO={}
+	INFO.update(info)
+	hvv=info['hvv']+[[]]
+	blankTested=False
+	for i in range(len(hvv)):
+		if blankTested!=False and len(hvv)==i+1: continue
+		hv=hvv[i]
+		INFO['hv']=hv
+		res=_bfs(obj,step=step,turn=turn,stateLimit=stateLimit,notViolate=notViolate,info=INFO)
+		blankTested|=(res[1][0]==res[1][1])
+		res=res[0]
+		delSet=set([ k for k in res if k in rtv and rtv[k][1]<=res[k][1] ])
+		for k in delSet: del res[k]
+		rtv.update(res)
+	return rtv
 
 def bfs2moveSeq(bfs,goalHash):
 	moves=[]

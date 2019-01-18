@@ -22,6 +22,8 @@ print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
+	it=2
+	step=int(sys.argv[it]) if len(sys.argv)>it and sys.argv[it].isdigit() else 8
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
 	arr=[]
@@ -38,6 +40,9 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[7, 6, 15, 11, 8, 1, 2, 5, 9, 14, 10, 12, 0, 4, 3, 13] # slow # appear exactly same board in the solution path.
 	#arr=[13, 14, 0, 4, 5, 1, 15, 7, 6, 10, 12, 8, 9, 11, 2, 3] # slow # appear exactly same board in the solution path.
 	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
+	#arr=[15, 12, 14, 13, 4, 11, 9, 0, 1, 2, 7, 6, 8, 10, 5, 3]
+	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # not solved
+	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # test: 91 steps
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
@@ -50,17 +55,19 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 		print("GG")
 	else:
 		movesS=res['moves']
-		print(movesS)
+		mml=min([len(mv) for mv in movesS])
+		print(movesS,mml)
 		nodesS=res['nodes']
 		for msg in movesS[0]:
 			print("msg")
 			print(msg)
 			move=msg[1]
-			time.sleep(0.25)
+			#time.sleep(0.25)
 			bbb.move(move)
 			print("board")
 			bbb.print()
 			print()
+		print(mml)
 	pass
 	exit()
 # TODO 

@@ -1,9 +1,9 @@
 # eventually, it's not sparsed
-Final - -pull corner1 corner2
+Final -
 0 corner3:1
 
 
-A Final -pull corner1
+A Final
 0 corner2:1
 
 
@@ -176,7 +176,7 @@ B11 B12 B
 0 near5:0,7
 
 
-B B11
+B B11 -pull near0 near1 near2 near3 near4 near8 near12
 0 corner1:1
 
 
@@ -375,23 +375,30 @@ D5 D6
 
 D4 D5
 0 0:0
-0 near1:0,1 near4:0,1
+0 near1:0 near4:0
 0 near1:0,3
 0 near4:0,3
 
 
 D3 D4
 0 0:0
+0 near1:0,2 near4:0,2
 0 near1:0,3
 0 near4:0,3
 
 
 D2 D3
 0 0:0
+0 near1:0,3
+0 near4:0,3
+
+
+D1 D2
+0 0:0
 0 near1:0,3 near4:0,3
 
 
-D D2
+D D1 -pull near0
 0 0:0
 
 
