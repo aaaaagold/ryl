@@ -42,14 +42,15 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
 	#arr=[15, 12, 14, 13, 4, 11, 9, 0, 1, 2, 7, 6, 8, 10, 5, 3]
 	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # not solved
-	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # test: 91 steps
+	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # test: 91@step=8 79@step=79
+	#arr=[4, 9, 6, 14, 11, 2, 1, 8, 7, 15, 12, 3, 10, 13, 0, 5] # test: 91@step=8 123@step=23
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
 	#print(bbb.output()) , print(bbb.outputs()) , exit()
 	print(bbb.rawBoard())
 	t0=time.time()
-	res=genSol_v3(bbb,xxx,step=8,stateLimit=4095,verbose=True)
+	res=genSol_v3(bbb,xxx,step=step,stateLimit=4095,verbose=True)
 	print(time.time()-t0)
 	if len(res['moves'])==0:
 		print("GG")
