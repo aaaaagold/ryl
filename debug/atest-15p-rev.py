@@ -41,10 +41,11 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[13, 14, 0, 4, 5, 1, 15, 7, 6, 10, 12, 8, 9, 11, 2, 3] # slow # appear exactly same board in the solution path.
 	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
 	#arr=[15, 12, 14, 13, 4, 11, 9, 0, 1, 2, 7, 6, 8, 10, 5, 3]
-	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # not solved
+	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # fail
 	#arr=[5, 1, 11, 6, 3, 9, 10, 4, 14, 2, 12, 7, 8, 13, 15, 0] # test: 91@step=8 79@step=79
 	#arr=[4, 9, 6, 14, 11, 2, 1, 8, 7, 15, 12, 3, 10, 13, 0, 5] # test: 91@step=8 123@step=23
 	#arr=[10, 7, 15, 14, 11, 12, 2, 6, 9, 5, 4, 13, 3, 1, 8, 0] # test: 98@step=8 150@step=23
+	#arr=[0, 9, 7, 8, 11, 10, 2, 1, 14, 6, 12, 3, 4, 5, 15, 13] # fail@step=8
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
@@ -133,6 +134,7 @@ else:
 	succList=[]
 	boardInitHistoryAll=[]
 	boardInitHistory=[]
+	failCnt=0
 	while 0==0:
 		print(len(succList))
 		if len(succList)>99 or learnFile!="":
@@ -143,6 +145,7 @@ else:
 				return sarr[-1],sarr[len(sarr)>>1],sarr[0]
 			print("time: max,mid,min =",getmmm([x[1] for x in boardInitHistory]))
 			print("step: max,mid,min =",getmmm([x[3] for x in boardInitHistory]))
+			print("fail count =",failCnt)
 			#print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) ) # deprecated
 			exit() # TODO
 			if learnFile!="":
@@ -194,7 +197,8 @@ else:
 						print("u",t1)
 						f.write(str(bbb.rawBoard())+"\t"+str(t1)+"\t"+str(res['nodes'])+"\n")
 						print("u",res['nodes'])
-			boardInitHistory=[]
+			boardInitHistory.clear()
+			failCnt*=0
 			exit()
 		print("board.random()")
 		bbb.random()
@@ -206,6 +210,7 @@ else:
 		t1=time.time()-t0
 		succList+=res['nodes']
 		mml=max([len(mv) for mv in res['moves']]+[-1])
+		failCnt+=(mml<0)
 		boardInitHistory.append((bbb.copy(),t1,res['nodes'],mml))
 		print(t1,(res['moves']),mml)
 		if len(res['moves'])==0:
