@@ -289,11 +289,11 @@ class goaltree:
 			prec = set(sts.split(rs[i+3])[1:]) # or
 			opts = {"-push":(set(),[]),"-pull":(set(),[])} # (fooNamesLookup,fooContent)
 			for opt in nodeopt.split(rs[i+5])[1::nodeopt.groups+1]:
-				arr=sts.split(opt)
-				dest=[k for k in opts if arr[0]==k]
+				arr=sts.split(opt) # opt_type foo1 foo2 ...
+				dest=[k for k in opts if arr[0]==k] # opt_type
 				if len(dest)==0: raise TypeError("Error: "+arr[0]+" is not an option")
 				arr,dst=tuple(arr[1:]),opts[dest[0]]
-				if not (arr in dst[0]):
+				if not (arr in dst[0]): # trim repeated
 					dst[0].add(arr)
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
@@ -479,15 +479,60 @@ class goaltree:
 ###########
 
 class goaltree_byweight:
-	def __init__(self,goaltree):
-		self.goal_final=[]
-		tmp=[]
+	def __init__(self,goaltree=None):
+		self.goal_final={}
+		self.goal_nodes={}
+		self.goal_nodes_names=[]
+		if not isNone(goaltree): self.setRef(goaltree)
+	def copy(self):
+		rtv=self.__class__()
+		rtv.goal_final=self.goal_final
+		rtv.goal_nodes=copy.deepcopy(self.goal_nodes)
+		rtv.goal_nodes_names.extend(self.goal_nodes_names)
+		return rtv
+	def setRef(self,goaltree):
+		tmp={}
 		for goalnode_key in goaltree.sets:
 			goalnode=goaltree.sets[goalnode_key]
 			goalset=goalnode[0]
-			succ=goalnode[1]
-			if succ!='-': tmp.append(([0],goalset))
-			else: self.goal_final.append(goalset)
-		self.goalsets=tmp
-	def _init_setWeight(self):
+			#succ=goalnode[1]
+			if succ!='-':
+				tmp[self.goal_nodes]=([0],goalset)
+				self.goal_nodes_names.append(goalnode_key)
+			else:
+				self.goal_final[goalnode_key]=((0,),goalset)
+		self.goal_nodes.update(tmp)
+	def setWeight(self,kv={}):
+		# kv = {"node_name":weight}
+		for k in kv:
+			if k in self.goal_nodes:
+				w=self.goal_nodes[k][0]
+				w.clear()
+				if type(kv[k])==list: w.extend(kv[k])
+				else: w.append(kv[k])
+	def random(self):
+		self.setWeight(dict([ (k,random.random()+1) for k in self.goal_nodes ]))
+	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
+		# min weight better
+		# notBelow and beforeKeys is not used # in current version
+		# inter-func.
+		w=self.goal_nodes[currentKey][0]
+		rtv=[]
+		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes if v[0]>=w ]
+		maxW=max(rtv_nodes)[0] if len(rtv_nodes)!=0 else 0
+		rtv.extend([ (maxW,k) for k in self.goal_final ])
+		rtv.extend(rtv_nodes)
+		return rtv
+	def mutate(self):
+		for k in self.goal_nodes:
+			w=self.goal_nodes[k][0]
+			for i in range(len(w)):
+				w[i]+=random.random()-0.5
+	def cross(self,rhs,p=0.5):
+		for k in self.goal_nodes_names:
+			if random.random()<p:
+				w=self.goal_nodes[k][0]
+				w.clear()
+				w.extend(rhs.goal_nodes[k][0])
 		pass
+

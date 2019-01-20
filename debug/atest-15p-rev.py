@@ -46,6 +46,9 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	#arr=[4, 9, 6, 14, 11, 2, 1, 8, 7, 15, 12, 3, 10, 13, 0, 5] # test: 91@step=8 123@step=23
 	#arr=[10, 7, 15, 14, 11, 12, 2, 6, 9, 5, 4, 13, 3, 1, 8, 0] # test: 98@step=8 150@step=23
 	#arr=[0, 9, 7, 8, 11, 10, 2, 1, 14, 6, 12, 3, 4, 5, 15, 13] # fail@step=8
+	#arr=[2, 8, 11, 12, 0, 1, 4, 15, 6, 7, 3, 10, 13, 5, 9, 14] # 58@step=8 108@step=23 ; slow@step=8 fast@step=23
+	#arr=[10, 5, 15, 7, 4, 13, 1, 11, 9, 2, 6, 3, 0, 8, 14, 12] # 78@step=8 90@step=23 ; slow@step=8 fast@step=23
+	#arr=[14, 15, 2, 12, 9, 8, 11, 5, 7, 6, 1, 10, 3, 13, 4, 0] # 109@step=8 139@step=23 ; fast@step=8 slow@step=23
 	#
 	if len(arr)!=0: bbb.setNums(arr,arr.index(15))
 	bbb.print()
