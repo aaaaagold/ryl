@@ -492,16 +492,59 @@ class goaltree_byweight:
 		return rtv
 	def setRef(self,goaltree):
 		tmp={}
+		wdata=self._setRef_weightedRecurr(goaltree)
 		for goalnode_key in goaltree.sets:
 			goalnode=goaltree.sets[goalnode_key]
 			goalset=goalnode[0]
 			#succ=goalnode[1]
 			if succ!='-':
-				tmp[self.goal_nodes]=([0],goalset)
+				tmp[self.goal_nodes]=([ wdata[goalnode_key] ],goalset)
 				self.goal_nodes_names.append(goalnode_key)
 			else:
-				self.goal_final[goalnode_key]=((0,),goalset)
+				# finals
+				self.goal_final[goalnode_key]=((wdata[goalnode_key],),goalset)
 		self.goal_nodes.update(tmp)
+	def _setRef_weightedRecurr(self,goaltree,_wdata=None,_currentPath=None,_beginNode=""):
+		if _beginNode=="":
+			nodeList=[ k for k in goaltree.sets ]
+			wdata={}
+			currentPath_d={}
+			currentPath_v=[]
+			for k in nodeList:
+				if k in wdata: continue
+				self._setRef_weightedRecurr(
+					goaltree=goaltree,
+					_wdata=wdata,
+					_currentPath=(currentPath_d,currentPath_v),
+					_beginNode=k
+				)
+			return wdata
+		else:
+			succ=goaltree.getSucc(_beginNode)
+			currentPath_d,currentPath_v = _currentPath
+			if succ=='-':
+				# terminate
+				_wdata[succ]=0 # finals' weights are 0
+				loc=currentPath_d[succ]
+				for i in range(loc): _wdata[currentPath_v[i]]=loc-i
+			elif succ in currentPath_d:
+				# cycle
+				loc=currentPath_d[succ]
+				for i in range(loc,len(currentPath_v)): _wdata[currentPath_v[i]]=0
+				for i in range(loc): _wdata[currentPath_v[i]]=loc-i
+			else:
+				currentPath_d[_beginNode]=len(currentPath_v)
+				currentPath_v.append(_beginNode)
+				res=self._setRef_weightedRecurr(
+					goaltree=goaltree,
+					_wdata=_wdata,
+					_currentPath=_currentPath,
+					_beginNode=succ
+				)
+				currentPath_v.pop(_beginNode)
+				del currentPath_d[_beginNode]
+		_setRef_weightedRecurr
+		pass
 	def setWeight(self,kv={}):
 		# kv = {"node_name":weight}
 		for k in kv:
@@ -513,7 +556,8 @@ class goaltree_byweight:
 	def random(self):
 		self.setWeight(dict([ (k,random.random()+1) for k in self.goal_nodes ]))
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
-		# min weight better
+		# smaller (than 'currentKey') weight will be reserve
+		# [but bigger weight (in reserved keys) at first]@asol.py
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
 		w=self.goal_nodes[currentKey][0]
