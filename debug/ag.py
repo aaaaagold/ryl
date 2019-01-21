@@ -478,7 +478,7 @@ class goaltree:
 
 ###########
 
-class goaltree_byweight:
+class goaltree_edgeless:
 	def __init__(self,goaltree=None):
 		self.goal_final={}
 		self.goal_nodes={}
