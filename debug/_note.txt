@@ -10,6 +10,10 @@ exp. data
 	#arr=[13, 14, 0, 4, 5, 1, 15, 7, 6, 10, 12, 8, 9, 11, 2, 3] # slow # appear exactly same board in the solution path.
 	#arr=[6, 4, 11, 1, 5, 14, 12, 0, 7, 13, 2, 10, 15, 3, 9, 8] # very slow
 
+TODO:
 space-filling curve
 	as problem size extend
+
+TODO:
+method to clear visited nodes
 
