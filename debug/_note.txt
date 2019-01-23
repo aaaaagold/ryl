@@ -17,3 +17,9 @@ space-filling curve
 TODO:
 method to clear visited nodes
 
+choice:
+@ELGT
+	wkeys:
+		nearest first
+		farest first
+
