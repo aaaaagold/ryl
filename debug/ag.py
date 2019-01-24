@@ -555,9 +555,25 @@ class goaltree_edgeless:
 				else: w.append(kv[k])
 	def random(self):
 		self.setWeight(dict([ (k,random.random()+1) for k in self.goal_nodes ]))
+	def getGoals(self,k):
+		if k in self.goal_final: return self.goal_final[k]
+		if k in self.goal_nodes: return self.goal_nodes[k]
+		return None
+	def getSuccsStr(self,k):
+		# TODO
+		return self.sets[k][3][0]
+	def getFinals(self):
+		return [ k for k in self.goal_final ]
+	def pushs(self):
+		# TODO
+		return ()
+	def pulls(self):
+		# TODO
+		return ()
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
 		# smaller (than 'currentKey') weight will be reserve
 		# [but bigger weight (in reserved keys) at first]@asol.py
+		# ( == nearest first )
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
 		w=self.goal_nodes[currentKey][0]
