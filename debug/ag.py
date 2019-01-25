@@ -227,6 +227,7 @@ class goaltree:
 			rtv.sort()
 			return rtv
 	def getGoals(self,k):
+		# return a goalset
 		return self.sets[k][0] if k in self.sets else None
 	def getSucc(self,k):
 		return self.sets[k][1]
@@ -482,15 +483,22 @@ class goaltree_edgeless:
 	def __init__(self,goaltree=None):
 		self.goal_final={}
 		self.goal_nodes={}
+		# [k]=>([weight_vector],goalset_from_goaltree)
+		# the order to be used is from greatest ( far from final ) to the least ( close to final )
 		self.goal_nodes_names=[]
+		self.cache_succsStr={}
 		if not isNone(goaltree): self.setRef(goaltree)
+	def clean_cache(self):
+		self.cache_succsStr={}
 	def copy(self):
 		rtv=self.__class__()
 		rtv.goal_final=self.goal_final
 		rtv.goal_nodes=copy.deepcopy(self.goal_nodes)
 		rtv.goal_nodes_names.extend(self.goal_nodes_names)
+		rtv.cache_succsStr=self.cache_succsStr
 		return rtv
 	def setRef(self,goaltree):
+		self.clean_cache()
 		tmp={}
 		wdata=self._setRef_weightedRecurr(goaltree)
 		for goalnode_key in goaltree.sets:
@@ -498,10 +506,11 @@ class goaltree_edgeless:
 			goalset=goalnode[0]
 			#succ=goalnode[1]
 			if succ!='-':
-				tmp[self.goal_nodes]=([ wdata[goalnode_key] ],goalset)
+				tmp[goalnode_key]=([ wdata[goalnode_key] ],goalset)
 				self.goal_nodes_names.append(goalnode_key)
 			else:
 				# finals
+				# wdata[goalnode_key]===0
 				self.goal_final[goalnode_key]=((wdata[goalnode_key],),goalset)
 		self.goal_nodes.update(tmp)
 	def _setRef_weightedRecurr(self,goaltree,_wdata=None,_currentPath=None,_beginNode=""):
@@ -546,6 +555,7 @@ class goaltree_edgeless:
 		_setRef_weightedRecurr
 		pass
 	def setWeight(self,kv={}):
+		self.clean_cache()
 		# kv = {"node_name":weight}
 		for k in kv:
 			if k in self.goal_nodes:
@@ -554,21 +564,32 @@ class goaltree_edgeless:
 				if type(kv[k])==list: w.extend(kv[k])
 				else: w.append(kv[k])
 	def random(self):
+		self.clean_cache()
 		self.setWeight(dict([ (k,random.random()+1) for k in self.goal_nodes ]))
 	def getGoals(self,k):
-		if k in self.goal_final: return self.goal_final[k]
-		if k in self.goal_nodes: return self.goal_nodes[k]
+		# return a goalset
+		if k in self.goal_final: return self.goal_final[k][1]
+		if k in self.goal_nodes: return self.goal_nodes[k][1]
 		return None
 	def getSuccsStr(self,k):
 		# TODO
-		return self.sets[k][3][0]
+		if k in self.cache_succsStr: return self.cache_succsStr[k]
+		w=self.goal_nodes[k][0]
+		arr=[ (self.goal_nodes[kk][0],kk) for kk in self.goal_nodes if k==kk or self.goal_nodes[kk][0]<w ]
+		arr.sort(reverse=True)
+		rtv='-'.join([ x[1] for x in arr ])
+		self.cache_succsStr[k]=rtv
+		return rtv
 	def getFinals(self):
 		return [ k for k in self.goal_final ]
 	def pushs(self):
 		# TODO
 		return ()
-	def pulls(self):
+	def pulls(self,currentKey,notBelow=None,beforeKeys=set(),wkeys=None):
 		# TODO
+		if isNone(wkeys):
+			wkeys=self.wkeys(currentKey=currentKey,notBelow=notBelow,beforeKeys=beforeKeys)
+			wkeys.sort()
 		return ()
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
 		# smaller (than 'currentKey') weight will be reserve
@@ -584,11 +605,13 @@ class goaltree_edgeless:
 		rtv.extend(rtv_nodes)
 		return rtv
 	def mutate(self):
+		self.clean_cache()
 		for k in self.goal_nodes:
 			w=self.goal_nodes[k][0]
 			for i in range(len(w)):
 				w[i]+=random.random()-0.5
 	def cross(self,rhs,p=0.5):
+		self.clean_cache()
 		for k in self.goal_nodes_names:
 			if random.random()<p:
 				w=self.goal_nodes[k][0]
