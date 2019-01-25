@@ -535,12 +535,12 @@ class goaltree_edgeless:
 				# _beginNode is in finals
 				_wdata[_beginNode]=0 # finals' weights are 0
 				loc=len(currentPath_v)
-				for i in range(loc): _wdata[currentPath_v[i]]=loc-i
+				for i in range(loc): _wdata[currentPath_v[i]]=i-loc
 			elif succ in currentPath_d:
 				# cycle
 				loc=currentPath_d[succ]
 				for i in range(loc,len(currentPath_v)): _wdata[currentPath_v[i]]=0
-				for i in range(loc): _wdata[currentPath_v[i]]=loc-i
+				for i in range(loc): _wdata[currentPath_v[i]]=i-loc
 			else:
 				currentPath_d[_beginNode]=len(currentPath_v)
 				currentPath_v.append(_beginNode)
@@ -604,17 +604,17 @@ class goaltree_edgeless:
 			wkeys.sort()
 		return ()
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
-		# smaller (than 'currentKey') weight will be reserved
-		# [but bigger weight (in reserved keys) at first]@asol.py
+		# bigger (than 'currentKey') weight will be reserved
+		# [and bigger weight (in reserved keys) at first]@asol.py
 		# finals will be tested first. for others: nearest (to final) first
-		# ( === finals have greatest weight
+		# ( === finals have greatest weight )
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
 		# inter-func. END
-		w=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else INF_v1
+		w=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else nINF_v1
 		rtv=[]
-		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if v[0]<w ]
-		maxW=max(rtv_nodes)[0]+[0] if len(rtv_nodes)!=0 else [0]
+		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if w<v[0] ]
+		maxW=(max(rtv_nodes)[0]+[0]) if len(rtv_nodes)!=0 else [0]
 		# let finals be tested first
 		rtv.extend([ (maxW,k) for k in self.goal_final ])
 		rtv.extend(rtv_nodes)
