@@ -1,3 +1,14 @@
+goalset:
+several sets of match rules
+the match rules "AND" together
+the sets "OR" together
+
+goalnode:
+goalset with header info
+header info: node_name, succ_node_name, prec_node_name, heuristic_func.
+
+
+
 TODO:15p:self-extract-subgoal(may use ad hoc hypothesis)(via differences between matched and not-matched) ; features/eigens of matching on a node
 TODO:add goaltree to info when bfs, trim below nodes, a state match a node in a 'near1' which is nearest will be extracted first
 
