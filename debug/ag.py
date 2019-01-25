@@ -504,14 +504,14 @@ class goaltree_edgeless:
 		for goalnode_key in goaltree.sets:
 			goalnode=goaltree.sets[goalnode_key]
 			goalset=goalnode[0]
-			#succ=goalnode[1]
+			succ=goalnode[1]
 			if succ!='-':
 				tmp[goalnode_key]=([ wdata[goalnode_key] ],goalset)
 				self.goal_nodes_names.append(goalnode_key)
 			else:
 				# finals
 				# wdata[goalnode_key]===0
-				self.goal_final[goalnode_key]=((wdata[goalnode_key],),goalset)
+				self.goal_final[goalnode_key]=([ wdata[goalnode_key] ],goalset)
 		self.goal_nodes.update(tmp)
 	def _setRef_weightedRecurr(self,goaltree,_wdata=None,_currentPath=None,_beginNode=""):
 		if _beginNode=="":
@@ -532,9 +532,9 @@ class goaltree_edgeless:
 			succ=goaltree.getSucc(_beginNode)
 			currentPath_d,currentPath_v = _currentPath
 			if succ=='-':
-				# terminate
-				_wdata[succ]=0 # finals' weights are 0
-				loc=currentPath_d[succ]
+				# _beginNode is in finals
+				_wdata[_beginNode]=0 # finals' weights are 0
+				loc=len(currentPath_v)
 				for i in range(loc): _wdata[currentPath_v[i]]=loc-i
 			elif succ in currentPath_d:
 				# cycle
@@ -550,10 +550,9 @@ class goaltree_edgeless:
 					_currentPath=_currentPath,
 					_beginNode=succ
 				)
-				currentPath_v.pop(_beginNode)
+				currentPath_v.pop()
 				del currentPath_d[_beginNode]
-		_setRef_weightedRecurr
-		pass
+		# _setRef_weightedRecurr END
 	def setWeight(self,kv={}):
 		self.clean_cache()
 		# kv = {"node_name":weight}
@@ -582,7 +581,20 @@ class goaltree_edgeless:
 		return rtv
 	def getFinals(self):
 		return [ k for k in self.goal_final ]
-	def pushs(self):
+	def size(self):
+		rtv={"byname":len(self.goal_final)+len(self.goal_nodes),"bygoal":0}
+		for _,d in self.goal_final.items():
+			arr=d[1]
+			for x in arr:
+				tmp=x.size()
+				for k,v in tmp.items(): rtv[k]+=v
+		for _,d in self.goal_nodes.items():
+			arr=d[1]
+			for x in arr:
+				tmp=x.size()
+				for k,v in tmp.items(): rtv[k]+=v
+		return rtv
+	def pushs(self,currentKey):
 		# TODO
 		return ()
 	def pulls(self,currentKey,notBelow=None,beforeKeys=set(),wkeys=None):
@@ -592,15 +604,18 @@ class goaltree_edgeless:
 			wkeys.sort()
 		return ()
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
-		# smaller (than 'currentKey') weight will be reserve
+		# smaller (than 'currentKey') weight will be reserved
 		# [but bigger weight (in reserved keys) at first]@asol.py
-		# ( == nearest first )
+		# finals will be tested first. for others: nearest (to final) first
+		# ( === finals have greatest weight
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
-		w=self.goal_nodes[currentKey][0]
+		# inter-func. END
+		w=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else INF_v1
 		rtv=[]
-		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes if v[0]>=w ]
-		maxW=max(rtv_nodes)[0] if len(rtv_nodes)!=0 else 0
+		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if v[0]<w ]
+		maxW=max(rtv_nodes)[0]+[0] if len(rtv_nodes)!=0 else [0]
+		# let finals be tested first
 		rtv.extend([ (maxW,k) for k in self.goal_final ])
 		rtv.extend(rtv_nodes)
 		return rtv

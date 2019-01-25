@@ -390,6 +390,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	__dummy=None):
 	# init
 	genSol=genSol_v3
+	#print(_lastMatch) # debug
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible,__internal_data
 		_rtvMoves=[]
