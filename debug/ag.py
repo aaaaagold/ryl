@@ -480,6 +480,7 @@ class goaltree:
 ###########
 
 class goaltree_edgeless:
+	cnt_newnode=0
 	def __init__(self,goaltree=None):
 		self.goal_final={}
 		self.goal_nodes={}
@@ -619,6 +620,12 @@ class goaltree_edgeless:
 		rtv.extend([ (maxW,k) for k in self.goal_final ])
 		rtv.extend(rtv_nodes)
 		return rtv
+	def newnode(self):
+		# TODO
+		self.__class__.cnt_newnode+=1
+		newid="ec_%d"%(self.__class__.cnt_newnode,)
+		rtv={"name":newid,"content":None}
+		return rtv
 	def mutate(self):
 		self.clean_cache()
 		for k in self.goal_nodes:
@@ -628,7 +635,7 @@ class goaltree_edgeless:
 	def cross(self,rhs,p=0.5):
 		self.clean_cache()
 		for k in self.goal_nodes_names:
-			if random.random()<p:
+			if (k in rhs.goal_nodes) and random.random()<p:
 				w=self.goal_nodes[k][0]
 				w.clear()
 				w.extend(rhs.goal_nodes[k][0])
