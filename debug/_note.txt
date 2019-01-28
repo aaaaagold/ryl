@@ -34,3 +34,17 @@ choice:
 		nearest first
 		farest first
 
+
+
+----
+
+find the same
+with different functions
+finder needs survive
+findee needs survive
+
+review the sol.
+re-flood it
+with shortest guaranteed methods
+
+
