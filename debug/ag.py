@@ -42,7 +42,7 @@ class KWs:
 
 class Goal:
 	# a part of goalset
-	# is a sub-class of goaltree and should not be use directly
+	# is a sub-class of Goaltree and should not be use directly
 	parser_item=re.compile(token_item)
 	#kwv=KWs(['include','gonear'])
 	KW_include_label=-1
@@ -57,7 +57,7 @@ class Goal:
 		self.maxLabel=-1
 		self.including=False
 		self.arrangeNeeded=False
-		self.extendedView=None # inherit from goaltree
+		self.extendedView=None # inherit from Goaltree
 	def __eq__(self,rhs):
 		self.arrange()
 		if isinstance(rhs,self.__class__):
@@ -65,7 +65,7 @@ class Goal:
 		else:
 			raise TypeError("unsupport: %s == %s"%(self.__class__,type(rhs)))
 	def __repr__(self):
-		return "[node:"+str(self.constraints)+"]"
+		return "[Goal:"+str(self.constraints)+"]"
 	def arrange(self):
 		if self.arrangeNeeded!=False:
 			self.arrangeNeeded=False
@@ -116,7 +116,7 @@ class Goal:
 				isKW=True
 				label=self.__class__.KW_include_label
 				self.including=True
-				tmp=goaltree()
+				tmp=Goaltree()
 				tmp.fromTxt(content,_cd=cd)
 				item=(content,tmp)
 			
@@ -179,7 +179,7 @@ class Goal:
 				for k,v in tmp.items(): rtv[k]+=v
 		return rtv
 
-class goaltree:
+class Goaltree:
 	# lots of goalset
 	'''
 		definitions:
@@ -203,7 +203,7 @@ class goaltree:
 		# learn file is self.filename+".learn", self.filename will be set after self.fromTxt()
 		pass
 	def __repr__(self):
-		rtv='{goaltree:\n'
+		rtv='{Goaltree:\n'
 		tmp=[ (k,v) for k,v in self.sets.items() ]
 		tmp.sort()
 		for x in tmp:
