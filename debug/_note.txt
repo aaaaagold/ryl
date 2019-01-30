@@ -1,11 +1,17 @@
 goalset:
 several sets of match rules
-the match rules "AND" together
-the sets "OR" together
+	the match rules "AND" together
+	the sets "OR" together
 
 goalnode:
-goalset with header info
+goalset with header info, 
 header info: node_name, succ_node_name, prec_node_name, heuristic_func.
+
+<class: Goal>
+a set of match rules that "AND" together
+
+<class: Goaltree>
+a set of goalnode
 
 
 
