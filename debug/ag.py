@@ -40,8 +40,8 @@ class KWs:
 		'''
 		return self.data[i] if i in self.data else None
 
-class Goalnode:
-	# a goalnode
+class Goal:
+	# a part of goalset
 	# is a sub-class of goaltree and should not be use directly
 	parser_item=re.compile(token_item)
 	#kwv=KWs(['include','gonear'])
@@ -212,7 +212,7 @@ class goaltree:
 		return rtv
 	def __getitem__(self,k):
 		return self.sets[k] if k in self.sets else None
-	def addGoalset(self,node,name,successorName):
+	def addnode(self,goalset,name,successorName):
 		# TODO
 		pass
 	def keys(self,notBelow=None,beforeKeys=set()):
@@ -301,8 +301,8 @@ class goaltree:
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
-			data.append((curr, ([ Goalnode().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
-			# curr:( Goalnode()s , succ , succSet , succStrs , prec , opts)
+			data.append((curr, ([ Goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
+			# curr:( Goal()s , succ , succSet , succStrs , prec , opts)
 		#data.sort()
 		#print(defined),exit() # debug
 		#print(sorted(list(defined))) # debug
@@ -337,7 +337,7 @@ class goaltree:
 	def fromTxt(self,filename,_cd='./'):
 		'''
 			concept:
-			a block with a name is a set of Goalnode. that means reach one of them is a 'match', and can to further more (try the successor)
+			a block with a name is a set of Goal. that means reach one of them is a 'match', and can to further more (try the successor)
 			
 			format prototype:
 
@@ -345,9 +345,9 @@ class goaltree:
 			...
 			( none or more empty lines )
 			name successorName(if None, use '-')
-			# lines which cannot be parsed as <class: Goalnode>
+			# lines which cannot be parsed as <class: Goal>
 			label item
-			# lines which cannot be parsed as <class: Goalnode>
+			# lines which cannot be parsed as <class: Goal>
 			label item
 			...
 			label item
