@@ -40,7 +40,8 @@ class KWs:
 		'''
 		return self.data[i] if i in self.data else None
 
-class goal:
+class Goalnode:
+	# a goalnode
 	# is a sub-class of goaltree and should not be use directly
 	parser_item=re.compile(token_item)
 	#kwv=KWs(['include','gonear'])
@@ -64,7 +65,7 @@ class goal:
 		else:
 			raise TypeError("unsupport: %s == %s"%(self.__class__,type(rhs)))
 	def __repr__(self):
-		return "[goal:"+str(self.constraints)+"]"
+		return "[node:"+str(self.constraints)+"]"
 	def arrange(self):
 		if self.arrangeNeeded!=False:
 			self.arrangeNeeded=False
@@ -179,11 +180,12 @@ class goal:
 		return rtv
 
 class goaltree:
+	# lots of goalset
 	'''
 		definitions:
 			successor:
-				the next goal to match after matching a goal
-		closer the root(tree), closer the final goal
+				the next goalset to match after matching a goalset
+		closer the root(tree), closer the final goalset
 	'''
 	parser_set=re.compile(token_goalset)
 	def __init__(self):
@@ -195,7 +197,7 @@ class goaltree:
 		# using 'fromStr' will remove (=None) previous extendedView from 'fromTxt'
 		# file name is '_cd' and 'filename' given to 'fromTxt' concatenate '.py'
 		# i.e. _cd+filename+".py"
-		## it is recommended to construct a hashtable ( key is tuple(*.outputs()) or you can specify other methods ) with timeout to prevent re-calculating same condition within the same goal
+		## it is recommended to construct a hashtable ( key is tuple(*.outputs()) or you can specify other methods ) with timeout to prevent re-calculating same condition within the same goal to achive
 		self.learned={"nextgoal":{}}
 		self.isSuccsOf={}
 		# learn file is self.filename+".learn", self.filename will be set after self.fromTxt()
@@ -210,7 +212,7 @@ class goaltree:
 		return rtv
 	def __getitem__(self,k):
 		return self.sets[k] if k in self.sets else None
-	def addgoal(self,goal,name,successorName):
+	def addGoalset(self,node,name,successorName):
 		# TODO
 		pass
 	def keys(self,notBelow=None,beforeKeys=set()):
@@ -299,8 +301,8 @@ class goaltree:
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
-			data.append((curr, ([ goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
-			# curr:( goal()s , succ , succSet , succStrs , prec , opts)
+			data.append((curr, ([ Goalnode().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
+			# curr:( Goalnode()s , succ , succSet , succStrs , prec , opts)
 		#data.sort()
 		#print(defined),exit() # debug
 		#print(sorted(list(defined))) # debug
@@ -335,7 +337,7 @@ class goaltree:
 	def fromTxt(self,filename,_cd='./'):
 		'''
 			concept:
-			a block with a name is a set of goal. that means reach one of them is a 'match', and can to further more (try the successor)
+			a block with a name is a set of Goalnode. that means reach one of them is a 'match', and can to further more (try the successor)
 			
 			format prototype:
 
@@ -343,9 +345,9 @@ class goaltree:
 			...
 			( none or more empty lines )
 			name successorName(if None, use '-')
-			# lines which cannot be parsed as <class: goal>
+			# lines which cannot be parsed as <class: Goalnode>
 			label item
-			# lines which cannot be parsed as <class: goal>
+			# lines which cannot be parsed as <class: Goalnode>
 			label item
 			...
 			label item
@@ -620,8 +622,9 @@ class goaltree_edgeless:
 		rtv.extend([ (maxW,k) for k in self.goal_final ])
 		rtv.extend(rtv_nodes)
 		return rtv
-	def newnode(self):
+	def newnode(self,nodes=[]):
 		# TODO
+		self.clean_cache()
 		self.__class__.cnt_newnode+=1
 		newid="ec_%d"%(self.__class__.cnt_newnode,)
 		rtv={"name":newid,"content":None}
