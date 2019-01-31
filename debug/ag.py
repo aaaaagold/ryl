@@ -483,6 +483,7 @@ class Goaltree:
 
 class goaltree_edgeless:
 	cnt_newnode=0
+	cnt_newGoal=0
 	def __init__(self,goaltree=None):
 		self.goal_final={}
 		self.goal_nodes={}
@@ -629,13 +630,28 @@ class goaltree_edgeless:
 		newid="ec_%d"%(self.__class__.cnt_newnode,)
 		rtv={"name":newid,"content":None}
 		return rtv
+		content=Goal()
+		#content=Goal().fromStr()
+		# content.add
+	def newGoal(self,boardOutput,ruleRatio=0.5):
+		self.__class__.cnt_newGoal+=1
+		name="ec_%d"%(self.__class__.cnt_newGoal,)
+		g=Goal()
+		for i in range(len(boardOutput)):
+			if random.random()<ruleRatio:
+				g.add(item=str(i)+":"+str(boardOutput[i]),label=0)
+		self.goal_nodes_names.append(name)
+		self.goal_nodes[name]=g
+		return name
 	def mutate(self):
+		#TODO: constraint mutation
 		self.clean_cache()
 		for k in self.goal_nodes:
 			w=self.goal_nodes[k][0]
 			for i in range(len(w)):
 				w[i]+=random.random()-0.5
 	def cross(self,rhs,p=0.5):
+		#TODO: constraint crossover
 		self.clean_cache()
 		for k in self.goal_nodes_names:
 			if (k in rhs.goal_nodes) and random.random()<p:
