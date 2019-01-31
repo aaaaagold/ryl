@@ -30,6 +30,7 @@ exp. data
 TODO:
 space-filling curve
 	as problem size extend
+	use multiple curves
 
 TODO:
 method to clear visited nodes
@@ -40,7 +41,14 @@ choice:
 		nearest first
 		farest first
 
-
+	mutate:
+		order (by weight)
+		reversed match (==excluded)
+		constraints
+	crossover:
+		weights
+		constraints
+		other nodes
 
 ----
 
