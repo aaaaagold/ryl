@@ -219,8 +219,12 @@ class Goaltree:
 		return rtv
 	def __getitem__(self,k):
 		return self.sets[k] if k in self.sets else None
-	def addNode(self,goalset,name,successorName):
+	def newNode(self,goals=[],name="",successorName='-'):
+		node=(goals,successorName,set(),[''])
+		return name,node
+	def addNode(self,goalset=[],name="",successorName='-'):
 		# TODO
+		if name=="" or (name in self.sets): return 1
 		pass
 	def keys(self,notBelow=None,beforeKeys=set()):
 		def valid_prec(k):
@@ -665,7 +669,7 @@ class goaltree_edgeless:
 		rtv[1].arrange()
 		return rtv
 	def mutate(self,someboardOutputs=[],
-		p_selfRef=0.5,
+		p_selfRef=0, # TODO
 		p_nodeDiverge=0.5,
 		__dummy=0):
 		#TODO: constraint mutation
@@ -683,11 +687,11 @@ class goaltree_edgeless:
 					w=self.goal_nodes[k][0]
 					for i in range(len(w)):
 						w[i]+=random.random()-0.5
-	def cross(self,rhs,p=0.5):
+	def cross(self,rhs,p_wRef=0.5):
 		#TODO: constraint crossover
 		self.clean_cache()
 		for k in self.goal_nodes_names:
-			if (k in rhs.goal_nodes) and random.random()<p:
+			if (k in rhs.goal_nodes) and random.random()<p_wRef:
 				w=self.goal_nodes[k][0]
 				w.clear()
 				w.extend(rhs.goal_nodes[k][0])
