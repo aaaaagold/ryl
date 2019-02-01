@@ -219,7 +219,7 @@ class Goaltree:
 		return rtv
 	def __getitem__(self,k):
 		return self.sets[k] if k in self.sets else None
-	def addnode(self,goalset,name,successorName):
+	def addNode(self,goalset,name,successorName):
 		# TODO
 		pass
 	def keys(self,notBelow=None,beforeKeys=set()):
