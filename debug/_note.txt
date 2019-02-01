@@ -40,15 +40,24 @@ choice:
 	wkeys:
 		nearest first
 		farest first
-
+	round-monitor: sel by:
+		L:change quests
+			L:crossover
+				other's nodes
+				other's weights # direct copy, next level loop will have time to adjust
+				L:mutate
+					weights
+					change constraints in nodes
+					change nodes
+	round-species:
 	mutate:
-		order (by weight)
+		weights - change order randomly
 		reversed match (==excluded)
-		constraints
+		constraints - diverge, merge
+		goal - AND(concatenate), OR(forms a goalset)
 	crossover:
-		weights
-		constraints
-		other nodes
+		weights - i.e. change order to be as the similar as the other
+		other nodes - take a use
 
 ----
 
