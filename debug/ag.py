@@ -631,7 +631,7 @@ class goaltree_edgeless:
 		rtv.extend(rtv_nodes)
 		return rtv
 	def newnode(self,nodes=[]):
-		# TODO
+		# TODO: maybe delete it
 		self.clean_cache()
 		self.__class__.cnt_newnode+=1
 		newid="ec_%d"%(self.__class__.cnt_newnode,)
@@ -648,11 +648,11 @@ class goaltree_edgeless:
 	def newGoal(self):
 		# empty goal
 		return self._newGoal()
-	def newGoalByObservation(self,obs):
+	def newGoalByObservation(self,obs,p_asRule=0.5):
 		#TODO
 		rtv=self._newGoal()
 		for i in range(len(obs)):
-			if random.random()<ruleRatio:
+			if random.random()<p_asRule:
 				rtv[1].add(item=str(i)+":"+str(obs[i]),label=0,arrangeLater=True)
 		rtv[1].arrange()
 		return rtv
