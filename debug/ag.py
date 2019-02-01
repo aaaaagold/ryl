@@ -70,6 +70,13 @@ class Goal:
 		if self.arrangeNeeded!=False:
 			self.arrangeNeeded=False
 			self.constraints.sort(key=lambda x:(x[2],x[:2]))
+			tmpv=[]
+			tmp=0
+			for c in self.constraints:
+				if tmp==c: continue
+				tmpv.append(c)
+				tmp=c
+			self.constraints=tmpv
 	def add(self,item,label=0,negate=False,arrangeLater=False):
 		# label must be an integer
 		self.constraints.append((label,item,negate))
@@ -633,23 +640,49 @@ class goaltree_edgeless:
 		content=Goal()
 		#content=Goal().fromStr()
 		# content.add
-	def newGoal(self,boardOutput,ruleRatio=0.5):
+	def _newGoal(self,boardOutput=[],ruleRatio=0.5):
 		self.__class__.cnt_newGoal+=1
 		name="ec_%d"%(self.__class__.cnt_newGoal,)
 		g=Goal()
-		for i in range(len(boardOutput)):
+		return name,g
+	def newGoal(self):
+		# empty goal
+		return self._newGoal()
+	def newGoalByObservation(self,obs):
+		#TODO
+		rtv=self._newGoal()
+		for i in range(len(obs)):
 			if random.random()<ruleRatio:
-				g.add(item=str(i)+":"+str(boardOutput[i]),label=0)
-		self.goal_nodes_names.append(name)
-		self.goal_nodes[name]=g
-		return name
-	def mutate(self):
+				rtv[1].add(item=str(i)+":"+str(obs[i]),label=0,arrangeLater=True)
+		rtv[1].arrange()
+		return rtv
+	def newGoalBy2Goals(self,g1,g2,p_contraintSelected=0.5,p_negateRatio=0.5):
+		rtv=self._newGoal()
+		constraintsTotal=g1.constraints+g2.constraints
+		for c in constraintsTotal:
+			if random.random()<p_contraintSelected:
+				rtv[1].add(item=c[1],lebel=c[0],negate=c[2]^(random.random()<p_negateRatio),arrangeLater=True)
+		rtv[1].arrange()
+		return rtv
+	def mutate(self,someboardOutputs=[],
+		p_selfRef=0.5,
+		p_nodeDiverge=0.5,
+		__dummy=0):
 		#TODO: constraint mutation
+		#TODO structure is wrong
 		self.clean_cache()
-		for k in self.goal_nodes:
-			w=self.goal_nodes[k][0]
-			for i in range(len(w)):
-				w[i]+=random.random()-0.5
+		if len(self.goal_nodes_names)>1 and random.random()<p_selfRef:
+			sel1=random.choice(self.goal_nodes_names)
+			sel2=sel1
+			while sel2==sel1: sel2=random.choice(self.goal_nodes_names)
+			c1v=self.goal_nodes[sel1][1].constraints
+			c2v=self.goal_nodes[sel2][1].constraints
+		else:
+			for k in self.goal_nodes:
+				if random.random()<p_nodeDiverge:
+					w=self.goal_nodes[k][0]
+					for i in range(len(w)):
+						w[i]+=random.random()-0.5
 	def cross(self,rhs,p=0.5):
 		#TODO: constraint crossover
 		self.clean_cache()
