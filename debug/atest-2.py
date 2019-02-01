@@ -7,7 +7,7 @@ from ab import *
 #from ab2g import *
 from asol import *
 
-xxx=goaltree()
+xxx=Goaltree()
 xxx.fromTxt("ainput-8puzzle-2.txt")
 print(xxx)
 print("toStr")

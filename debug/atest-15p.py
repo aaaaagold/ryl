@@ -8,7 +8,7 @@ from ab import *
 #from ab2g import *
 from asol import *
 
-xxx=goaltree()
+xxx=Goaltree()
 xxx.fromTxt("ainput-15p/main.txt")
 learnDir="alearn-15p/"
 #print(xxx)

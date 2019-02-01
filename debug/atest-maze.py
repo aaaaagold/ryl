@@ -9,13 +9,13 @@ from amaze import *
 from asol import *
 
 filepairs=[
-{"goaltree":"ainput-maze/main.txt","maze":"ainput-maze/mazes/m-1-adjlist.txt"},
-{"goaltree":"ainput-maze/main-nowall.txt","maze":"ainput-maze/mazes/m-nowall-adjlist.txt"},
+{"Goaltree":"ainput-maze/main.txt","maze":"ainput-maze/mazes/m-1-adjlist.txt"},
+{"Goaltree":"ainput-maze/main-nowall.txt","maze":"ainput-maze/mazes/m-nowall-adjlist.txt"},
 ]
 filepairsIt=0 if len(sys.argv)<3 or sys.argv[1]!="1demo" else int(sys.argv[2])
 
-xxx=goaltree()
-xxx.fromTxt(filepairs[filepairsIt]["goaltree"])
+xxx=Goaltree()
+xxx.fromTxt(filepairs[filepairsIt]["Goaltree"])
 learnDir="alearn-maze/"
 #print(xxx)
 #print("toStr")

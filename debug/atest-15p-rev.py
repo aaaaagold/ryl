@@ -9,7 +9,7 @@ from a15p_rev import *
 #from ab2g import *
 from asol import *
 
-xxx=goaltree()
+xxx=Goaltree()
 xxx.fromTxt("ainput-15p-rev/main.txt")
 learnDir="alearn-15p-rev/"
 #print(xxx)

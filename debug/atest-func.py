@@ -10,7 +10,7 @@ from afunc import *
 
 xxxv=[]
 for i in range(3):
-	xxx=goaltree()
+	xxx=Goaltree()
 	xxx.fromTxt("ainput-func/t"+str(i)+"/main.txt")
 	print("#end")
 	print("finals:",xxx.getFinals())

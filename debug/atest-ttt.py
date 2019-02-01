@@ -8,7 +8,7 @@ from ag import *
 from attt import *
 from asol import *
 
-xxx=goaltree()
+xxx=Goaltree()
 xxx.fromTxt("ainput-ttt/main-first.txt")
 print(xxx)
 print("toStr")
