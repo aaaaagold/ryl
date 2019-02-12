@@ -676,11 +676,12 @@ class goaltree_edgeless:
 		#TODO structure is wrong
 		self.clean_cache()
 		if len(self.goal_nodes_names)>1 and random.random()<p_selfRef:
-			sel1=random.choice(self.goal_nodes_names)
-			sel2=sel1
-			while sel2==sel1: sel2=random.choice(self.goal_nodes_names)
-			c1v=self.goal_nodes[sel1][1].constraints
-			c2v=self.goal_nodes[sel2][1].constraints
+			arr=self.goal_nodes_names
+			L=len(arr)
+			s1=int(random.random()*L)
+			s2=int(s1+random.random()*(L-1)+1)%L
+			c1v=self.goal_nodes[arr[s1]][1].constraints
+			c2v=self.goal_nodes[arr[s2]][1].constraints
 		else:
 			for k in self.goal_nodes:
 				if random.random()<p_nodeDiverge:
