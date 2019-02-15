@@ -493,7 +493,7 @@ class Goaltree:
 ###########
 
 class goaltree_edgeless:
-	cnt_newnode=0
+	cnt_newNode=0
 	cnt_newGoal=0
 	def __init__(self,goaltree=None):
 		self.goal_final={}
@@ -637,14 +637,24 @@ class goaltree_edgeless:
 	def newnode(self,nodes=[]):
 		# TODO: maybe delete it
 		self.clean_cache()
-		self.__class__.cnt_newnode+=1
-		newid="ec_%d"%(self.__class__.cnt_newnode,)
+		self.__class__.cnt_newNode+=1
+		newid="ec_%d"%(self.__class__.cnt_newNode,)
 		rtv={"name":newid,"content":None}
 		return rtv
 		content=Goal()
 		#content=Goal().fromStr()
 		# content.add
-	def _newGoal(self,boardOutput=[],ruleRatio=0.5):
+	def _newNode(self):
+		self.clean_cache()
+		self.__class__.cnt_newNode+=1
+		name="ec_%d"%(self.__class__.cnt_newNode,)
+		node=([0],[])
+		return name,node
+	def newNodeByGoals(self,gs=[]):
+		rtv=self.newNodeByGoals()
+		rtv[1].extend(gs)
+		return rtv
+	def _newGoal(self):
 		self.__class__.cnt_newGoal+=1
 		name="ec_%d"%(self.__class__.cnt_newGoal,)
 		g=Goal()
@@ -660,8 +670,16 @@ class goaltree_edgeless:
 				rtv[1].add(item=str(i)+":"+str(obs[i]),label=0,arrangeLater=True)
 		rtv[1].arrange()
 		return rtv
+	def newGoalBy1Goal(self,g,p_contraintSelected=0.5):
+		rtv=self._newGoal()
+		constraintsTotal=g.constraints
+		for c in constraintsTotal:
+			if random.random()<p_contraintSelected:
+				rtv[1].add(item=c[1],lebel=c[0],negate=c[2],arrangeLater=True)
+		rtv[1].arrange()
+		return rtv
 	def newGoalBy2Goals(self,g1,g2,p_contraintSelected=0.5,p_negateRatio=0.5):
-		# TODO: g1 , g2 is <list>
+		# TODO: g1 , g2 is <list>?
 		rtv=self._newGoal()
 		constraintsTotal=g1.constraints+g2.constraints
 		for c in constraintsTotal:
@@ -670,6 +688,7 @@ class goaltree_edgeless:
 		rtv[1].arrange()
 		return rtv
 	def _mutate_randWeight(self,p=1):
+		# random adjust weights
 		for k in self.goal_nodes:
 			if random.random()<p:
 				w=self.goal_nodes[k][0]
@@ -677,6 +696,7 @@ class goaltree_edgeless:
 					w[i]+=random.random()-0.5
 		pass
 	def _mutate_merge_and(self):
+		# take some constraints from 2 goalsets of 2 nodes respectively and merge as a goalset forming a new node
 		# TODO
 		allNodesNames=[k for k in self.goal_final]+self.goal_nodes_names
 		if 0==0:
@@ -690,26 +710,27 @@ class goaltree_edgeless:
 			goal=self.newGoalBy2Goals(g1,g2)
 		pass
 	def _mutate_merge_or(self):
+		# take some goalsets from different nodes and merge as a new node
+		pass
+	def _mutate_partial(self,p_constraintReserved=0.5):
+		# take partial constraints of a goalset of a final node to form a new node
 		pass
 	def mutate(self,someboardOutputs=[],
-		p_nodeRandWeight=0.5,
+		p_nodePartialFinal=0.5,
 		p_nodeMergeAnd=0.5, # TODO
 		p_nodeMergeOr=0.5, # TODO
+		p_nodeRandWeight=0.5,
 		__dummy=0):
 		#TODO: constraint mutation
 		#TODO structure is wrong
 		self.clean_cache()
 		newNodes=[]
+		if random.random()<p_nodePartialFinal:
+			newNodes+=self._mutate_partial()
 		if random.random()<p_nodeMergeAnd:
 			newNodes+=self._mutate_merge_and()
 		if random.random()<p_nodeMergeOr:
 			newNodes+=self._mutate_merge_or()
-		if len(self.goal_nodes_names)>1 and random.random()<p_nodeMergeAnd:
-		if 0==0:
-			# rand weight
-		if 0==0:
-			# or-merge
-			pass
 		# rand weight
 		if random.random()<p_nodeRandWeight:
 			self._mutate_randWeight()

@@ -72,8 +72,9 @@ matchGoal=matchGoal_v4
 
 def matchGoaltree_find_inSet(b,goals):
 	for g in goals:
-		if matchGoal(b,g):
-			return True
+		res=matchGoal(b,g)
+		if res!=0:
+			return res
 	return False
 
 def matchGoaltree_find(b,gt,notBelow=None,beforeKeys=set()):
