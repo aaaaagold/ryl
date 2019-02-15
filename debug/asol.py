@@ -27,7 +27,7 @@ def matchGoal_v4(b,g):
 					matched=True
 					break
 		if isKW==False:
-			#p=re.compile("([0-9]+):([^ \b\t\n\r]+)")
+			#p=re.compile(r"([0-9]+):([^ \b\t\n\r]+)")
 			p=parser_itemWithouLabelSplit
 			item=p.split(str(x[1])) # may have several constraints, just one of them
 			for i in range(1,len(item),p.groups+1):
