@@ -579,7 +579,7 @@ class goaltree_edgeless:
 				else: w.append(kv[k])
 	def random(self):
 		self.clean_cache()
-		self.setWeight(dict([ (k,random.random()+1) for k in self.goal_nodes ]))
+		self.setWeight(dict([ (k,random.random()-1) for k in self.goal_nodes ]))
 	def getGoals(self,k):
 		# return a goalset
 		if k in self.goal_final: return self.goal_final[k][1]
@@ -661,6 +661,7 @@ class goaltree_edgeless:
 		rtv[1].arrange()
 		return rtv
 	def newGoalBy2Goals(self,g1,g2,p_contraintSelected=0.5,p_negateRatio=0.5):
+		# TODO: g1 , g2 is <list>
 		rtv=self._newGoal()
 		constraintsTotal=g1.constraints+g2.constraints
 		for c in constraintsTotal:
@@ -668,26 +669,50 @@ class goaltree_edgeless:
 				rtv[1].add(item=c[1],lebel=c[0],negate=c[2]^(random.random()<p_negateRatio),arrangeLater=True)
 		rtv[1].arrange()
 		return rtv
-	def mutate(self,someboardOutputs=[],
-		p_selfRef=0, # TODO
-		p_nodeDiverge=0.5,
-		__dummy=0):
-		#TODO: constraint mutation
-		#TODO structure is wrong
-		self.clean_cache()
-		if len(self.goal_nodes_names)>1 and random.random()<p_selfRef:
+	def _mutate_randWeight(self,p=1):
+		for k in self.goal_nodes:
+			if random.random()<p:
+				w=self.goal_nodes[k][0]
+				for i in range(len(w)):
+					w[i]+=random.random()-0.5
+		pass
+	def _mutate_merge_and(self):
+		# TODO
+		allNodesNames=[k for k in self.goal_final]+self.goal_nodes_names
+		if 0==0:
+			# new Goal()
 			arr=self.goal_nodes_names
 			L=len(arr)
 			s1=int(random.random()*L)
 			s2=int(s1+random.random()*(L-1)+1)%L
-			c1v=self.goal_nodes[arr[s1]][1].constraints
-			c2v=self.goal_nodes[arr[s2]][1].constraints
-		else:
-			for k in self.goal_nodes:
-				if random.random()<p_nodeDiverge:
-					w=self.goal_nodes[k][0]
-					for i in range(len(w)):
-						w[i]+=random.random()-0.5
+			g1=self.goal_nodes[arr[s1]][1]
+			g2=self.goal_nodes[arr[s2]][1]
+			goal=self.newGoalBy2Goals(g1,g2)
+		pass
+	def _mutate_merge_or(self):
+		pass
+	def mutate(self,someboardOutputs=[],
+		p_nodeRandWeight=0.5,
+		p_nodeMergeAnd=0.5, # TODO
+		p_nodeMergeOr=0.5, # TODO
+		__dummy=0):
+		#TODO: constraint mutation
+		#TODO structure is wrong
+		self.clean_cache()
+		newNodes=[]
+		if random.random()<p_nodeMergeAnd:
+			newNodes+=self._mutate_merge_and()
+		if random.random()<p_nodeMergeOr:
+			newNodes+=self._mutate_merge_or()
+		if len(self.goal_nodes_names)>1 and random.random()<p_nodeMergeAnd:
+		if 0==0:
+			# rand weight
+		if 0==0:
+			# or-merge
+			pass
+		# rand weight
+		if random.random()<p_nodeRandWeight:
+			self._mutate_randWeight()
 	def cross(self,rhs,p_wRef=0.5):
 		#TODO: constraint crossover
 		self.clean_cache()
