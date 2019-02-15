@@ -60,6 +60,21 @@ choice:
 		weights - i.e. change order to be as the similar as the other
 		other nodes - take a use
 
+	mutation detail:
+	def
+		node = (wv,gs)
+		gs=[ goal , ... ]
+		constraints=goal.constraints
+	constraints
+		sparsing constraints
+		merging constraints
+		adding constraints from finals’
+	goal
+		and constraints
+		no need: or constraints:
+			edgeless
+	node
+		rand wv
 ----
 
 find the same
