@@ -7,11 +7,11 @@ from amyhead import *
 
 from aexpand import *
 
-token_itemWithouLabelSplit="([0-9]+|" + charset_namespace + "):([^ \b\t\n\r]+)"
+token_itemWithouLabelSplit=r"([0-9]+|" + charset_namespace + r"):([^ \b\t\n\r]+)"
 parser_itemWithouLabelSplit=re.compile(token_itemWithouLabelSplit)
-token_itemVal_number="(-?[0-9]+\.?[0-9]*)"
-token_itemVal_rangeNum=token_itemVal_number+","+token_itemVal_number
-parser_itemVal_rangeNum=re.compile("^"+token_itemVal_rangeNum+"$")
+token_itemVal_number=r"(-?[0-9]+\.?[0-9]*)"
+token_itemVal_rangeNum=token_itemVal_number+r","+token_itemVal_number
+parser_itemVal_rangeNum=re.compile(r"^"+token_itemVal_rangeNum+r"$")
 
 def matchGoal_v4(b,g):
 	oarr=b.outputs()

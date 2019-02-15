@@ -10,20 +10,20 @@ from amyhead import *
 
 #charset_namespace="[A-Za-z0-9_$]+" # in 'shorthand'
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item='([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]([^\n]+)'
+token_item=r'([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]([^\n]+)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
-token_nodeopt='(-pull|-push)([ \t]+'+charset_namespace+')*'
-token_goalset = '(^|[\n])[ \t]*' # start : 1
-token_goalset+= '('+charset_namespace+')[ \t]+('+charset_namespace+'|-)' # name,succ : 2
-token_goalset+= '(([ \t]+'+charset_namespace+')*)' # pres : 2
-token_goalset+= '(([ \t]+'+token_nodeopt+')*)' # pu** : 4
-token_goalset+= '[ \t]*' # tailing
-token_goalset+= '(([\n][\n]?[^\n]+)*)' # contentInSameNode : 2
-token_goalset+= '([\n]+[\n](?=[\n])|[\n]?[\n]?$)' # sep : 2
+token_nodeopt=r'(-pull|-push)([ \t]+'+charset_namespace+r')*'
+token_goalset = r'(^|[\n])[ \t]*' # start : 1
+token_goalset+= r'('+charset_namespace+r')[ \t]+('+charset_namespace+r'|-)' # name,succ : 2
+token_goalset+= r'(([ \t]+'+charset_namespace+r')*)' # pres : 2
+token_goalset+= r'(([ \t]+'+token_nodeopt+r')*)' # pu** : 4
+token_goalset+= r'[ \t]*' # tailing
+token_goalset+= r'(([\n][\n]?[^\n]+)*)' # contentInSameNode : 2
+token_goalset+= r'([\n]+[\n](?=[\n])|[\n]?[\n]?$)' # sep : 2
 # '(?=...)'Matches if ... matches next, but doesn’t consume any of the string.
-sts=re.compile('[ \t]+')
-nodeopt=re.compile('('+token_nodeopt+')')
+sts=re.compile(r'[ \t]+')
+nodeopt=re.compile(r'('+token_nodeopt+r')')
 
 class KWs:
 	def __init__(self,kwv):
