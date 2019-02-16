@@ -75,13 +75,19 @@ class board:
 		self.swap((self.emptyAt(),emptyAt))
 		self.__board=copy.deepcopy(nums)
 		self.__emptyNum=nums[emptyAt]
-	def random(self,it=-1):
+	def random(self,it=-1,solvable=True):
 		sz=self.size()
 		if it<0: it=sz*sz
 		for _ in range(it):
 			ch1=int(random.random()*sz)
 			ch2=int(random.random()*sz)
 			self.swap((ch1,ch2))
+		if solvable and self.solvable()==False:
+			ch=int(random.random()*(sz-2))
+			if ch>=self.emptyAt(): ch+=1
+			succ=1+(ch+1==self.emptyAt())
+			self.swap((ch,ch+succ))
+		return self
 	def copyBoard(self):
 		return copy.deepcopy(self.__board)
 	def rawBoard(self):
