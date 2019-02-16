@@ -86,6 +86,7 @@ def main(argv):
 			for q in qv: q.print("\n") # debug
 			for p in newpop:
 				print("P:",p)
+				p[0][0]&=0
 				p[2].clear()
 				for q in qv:
 					res=sol1(q,p[1],oriNodes,step)
