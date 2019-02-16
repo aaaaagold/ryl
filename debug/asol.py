@@ -388,7 +388,9 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	__internal_data=None,
 	endBefore=None,
 	verbose=False,
+	__lv=0,
 	__dummy=None):
+	print("__lv",__lv) # debug
 	# init
 	genSol=genSol_v3
 	#print(_lastMatch) # debug
@@ -421,6 +423,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		"__dummy":None}
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
 	keys.sort(reverse=True)
+	#if verbose: print("?",keys) # debug
 	hvv=[]
 	hvv+=gt.pushs(currentKey=_lastMatch)+gt.pulls(currentKey=_lastMatch,wkeys=keys) # it's slow
 	# [ [foo1,foo2, ... ] , [foo3,foo4, ... ] , ... ]
@@ -429,6 +432,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	INFO.update(info)
 	INFO.update(expInfo)
 	INFO['hvv']=hvv
+	print(INFO)
 	for _ in range(len(hvv)+1):
 		#
 		#
@@ -440,6 +444,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		minProb=keys[len(keys)>>1][0]
 		matchesDict={}
 		matchedKeys=[]
+		print(keys)
 		for i in range(len(keys)):
 			if keys[i][0]<minProb:
 				#break
@@ -458,6 +463,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						matchedBfsRes=[(i,bRes)]
 					elif bRes[1]==matchedBfsRes[0][1][1]:
 						matchedBfsRes.append((i,bRes))
+			print("!",matchedBfsRes)
 			if len(matchedBfsRes)==0: continue
 			#
 			# check final
@@ -482,7 +488,8 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_possible=_possible,
 						__internal_data=__internal_data,
 						endBefore=endBefore,
-						verbose=verbose)
+						verbose=verbose,
+						__lv=__lv+1)
 					if len(_rtvMoves)!=0: break
 				#
 			if len(_rtvMoves)!=0: break
@@ -508,7 +515,8 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_possible=_possible,
 						__internal_data=__internal_data,
 						endBefore=endBefore,
-						verbose=verbose)
+						verbose=verbose,
+						__lv=__lv+1)
 				else:
 					sureFail|=True
 				del tryInfo
@@ -525,11 +533,14 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 					failinfo["set"].remove(tmp[1])
 	del expInfo,INFO ####
 	if len(_rtvMoves)==0: # after try next
+		#print(_lastMatch) # debug
 		# all candidate nodes cannot find a path to final(s)
 		if verbose:
 			print("GG",_nodes,len(hvv)) # debug
 			b.print()
-		_possible.append(_nodes)
+		tmp=[]
+		tmp.extend(_nodes)
+		_possible.append(tmp)
 		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
 		_possible.clear()
 		_possible.extend(newPoss)
