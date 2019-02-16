@@ -496,13 +496,16 @@ class goaltree_edgeless:
 	cnt_newNode=0
 	cnt_newGoal=0
 	def __init__(self,goaltree=None):
+		self.extendedView=None
 		self.goal_final={}
 		self.goal_nodes={}
 		# [k]=>([weight_vector],goalset_from_goaltree)
 		# the order to be used is from greatest ( far from final ) to the least ( close to final )
 		self.goal_nodes_names=[]
 		self.cache_succsStr={}
-		if not isNone(goaltree): self.setRef(goaltree)
+		if not isNone(goaltree):
+			self.setRef(goaltree)
+			self.extendedView=goaltree.extendedView
 	def clean_cache(self):
 		self.cache_succsStr={}
 	def copy(self):
@@ -517,6 +520,7 @@ class goaltree_edgeless:
 		rtv.goal_nodes=tmp
 		rtv.goal_nodes_names.extend(self.goal_nodes_names)
 		rtv.cache_succsStr=self.cache_succsStr
+		rtv.extendedView=self.extendedView
 		return rtv
 	def setRef(self,goaltree):
 		self.clean_cache()
@@ -636,7 +640,7 @@ class goaltree_edgeless:
 		rtv=[]
 		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if w<v[0] ]
 		rtv_nodes.sort()
-		rtv_nodes=[rtv_nodes[0]]
+		#rtv_nodes=[rtv_nodes[0]] # debug
 		maxW=(max(rtv_nodes)[0]+[0]) if len(rtv_nodes)!=0 else [0]
 		# let finals be tested first
 		rtv.extend([ (maxW,k) for k in self.goal_final ])
@@ -661,6 +665,7 @@ class goaltree_edgeless:
 		self.__class__.cnt_newGoal+=1
 		name="ec_%d"%(self.__class__.cnt_newGoal,)
 		g=Goal()
+		g.extendedView=self.extendedView
 		return name,g
 	def newGoal(self):
 		# empty goal
@@ -699,38 +704,50 @@ class goaltree_edgeless:
 		if len(g[1].constraints)==0: return None
 		return self.newNodeByGoals([g[1]])
 	
-	def _mutate_randWeight(self,p=1):
+	def _mutate_randWeight(self,strt="",p=1):
 		# random adjust weights
+		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
+		maxW=[0]
+		deltaW=None if strt=="" else maxW[0]-minW[0]
 		for k in self.goal_nodes:
-			if random.random()<p:
+			if (minW<self.goal_nodes[k][0]) and random.random()<p:
 				w=self.goal_nodes[k][0]
-				for i in range(len(w)):
-					w[i]+=random.random()-0.5
+				if strt=="":
+					for i in range(len(w)):
+						w[i]+=random.random()-0.5
+				else:
+					self.goal_nodes[k][0].clear()
+					self.goal_nodes[k][0].extend([random.random()*deltaW+minW[0]])
 		pass
-	def _mutate_merge(self,p_contraintSelected=0.5,p_negateRatio=0.5):
+	def _mutate_merge(self,strt="",p_contraintSelected=0.5,p_negateRatio=0.5):
 		# take some constraints from 2 goalsets of 2 nodes respectively and merge as a goalset forming a new node
 		# TODO
 		rtv=[]
-		names=random.sample(self.goal_nodes_names,2)
+		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
+		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
+		if len(candi)<2: return None
+		names=random.sample(candi,2)
 		nodesrc1=self.goal_nodes[names[0]]
 		nodesrc2=self.goal_nodes[names[1]]
 		node=self.newNode_merge(nodesrc1,nodesrc2,p_contraintSelected,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def _mutate_sparse(self,p_constraintReserved=0.5,p_negateRatio=0.5):
+	def _mutate_sparse(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		# take partial constraints of a goalset of a final node to form a new node
 		rtv=[]
-		name=random.choice(self.goal_nodes_names)
+		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
+		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
+		name=random.choice(candi)
 		nodesrc=self.goal_nodes[name]
 		node=self.newNode_sparse(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def _mutate_partialFinal(self,p_constraintReserved=0.5,p_negateRatio=0.5):
+	def _mutate_partialFinal(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def mutate(self,someboardOutputs=[],
+	def mutate(self,strt="",
 		max_node_cnt=200,
 		p_nodePartialFinal=0.5,
 		p_nodeSparse=0.5, # TODO
@@ -742,11 +759,11 @@ class goaltree_edgeless:
 		self.clean_cache()
 		newNodes=[]
 		if random.random()<p_nodePartialFinal:
-			newNodes+=self._mutate_partialFinal()
+			newNodes+=self._mutate_partialFinal(strt=strt)
 		if random.random()<p_nodeSparse:
-			newNodes+=self._mutate_sparse()
+			newNodes+=self._mutate_sparse(strt=strt)
 		if random.random()<p_nodeMerge:
-			newNodes+=self._mutate_merge()
+			newNodes+=self._mutate_merge(strt=strt)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
 		sz_n=len(self.goal_nodes)
@@ -757,7 +774,7 @@ class goaltree_edgeless:
 			for k in delSet: del self.goal_nodes[k]
 		self.addNodes(newNodes)
 		if random.random()<p_nodeRandWeight:
-			self._mutate_randWeight()
+			self._mutate_randWeight(strt=strt)
 		return self
 	def cross(self,rhs,p_wRef=0.5):
 		#TODO: constraint crossover

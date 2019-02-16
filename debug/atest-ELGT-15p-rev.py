@@ -10,12 +10,13 @@ from a15p_rev import *
 from asol import *
 
 def sol1(q,elgt,oriNodes,step):
-	print("?")
-	res=genSol_v3(q,elgt,step=step,stateLimit=4095,verbose=False)
-	print("!")
-	print(res)
-	trans=[0]+[ oriNodes.index(n)+1 for nv in res['possible'] for n in nv if n in oriNodes ]
-	print(trans)
+	print("sol1 strt")
+	res=genSol_v4(q,elgt,step=step,stateLimit=4095,verbose=False)
+	print("sol1 genSol ende")
+	print(res,oriNodes)
+	if len(res["moves"])!=0: return len(oriNodes)+1
+	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
+	print("trans",trans)
 	return max(trans)
 
 def demo1(argv):
@@ -27,13 +28,13 @@ def main(argv):
 	else:
 		args={
 			"manual":"ainput-15p-rev/very-sparse.txt",
-			"popsize":30,
+			"popsize":11,
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":100,
 			"addedRatio":2.0,
-			"qsize":10,
-			"step":11,
+			"qsize":1,
+			"step":8,
 			"__dummy":0
 		}
 		if "--help" in argv or "-h" in argv or "?" in argv:
@@ -57,33 +58,42 @@ def main(argv):
 		oriNodes.sort()
 		oriNodes=[ x[1] for x in oriNodes ]
 		print(oriNodes)
-		pop=[ ([0,0],elgt.copy()) for _ in range(popsize) ]
+		pop=[ ([0,0],elgt.copy(),[]) for _ in range(popsize) ]
 		# [ ([solve count,gen],idv) , ... ]
 		bbb=board((4,4))
 		qv=[bbb.random().copy() for _ in range(qsize)]
+		strt=[]
+		for q in qv:
+			res=sol1(q,elgt,oriNodes,step)
+			strt.append(res)
+		for p in pop: p[2].extend(strt)
 		for _ in range(r_total):
 			untilSize=int(len(pop)*addedRatio)
-			newpop=[p for p in pop]
+			newpop=[]
+			newpop.extend(pop)
 			while len(newpop)<untilSize:
-				if random.random()<0.5:
+				if 0==0 or random.random()<0.5:
 					# mutate
 					ch=random.choice(pop)
 					newGenNum=ch[0][1]+1
-					newpop.append(([0,newGenNum],ch[1].copy().mutate()))
+					best="" if len(ch[2])==0 else max(ch[2])[1]
+					newpop.append(([0,newGenNum],ch[1].copy().mutate(best),[]))
 				else:
 					# cross
 					chs=random.sample(pop,2)
 					newGenNum=max(chs[0][0][1],chs[1][0][1])+1
-					newpop.append(([0,newGenNum],chs[0][1].copy().cross(chs[1][1])))
+					newpop.append(([0,newGenNum],chs[0][1].copy().cross(chs[1][1]),[]))
 			for q in qv: q.print("\n") # debug
 			for p in newpop:
 				print("P:",p)
+				p[2].clear()
 				for q in qv:
-					tmp=sol1(q,p[1],oriNodes,step)
-					p[0][0]+=tmp
-					print(tmp)
-			newpop.sort(reverse=True)
-			newpop=newpop[:popsize]
+					res=sol1(q,p[1],oriNodes,step)
+					p[0][0]+=res[0]
+					p[2].append(res)
+					print(res)
+			newpop.sort(reverse=True,key=lambda x:x[0])
+			pop=newpop[:popsize]
 			print(newpop[0])
 	return 0
 		
