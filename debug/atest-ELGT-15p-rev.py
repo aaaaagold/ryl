@@ -8,9 +8,11 @@ from ag import *
 from a15p_rev import *
 #from ab2g import *
 from asol import *
+import argparse
 
 xxx=Goaltree()
 xxx.fromTxt("ainput-15p-rev/main.txt")
+xxx.fromTxt("ainput-15p-rev/very-sparse.txt")
 gt=xxx
 xxx=goaltree_edgeless(gt)
 learnDir="alearn-15p-rev/"
@@ -23,6 +25,50 @@ print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
+
+def demo1(argv):
+	pass
+
+def main(argv):
+	if argv[1]=="1demo":
+		demo1(argv[1:])
+	else:
+		args={
+			"manual":"ainput-15p-rev/very-sparse.txt",
+			"popsize":30,
+			"r-mutate":10,
+			"r-cross":10,
+			"qsize":10,
+			"__dummy":0
+		}
+		if "--help" in argv or "-h" in argv or "?" in argv:
+			print(args)
+			return 0
+		for k in args:
+			if k in argv:
+				args[k]=argv.index(k)+1
+		manual=args["manual"]
+		popsize=int(args["popsize"])
+		r_mutate=int(args["r-mutate"])
+		r_cross=int(args["r-cross"])
+		qsize=int(args["qsize"])
+		gt=Goaltree()
+		gt.fromTxt(manual)
+		elgt=goaltree_edgeless(gt)
+		pop=[ ([0],) for _ in range(popsize) ]
+		# [ ([solve count],idv) , ... ]
+		bbb=board((4,4))
+		for _ in range(1):
+			qv=[bbb.random() for _ in range(qsize)]
+			for _c in range(r_cross):
+				poptmp=[ ([0],p[1]) for p in pop ]
+				for _m in range(r_mutate):
+					pass
+	return 0
+		
+if __name__=='__main__':
+	exit(main(sys.argv))
+
 if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	it=2
 	step=int(sys.argv[it]) if len(sys.argv)>it and sys.argv[it].isdigit() else 8
