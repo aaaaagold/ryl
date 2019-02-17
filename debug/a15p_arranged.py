@@ -57,9 +57,7 @@ class board(ab.board):
 	def outputs(self,argv=()):
 		rtv=[]
 		rtv+=self._output(argv)
-		print(len(rtv))
 		rtv+=self.rawBoard()
-		print(len(rtv))
 		return rtv
 
 def p9(goal,strt):
