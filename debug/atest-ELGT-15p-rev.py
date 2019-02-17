@@ -84,7 +84,8 @@ def main(argv):
 					newGenNum=max(chs[0][0][1],chs[1][0][1])+1
 					newpop.append(([0,newGenNum],chs[0][1].copy().cross(chs[1][1]),[]))
 			for q in qv: q.print("\n") # debug
-			for p in newpop:
+			for i in range(popsize,len(newpop)):
+				p=newpop[i]
 				print("P:",p)
 				p[0][0]&=0
 				p[2].clear()
