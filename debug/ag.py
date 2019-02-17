@@ -502,10 +502,12 @@ class goaltree_edgeless:
 		# [k]=>([weight_vector],goalset_from_goaltree)
 		# the order to be used is from greatest ( far from final ) to the least ( close to final )
 		self.goal_nodes_names=[]
+		#self.goal_nodes_usedCnt={} # "name":int_cnt
+		self.oriNodes=[]
+		self.oriNodes_dict={}
 		self.cache_succsStr={}
 		if not isNone(goaltree):
 			self.setRef(goaltree)
-			self.extendedView=goaltree.extendedView
 	def clean_cache(self):
 		self.cache_succsStr={}
 	def copy(self):
@@ -521,9 +523,21 @@ class goaltree_edgeless:
 		rtv.goal_nodes_names.extend(self.goal_nodes_names)
 		rtv.cache_succsStr=self.cache_succsStr
 		rtv.extendedView=self.extendedView
+		rtv.oriNodes=self.oriNodes
+		rtv.oriNodes_dict=self.oriNodes_dict
+		#rtv.goal_nodes_usedCnt.update(self.goal_nodes_usedCnt)
 		return rtv
+	def _setRef_oth(self,goaltree):
+		self.extendedView=goaltree.extendedView
+		self.oriNodes.clear()
+		self.oriNodes.extend(self.goal_nodes_names)
+		self.oriNodes.sort(key=lambda x:self.goal_nodes[x][0])
+		self.oriNodes_dict=dict([ (self.oriNodes[i],i) for i in range(len(self.oriNodes)) ])
 	def setRef(self,goaltree):
+		self.__init__()
 		self.clean_cache()
+		#self.goal_nodes.clear()
+		#self.goal_nodes_names.clear()
 		tmp={}
 		wdata=self._setRef_weightedRecurr(goaltree)
 		for goalnode_key in goaltree.sets:
@@ -538,6 +552,7 @@ class goaltree_edgeless:
 				# wdata[goalnode_key]===0
 				self.goal_final[goalnode_key]=([ wdata[goalnode_key] ],goalset)
 		self.goal_nodes.update(tmp)
+		self._setRef_oth(goaltree)
 	def _setRef_weightedRecurr(self,goaltree,_wdata=None,_currentPath=None,_beginNode=""):
 		if _beginNode=="":
 			nodeList=[ k for k in goaltree.sets ]
@@ -727,40 +742,59 @@ class goaltree_edgeless:
 	
 	def _mutate_randWeight(self,strt="",p=1):
 		# random adjust weights
-		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
+		minW=nINF_v1 if strt=="" or (not strt in self.goal_nodes) else self.goal_nodes[strt][0]
 		maxW=[0]
 		deltaW=None if strt=="" else maxW[0]-minW[0]
-		for k in self.goal_nodes:
-			if (minW<self.goal_nodes[k][0]) and random.random()<p:
+		for k,v in self.goal_nodes.items():
+			if minW<v[0] and (not k in self.oriNodes_dict) and random.random()<p:
+				w=v[0]
 				if strt=="":
-					w=self.goal_nodes[k][0]
 					for i in range(len(w)):
 						w[i]+=random.random()-0.5
+					if w[0]>0: w[0]*=0
 				else:
-					self.goal_nodes[k][0].clear()
-					self.goal_nodes[k][0].extend([random.random()*deltaW+minW[0]])
+					w.clear()
+					w.extend([random.random()*deltaW+minW[0]])
 		pass
+	def _mutate_getCandi(self,strt=""):
+		# get nodes whose wegiht > strt's
+		useDefault=(strt=="" or (not strt in self.goal_nodes))
+		minW=nINF_v1 if useDefault else self.goal_nodes[strt][0]
+		nextNodeName=""
+		if not useDefault:
+			tmp=self.oriNodes_dict[strt]+1
+			nextNodeName+=self.oriNodes[tmp] if tmp<len(self.oriNodes) else ""
+		maxW=[0] if nextNodeName=="" else self.goal_nodes[nextNodeName][0]
+		rtv=[ (v,k) for k,v in self.goal_nodes.items() if minW<v[0] and (nextNodeName=="" or v[0]<=maxW) ]
+		rtv.sort(key=lambda x:x[0][0])
+		rtv=[x[0] for x in rtv]
+		return rtv
 	def _mutate_merge(self,strt="",p_contraintSelected=0.5,p_negateRatio=0.5):
 		# take some constraints from 2 goalsets of 2 nodes respectively and merge as a goalset forming a new node
 		# TODO
 		rtv=[]
-		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
-		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
+		candi=self._mutate_getCandi(strt=strt)
 		if len(candi)<2: return None
-		names=random.sample(candi,2)
-		nodesrc1=self.goal_nodes[names[0]]
-		nodesrc2=self.goal_nodes[names[1]]
+		nodesrc1=candi[0]
+		nodesrc2=candi[1]
 		node=self.newNode_merge(nodesrc1,nodesrc2,p_contraintSelected,p_negateRatio)
 		rtv.append(node)
 		return rtv
 	def _mutate_sparse(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		# take partial constraints of a goalset of a final node to form a new node
 		rtv=[]
-		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
-		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
-		name=random.choice(candi)
-		nodesrc=self.goal_nodes[name]
+		candi=self._mutate_getCandi(strt=strt)
+		if len(candi)<2: return None
+		nodesrc=candi[0]
 		node=self.newNode_sparse(nodesrc,p_constraintReserved,p_negateRatio)
+		rtv.append(node)
+		return rtv
+	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
+		rtv=[]
+		candi=self._mutate_getCandi(strt=strt)
+		if len(candi)<2: return None
+		nodesrc=candi[0]
+		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
 	def _mutate_partialFinal(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
@@ -768,19 +802,10 @@ class goaltree_edgeless:
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
-		rtv=[]
-		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
-		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
-		name=random.choice(candi)
-		nodesrc=self.goal_nodes[name]
-		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
-		rtv.append(node)
-		return rtv
 	def mutate(self,strt="",
 		max_node_cnt=200,
 		p_nodeNoise=0.5,
-		p_nodePartialFinal=0.5,
+		p_nodePartialFinal=1,
 		p_nodeSparse=0.5, # TODO
 		p_nodeMerge=0.5, # TODO
 		p_nodeRandWeight=0.5,

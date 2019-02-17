@@ -37,16 +37,20 @@ def main(argv):
 	if len(argv)>1 and argv[1]=="1demo":
 		demo1(argv[1:])
 	else:
+		tests=[
+			[4, 8, 7, 0, 12, 11, 14, 2, 6, 15, 1, 13, 10, 3, 5, 9],
+		]
+		
 		args={
 			"manual":"ainput-15p-rev/very-sparse.txt",
 			"popsize":11,
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":100,
-			"r-change":3,
+			"r-change":10,
 			"addedRatio":2.0,
 			"qsize":1,
-			"step":20,
+			"step":8,
 			"__dummy":0
 		}
 		if "--help" in argv or "-h" in argv or "?" in argv:
@@ -64,6 +68,7 @@ def main(argv):
 		addedRatio=float(args["addedRatio"])
 		qsize=int(args["qsize"])
 		step=int(args["step"])
+
 		gt=Goaltree()
 		gt.fromTxt(manual)
 		elgt=goaltree_edgeless(gt)
@@ -75,11 +80,13 @@ def main(argv):
 		# [ ([solve count,gen],idv) , ... ]
 		bbb=board((4,4))
 		qv=[bbb.random().copy() for _ in range(qsize)]
+		qv.extend([bbb.setNums(arr,arr.index(15)) for arr in tests])
 		strt=[]
 		for q in qv:
 			res=sol1(q,elgt,oriNodes,step)
 			strt.append(res)
-		for p in pop: p[2].extend(strt)
+		pop[0][0][0]+=sum([x[0] for x in strt])
+		pop[0][2].extend(strt)
 		for _ in range(r_total):
 			untilSize=int(len(pop)*addedRatio)
 			newpop=[]
@@ -90,17 +97,17 @@ def main(argv):
 				base=([0,baseGenNum],basesrc[1].copy(),[])
 				best="" if len(base[2])==0 else max(base[2])[1]
 				for _r_change in range(r_change):
-					if 0==0 or random.random()<0.5:
+					if random.random()<0.5:
 						# mutate
 						base[1].mutate(best)
 					else:
 						# cross
 						rhs=random.choice(pop)
 						base[0][1]=max(base[0][1],rhs[0][1])
-						base[1].cross(rhs)
+						base[1].cross(rhs[1])
 				base[0][1]+=1 # inc genNum
 				newpop.append(base)
-			for q in qv: q.print("\n") # debug
+			for q in qv: print(q.rawBoard()),q.print("\n") # debug
 			for i in range(popsize,len(newpop)):
 				p=newpop[i]
 				print("P:",p)
