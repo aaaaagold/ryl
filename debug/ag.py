@@ -696,7 +696,7 @@ class goaltree_edgeless:
 			newVal=int(rtv1s[1])+int(random.random()*15)-7
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
-		print(rtv[1])
+		#print(rtv[1]) # debug
 		return tuple(rtv)
 	def newGoal_noise(self,g,p_contraintSelected=1,p_negateRatio=0):
 		cs=g.constraints
