@@ -767,6 +767,7 @@ class goaltree_edgeless:
 		maxW=[0] if nextNodeName=="" else self.goal_nodes[nextNodeName][0]
 		rtv=[ (v,k) for k,v in self.goal_nodes.items() if minW<v[0] and (nextNodeName=="" or v[0]<=maxW) ]
 		rtv.sort(key=lambda x:x[0][0])
+		rtv=random.sample(rtv,2)
 		rtv=[x[0] for x in rtv]
 		return rtv
 	def _mutate_merge(self,strt="",p_contraintSelected=0.5,p_negateRatio=0.5):
