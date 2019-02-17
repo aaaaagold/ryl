@@ -10,7 +10,7 @@ from amyhead import *
 
 #charset_namespace="[A-Za-z0-9_$]+" # in 'shorthand'
 #parser_goal=re.compile('[ \t]*([0-9]+)[ \t](.+)')
-token_item=r'([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]([^\n]+)'
+token_item=r'([\n]|^)([ \t]*\~?[0-9]+|[ \t]*\~?include|[ \t]*\~?gonear)[ \t]+([^ \t][^\n]*)'
 #token_item_1='[ \t]*([0-9]+)[ \t]([^\n]+)'
 #token_item='[\t]*\[[ \t]*[\n](([^\n]+[\n])+)[ \t]*\][ \t]*([\n]|$)'
 token_nodeopt=r'(-pull|-push)([ \t]+'+charset_namespace+r')*'
@@ -704,10 +704,11 @@ class goaltree_edgeless:
 	def _newGoal_noise_noisify(self,c):
 		# TODO noise in RealNumber and Range
 		rtv=list(c)
-		rtv1v=rtv[1].split(" ")
+		rtv1v=re.split("[ ]+",rtv[1])
 		newrtv1strs=[]
 		for c in rtv1v:
 			rtv1s=c.split(":")
+			#print(rtv1s) # debug
 			newVal=int(rtv1s[1])+int(random.random()*15)-7
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
