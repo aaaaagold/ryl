@@ -39,6 +39,7 @@ def main(argv):
 	else:
 		tests=[
 			[4, 8, 7, 0, 12, 11, 14, 2, 6, 15, 1, 13, 10, 3, 5, 9],
+			[1, 6, 12, 9, 14, 4, 11, 3, 0, 10, 5, 13, 2, 8, 7, 15],
 		]
 		
 		args={
@@ -97,7 +98,7 @@ def main(argv):
 				basesrc=random.choice(pop)
 				baseGenNum=basesrc[0][1]
 				base=([0,baseGenNum],basesrc[1].copy(),[])
-				best="" if len(base[2])==0 else max(base[2])[1]
+				best="" if len(base[2])==0 else min(base[2])[1]
 				for _r_change in range(r_change):
 					if random.random()<0.5:
 						# mutate
