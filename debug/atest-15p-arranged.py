@@ -11,7 +11,7 @@ from asol import *
 	
 def sol1(q,elgt,oriNodes,step):
 	print("sol1 strt") # debug
-	res=genSol_v4(q,elgt,step=step,stateLimit=4095,verbose=True)
+	res=genSol_v4(q,elgt,step=step,stateLimit=4095,verbose=False)
 	print("sol1 genSol ende") # debug
 	print(res,oriNodes)
 	if len(res["moves"])!=0: return len(oriNodes)+1
