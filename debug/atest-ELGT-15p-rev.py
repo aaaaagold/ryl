@@ -8,7 +8,7 @@ from ag import *
 from a15p_rev import *
 #from ab2g import *
 from asol import *
-
+	
 def sol1(q,elgt,oriNodes,step):
 	print("sol1 strt")
 	res=genSol_v4(q,elgt,step=step,stateLimit=4095,verbose=False)
@@ -22,6 +22,17 @@ def sol1(q,elgt,oriNodes,step):
 def demo1(argv):
 	pass
 
+def sol_thread(newpopPartial,qv,oriNodes,step):
+	for p in newpopPartial:
+		#print("P:",p)
+		p[0][0]&=0
+		p[2].clear()
+		for q in qv:
+			res=sol1(q,p[1],oriNodes,step)
+			p[0][0]+=res[0]
+			p[2].append(res)
+			#print(res)
+
 def main(argv):
 	if len(argv)>1 and argv[1]=="1demo":
 		demo1(argv[1:])
@@ -32,6 +43,7 @@ def main(argv):
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":100,
+			"r-change":3,
 			"addedRatio":2.0,
 			"qsize":1,
 			"step":8,
@@ -48,6 +60,7 @@ def main(argv):
 		r_mutate=int(args["r-mutate"])
 		r_cross=int(args["r-cross"])
 		r_total=int(args["r-total"])
+		r_change=int(args["r-change"])
 		addedRatio=float(args["addedRatio"])
 		qsize=int(args["qsize"])
 		step=int(args["step"])
@@ -72,17 +85,21 @@ def main(argv):
 			newpop=[]
 			newpop.extend(pop)
 			while len(newpop)<untilSize:
-				if 0==0 or random.random()<0.5:
-					# mutate
-					ch=random.choice(pop)
-					newGenNum=ch[0][1]+1
-					best="" if len(ch[2])==0 else max(ch[2])[1]
-					newpop.append(([0,newGenNum],ch[1].copy().mutate(best),[]))
-				else:
-					# cross
-					chs=random.sample(pop,2)
-					newGenNum=max(chs[0][0][1],chs[1][0][1])+1
-					newpop.append(([0,newGenNum],chs[0][1].copy().cross(chs[1][1]),[]))
+				basesrc=random.choice(pop)
+				baseGenNum=basesrc[0][1]
+				base=([0,baseGenNum],basesrc[1].copy(),[])
+				best="" if len(base[2])==0 else max(base[2])[1]
+				for _r_change in range(r_change):
+					if 0==0 or random.random()<0.5:
+						# mutate
+						base[1].mutate(best)
+					else:
+						# cross
+						rhs=random.choice(pop)
+						base[0][1]=max(base[0][1],rhs[0][1])
+						base[1].cross(rhs)
+				base[0][1]+=1 # inc genNum
+				newpop.append(base)
 			for q in qv: q.print("\n") # debug
 			for i in range(popsize,len(newpop)):
 				p=newpop[i]

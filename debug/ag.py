@@ -686,6 +686,27 @@ class goaltree_edgeless:
 		if len(g[1].constraints)==0: return None
 		return self.newNodeByGoals([g[1]])
 	
+	def _newGoal_noise_noisify(self,c):
+		# TODO noise in RealNumber and Range
+		rtv=list(c)
+		rtv1v=rtv[1].split(" ")
+		newrtv1strs=[]
+		for c in rtv1v:
+			rtv1s=c.split(":")
+			newVal=int(rtv1s[1])+int(random.random()*15)-7
+			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
+		rtv[1]=' '.join(newrtv1strs)
+		print(rtv[1])
+		return tuple(rtv)
+	def newGoal_noise(self,g,p_contraintSelected=1,p_negateRatio=0):
+		cs=g.constraints
+		cs=[self._newGoal_noise_noisify(c) for c in cs]
+		return self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
+	def newNode_noise(self,node,p_contraintSelected=1,p_negateRatio=0):
+		g=self.newGoal_noise(random.choice(node[1]),p_contraintSelected,p_negateRatio)
+		if len(g[1].constraints)==0: return None
+		return self.newNodeByGoals([g[1]])
+	
 	def newGoal_merge(self,g1,g2,p_contraintSelected=0.5,p_negateRatio=0.5):
 		cs=g1.constraints+g2.constraints
 		return self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
@@ -747,8 +768,18 @@ class goaltree_edgeless:
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
+	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
+		rtv=[]
+		minW=nINF_v1 if strt=="" else self.goal_nodes[strt][0]
+		candi=[k for k in self.goal_nodes if minW<self.goal_nodes[k][0]]
+		name=random.choice(candi)
+		nodesrc=self.goal_nodes[name]
+		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
+		rtv.append(node)
+		return rtv
 	def mutate(self,strt="",
 		max_node_cnt=200,
+		p_nodeNoise=0.5,
 		p_nodePartialFinal=0.5,
 		p_nodeSparse=0.5, # TODO
 		p_nodeMerge=0.5, # TODO
@@ -758,12 +789,14 @@ class goaltree_edgeless:
 		#TODO structure is wrong
 		self.clean_cache()
 		newNodes=[]
+		if random.random()<p_nodeNoise:
+			newNodes+=self._mutate_noise(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodePartialFinal:
-			newNodes+=self._mutate_partialFinal(strt=strt)
+			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeSparse:
-			newNodes+=self._mutate_sparse(strt=strt)
+			newNodes+=self._mutate_sparse(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeMerge:
-			newNodes+=self._mutate_merge(strt=strt)
+			newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
 		sz_n=len(self.goal_nodes)
