@@ -46,7 +46,7 @@ def main(argv):
 			"r-change":3,
 			"addedRatio":2.0,
 			"qsize":1,
-			"step":8,
+			"step":20,
 			"__dummy":0
 		}
 		if "--help" in argv or "-h" in argv or "?" in argv:

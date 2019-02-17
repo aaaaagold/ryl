@@ -732,8 +732,8 @@ class goaltree_edgeless:
 		deltaW=None if strt=="" else maxW[0]-minW[0]
 		for k in self.goal_nodes:
 			if (minW<self.goal_nodes[k][0]) and random.random()<p:
-				w=self.goal_nodes[k][0]
 				if strt=="":
+					w=self.goal_nodes[k][0]
 					for i in range(len(w)):
 						w[i]+=random.random()-0.5
 				else:

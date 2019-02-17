@@ -596,7 +596,10 @@ def genSol_v4(b,gt,step=8,stateLimit=4095,currStep=0,
 		"nodes":_nodes,
 		"__dummy":None}
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
-	keys.sort(reverse=True)
+	#keys.sort(reverse=True) # for grading purpose, need from farest () node to nearest node
+	keys.sort() # for grading purpose, need from farest () node to nearest node
+	# there will be added node inside,
+	# but added nodes won't be consider as a grade, only original nodes.
 	#if verbose: print("?",keys) # debug
 	hvv=[]
 	hvv+=gt.pushs(currentKey=_lastMatch)+gt.pulls(currentKey=_lastMatch,wkeys=keys) # it's slow
