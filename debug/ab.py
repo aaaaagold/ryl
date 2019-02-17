@@ -94,7 +94,7 @@ class board:
 	def rawBoard(self):
 		return self.__board
 	def output(self,argv=()):
-		return ()
+		return []
 	def outputs(self,argv=()):
 		rtv=[]
 		rtv+=self.output(argv)

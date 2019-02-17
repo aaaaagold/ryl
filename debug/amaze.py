@@ -58,9 +58,9 @@ class maze:
 		self.pos=copy.deepcopy(bd)
 	def rawBoard(self):
 		# returns something that can be changed in this "question"
-		return self.pos
+		return list(self.pos)
 	def output(self,argv=()):
-		return ()
+		return []
 	def outputs(self,argv=()):
 		rtv=[]
 		rtv+=self.output(argv)

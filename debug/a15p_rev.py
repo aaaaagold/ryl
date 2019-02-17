@@ -18,7 +18,7 @@ class board(ab.board):
 		for i in range(len(self.__board)):
 			tmp[ self.__board[i] ] = (i,)
 			#tmp[ self.__board[i] ] = (int(i//self.__wh[0]),int(i%self.__wh[0]))
-		return ( x for v in tmp for x in v )
+		return [ x for v in tmp for x in v ]
 	def copy(self):
 		rtv=self.__class__(self.__wh)
 		rtv.__board=self.copyBoard()

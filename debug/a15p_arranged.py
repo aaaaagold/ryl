@@ -10,7 +10,12 @@ from amyhead import *
 import ab
 
 class board(ab.board):
-	outputOrder=[ 15,14,11,10,13,9,7,6,5,12,5,4,3,2,1,0 ]
+	outputOrder=[
+		15,
+		14,11,10,
+		13,9,7,6,5,
+		12,8,4,3,2,1,0
+	]
 	'''
 		pieceNum.. -> outputOrder[pieceNum]..
 		00 01 02 03
@@ -30,10 +35,15 @@ class board(ab.board):
 		tmp=[ t for _ in range(len(self.__board)) ]
 		for loc in range(len(self.__board)):
 			transedOrd=self.__class__.outputOrder[self.__board[loc]] # change order
-			tmp[transedOrd]=(int(loc//self.__wh[0]),int(loc%self.__wh[0]))
+			tmp[transedOrd]=(int(loc%self.__wh[0]),int(loc//self.__wh[0]))
 			#tmp[ self.__board[loc] ] = (loc,)
 			#tmp[ self.__board[loc] ] = (int(loc//self.__wh[0]),int(loc%self.__wh[0]))
-		return ( x for v in tmp for x in v )
+		rtv=[ x for v in tmp for x in v ]
+		#tmp=[] # debug
+		#tmp+=rtv # debug
+		#tmp+=rtv # debug
+		#print(len(tmp)) # debug
+		return rtv
 	def copy(self):
 		rtv=self.__class__(self.__wh)
 		rtv.__board=self.copyBoard()
@@ -47,7 +57,9 @@ class board(ab.board):
 	def outputs(self,argv=()):
 		rtv=[]
 		rtv+=self._output(argv)
+		print(len(rtv))
 		rtv+=self.rawBoard()
+		print(len(rtv))
 		return rtv
 
 def p9(goal,strt):
