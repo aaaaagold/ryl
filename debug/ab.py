@@ -75,6 +75,7 @@ class board:
 		self.swap((self.emptyAt(),emptyAt))
 		self.__board=copy.deepcopy(nums)
 		self.__emptyNum=nums[emptyAt]
+		return self
 	def random(self,it=-1,solvable=True):
 		sz=self.size()
 		if it<0: it=sz*sz
