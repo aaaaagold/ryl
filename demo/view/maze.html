@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{position:relative;}
+.btn{border:1px solid grey;text-align:center;}
+.btn *{display:inline-block;width:100%;height:100%;}
+.btn:hover{background-color:rgba(111,111,0,0.5);}
+#maze-blk{
+	display:inline-block;
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+.row{margin:0px;padding:0px;border:0px solid black;}
+.cell{
+	position:relative;display:inline-block;width:23px;height:23px;
+	margin:0px;padding:0px;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+	color:rgba(0,0,0,0);
+}
+.cell-inner{
+	position:absolute;
+	display:block;
+	width:100%;
+	height:100%;
+}
+.cell-ruler{
+	position:relative;display:inline-block;width:23px;height:23px;
+	margin:0px;padding:0px;
+	border-right:1px solid rgba(0,0,0,0);
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+.cell-inner>div{
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+textarea{width:100%;}
+</style>
+<style id="dynamic">
+</style>
+</head>
+<body>
+<div id="root-maze">
+<div id="outFile"><div>output file path</div><div><textarea tabindex=1></textarea></div></div>
+<div id="confirm" class="btn"><a tabindex=2 href="javascript:void(0);">confirm</a></div>
+<div id="maze"><div>maze</div><div id="maze-blk"></div></div>
+</div>
+<script>
+let ct=(txt)=>{return document.createTextNode(txt);};
+let ce=(tag)=>{return document.createElement(tag);};
+let ge=(id)=>{return document.getElementById(id);};
+Object.prototype.arrback=function(){if(this.length)return this[this.length-1];};
+HTMLElement.prototype.ac=function(c){this.appendChild(c);return this;};
+HTMLElement.prototype.sa=function(a,v){this.setAttribute(a,v);return this;};
+HTMLElement.prototype.ga=function(a){return this.getAttribute(a);};
+HTMLElement.prototype.atxt=function(t){this.appendChild(ct(t));return this;};
+HTMLElement.prototype.getCell=function(xyz__){
+	let rtv=this;
+	for(let x=xyz__.length;x--;) rtv=rtv.childNodes[xyz__[x]];
+	return rtv;
+};
+HTMLElement.prototype.rc=function(remainCnt){
+	let arr=this.childNodes;
+	while(remainCnt<arr.length) this.removeChild(arr.arrback());
+	return this;
+};
+
+let css_dynamic=ge("dynamic");
+let css_light="",css_dark="";
+
+css_light+="body{ background-color:white; color:black; }";
+css_light+="#maze-blk{ border-left:1px solid black; border-top:1px solid black; }";
+css_light+=".cell{ border-right:1px solid black; border-bottom:1px solid black; }";
+css_light+=".cell-ruler{ color:black; }";
+css_light+=".cell-inner>div{ color:black; }";
+
+css_dark+="body{ background-color:black; color:white; }";
+css_dark+="#maze-blk{ border-left:1px solid white; border-top:1px solid white; }";
+css_dark+=".cell{ border-right:1px solid white; border-bottom:1px solid white; }";
+css_dark+=".cell-ruler{ color:white; }";
+css_dark+=".cell-inner>div{ color:white; }";
+
+css_dynamic.innerHTML=css_dark;
+
+let confirmBtn=ge("confirm");
+let jurl=function jurl(url,method,data,callback){ let xhttp = new XMLHttpRequest(); xhttp.onreadystatechange = function() { if (this.readyState == 4) { let s=this.status.toString(); if(s.length==3 && s.slice(0,1)=='2'){ if(typeof(callback)=="function"){ callback(this.responseText); } } } }; xhttp.open(method,url,true); xhttp.send(method==="GET"?undefined:data); };
+let parser_maze=function _parser_maze(outtxt_relpath,putAtDiv){
+	if(_parser_maze.getparse==undefined){ _parser_maze.getparse=function _getparse(txt){
+		if(_getparse.parse==undefined){ _getparse.parse=function _parse(mazeData,solData){
+			if(_parse.putCss==undefined){ _parse.putCss=(div,css)=>{
+				div.sa("style",css);
+				div.style_prev=css;
+			};}
+			if(_parse.getPos==undefined){ _parse.getPos=(str)=>{
+				let s=str.indexOf("pos");
+				let L=str.indexOf("(",s)+1;
+				let R=str.indexOf(")",s);
+				rtv=str.slice(L,R).split(",");
+				rtv.forEach((e,k,a)=>{a[k]=parseInt(e);});
+				return rtv;
+			};}
+			if(_parse.transConstraints==undefined){ _parse.transConstraints=(str)=>{
+				let arr=str.split("\n");
+				arr.shift();
+				let rtv=[];
+				for(let x=arr.length;x--;){
+					let tmp=arr[x].split(/[ ]+/);
+					if(tmp[0]==="=="){
+						let to=tmp[1].search(":");
+						rtv[parseInt(tmp[1].slice(0,to))]=parseInt(tmp[1].slice(to+1));
+					}
+				}
+				return rtv;
+			};}
+			// maze
+			let mazeblk=ge("maze-blk");
+			clearInterval(mazeblk.itvl);
+			{
+				let data=mazeData.split("\n"); while(data.arrback()=="") data.pop();
+				data.forEach((ele,key,arr)=>{
+					let tmp=ele.split(" ");tmp.forEach((e,k,a)=>{a[k]=parseInt(e);});
+					arr[key]=tmp;
+				});
+				let mxy=data[0];
+				mazeblk.rc(0);
+				for(let y=0;y<mxy[1];++y){
+					let div=ce("div").sa("class","row");
+					//for(let x=mxy[0];x--;) div.ac(ce("div").sa("class","cell").atxt("."));
+					for(let x=mxy[0];x--;) div.ac(ce("div").sa("class","cell").ac(ce("div").sa("class","cell-inner")).atxt("."));
+					div.ac(ce("div").sa("class","cell-ruler").atxt(y));
+					mazeblk.ac(div);
+				}
+				{
+					let div=ce("div").sa("class","row");
+					for(let x=0;x<mxy[0];++x) div.ac(ce("div").sa("class","cell-ruler").atxt(x));
+					mazeblk.ac(div);
+				}
+				for(let i=1;i<data.length;++i){
+					let tmp=Math.min(data[i][0],data[i][1]);
+					let topLeft=[tmp%mxy[0]]; topLeft.push(parseInt((tmp-topLeft[0])/mxy[0]));
+					let node=mazeblk.getCell(topLeft);
+					let lastStyle=node.ga("style"); if(lastStyle==null) lastStyle="";
+					if(Math.abs(data[i][0]-data[i][1])==1){
+						lastStyle+="border-right:1px solid rgba(0,0,0,0);";
+					}else{
+						lastStyle+="border-bottom:1px solid rgba(0,0,0,0);";
+					}
+					node.sa("style",lastStyle);
+				}
+			}
+			// nodes
+			{
+				let putCss=_parse.putCss;
+				let transConstraints=_parse.transConstraints;
+				let re=/\ngoal[\r]?\n/;
+				let s=solData.search(re);
+				let ss=solData.slice(s);
+				let data=ss.split(re);
+				if(data.length) data.shift();
+				while(data.length && data.arrback().slice(0,3)!="END") data.pop();
+				if(data.length) data.pop();
+				data.forEach((ele,key,arr)=>{arr[key]=transConstraints(ele);});
+				for(let x=data.length;x--;){
+					let div=mazeblk.getCell(data[x]).childNodes[0];
+					putCss(div,"background-color:rgba(0,0,255,0.5);");
+					div.ac(ce("div").atxt(x));
+				}
+			}
+			// loc
+			{
+				let putCss=_parse.putCss;
+				let getPos=_parse.getPos;
+				let strt=getPos(solData);
+				let re=/\nmsg[\r]?\n/;
+				let s=solData.search(re);
+				let ss=solData.slice(s);
+				let data=ss.split(re);
+				data.shift();
+				data.forEach((ele,key,arr)=>{arr[key]=getPos(ele);});
+				data.unshift(strt);
+				let ende=data.arrback();
+				putCss(mazeblk.getCell(strt).childNodes[0],"background-color:rgba(0,255,0,0.5);");
+				putCss(mazeblk.getCell(ende).childNodes[0],"background-color:rgba(255,0,0,0.5);");
+				let idx=0;
+				mazeblk.getCell(data[idx]).childNodes[0].sa("style","background-color:rgba(233,233,0,0.75);");
+				mazeblk.itvl=setInterval(()=>{  let cell;
+					cell=mazeblk.getCell(data[idx]).childNodes[0];
+					cell.sa("style",cell.style_prev);
+					idx+=1; if(idx==data.length) idx=0;
+					cell=mazeblk.getCell(data[idx]).childNodes[0];
+					cell.style_prev=cell.ga("style");
+					cell.sa("style","background-color:rgba(233,233,0,0.75);");
+				},500);
+			}
+		};}
+		let re=/\nmaze[ ]([^\n]+)\n/g;
+		let mazeFile=txt.match(re)[0].split(re)[1];
+		jurl("/"+mazeFile,"GET",0,(txtMaze)=>{_getparse.parse(txtMaze,txt);});
+	};}
+	jurl(outtxt_relpath,"GET",0,(txt)=>{_parser_maze.getparse(txt);});
+};
+//jurl("out-maze.txt","GET",0,(txt)=>{ge("blk").ac(ct(txt));});
+let outFilePath=ge("outFile").childNodes[1].childNodes[0];
+outFilePath.value="out-maze-0.txt";
+let update=()=>{parser_maze(outFilePath.value,ge("blk"));};
+confirmBtn.onclick=update;
+update();
+
+</script>
+</body>
+</html>
