@@ -111,7 +111,7 @@ let parser_maze=function _parser_maze(outtxt_relpath,putAtDiv){
 				for(let x=arr.length;x--;){
 					let tmp=arr[x].split(/[ ]+/);
 					if(tmp[0]==="=="){
-						let to=tmp[1].search(":");
+						let to=tmp[1].indexOf(":");
 						rtv[parseInt(tmp[1].slice(0,to))]=parseInt(tmp[1].slice(to+1));
 					}
 				}
