@@ -1,0 +1,156 @@
+#end
+finals: ['Final']
+size: {'byname': 21, 'bygoal': 21}
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (3, 12)
+[3, 12]
+0.04686880111694336
+goal
+a4
+== 0:7
+== 1:11
+goal
+a2
+== 0:10
+== 1:12
+goal
+Final
+== 0:14,14
+== 1:14,14
+goal
+END
+[[(0, [1]), (0, [1]), (0, [2]), (0, [0]), (0, [2]), (0, [2]), (0, [2]), (0, [0]), (0, [2]), (0, [2]), (0, [2]), (0, [2]), (0, [0]), (0, [2]), (0, [1]), (0, [2]), (0, [0]), (0, [0]), (0, [2])]]
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (3, 11)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (3, 10)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (4, 10)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (4, 11)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (5, 11)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (6, 11)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (7, 11)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (7, 12)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (8, 12)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (9, 12)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (10, 12)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (11, 12)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (11, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (12, 13)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (12, 12)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (13, 12)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (13, 13)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (13, 14)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (14, 14)
+

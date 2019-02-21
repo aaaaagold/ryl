@@ -1,0 +1,576 @@
+#end
+finals: ['Final']
+size: {'byname': 16, 'bygoal': 19}
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 11)
+[1, 11]
+0.3921620845794678
+goal
+z1
+== 0:3
+== 1:6
+== 0:6
+== 1:3
+goal
+k
+== 0:1
+== 1:1
+goal
+j
+== 0:1
+== 1:7
+goal
+i
+== 0:1
+== 1:13
+goal
+h
+== 0:4
+== 1:13
+goal
+g
+== 0:4
+== 1:7
+goal
+f
+== 0:10
+== 1:7
+goal
+e
+== 0:10
+== 1:13
+goal
+d
+== 0:13
+== 1:13
+goal
+c
+== 0:13
+== 1:7
+goal
+b
+== 0:13
+== 1:1
+goal
+a
+== 0:7
+== 1:1
+goal
+Final
+== 0:2
+== 1:1
+goal
+END
+[[(0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [2]), (0, [2]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [3]), (0, [3]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [2]), (0, [2]), (0, [2]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [2]), (0, [2]), (0, [2]), (0, [2]), (0, [2]), (0, [2]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [0]), (0, [2]), (0, [2]), (0, [2]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [1]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3]), (0, [3])]]
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 10)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 9)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 8)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 7)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 6)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (2, 6)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 6)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 5)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 4)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 3)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 2)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (2, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 1)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 2)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 3)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 4)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 5)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 6)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 7)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 8)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 9)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 10)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 11)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 12)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (1, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (2, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 13)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 12)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 11)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 10)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 9)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 8)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (5, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (6, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (7, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (8, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (9, 7)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 7)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 8)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 9)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 10)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 11)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 12)
+
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (11, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (12, 13)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 13)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 12)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 11)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 10)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 9)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 8)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 7)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 6)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 5)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 4)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 3)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 2)
+
+msg
+(0, [1])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (13, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (12, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (11, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (10, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (9, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (8, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (7, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (6, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (5, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (4, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (3, 1)
+
+msg
+(0, [3])
+board
+maze ainput-maze/mazes/m-nowall-adjlist.txt
+size (15, 15)
+pos (2, 1)
+

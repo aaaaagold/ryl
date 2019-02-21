@@ -1,0 +1,29 @@
+#end
+finals: ['Final']
+size: {'byname': 21, 'bygoal': 21}
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (13, 13)
+[13, 13]
+0.01562786102294922
+goal
+Final
+== 0:14,14
+== 1:14,14
+goal
+END
+[[(0, [0]), (0, [2])]]
+msg
+(0, [0])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (13, 14)
+
+msg
+(0, [2])
+board
+maze ainput-maze/mazes/m-1-adjlist.txt
+size (15, 15)
+pos (14, 14)
+
