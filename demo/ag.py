@@ -830,7 +830,7 @@ class goaltree_edgeless:
 		sz_n=len(self.goal_nodes)
 		sz_nn=len(newNodes)
 		if sz_n+sz_nn>max_node_cnt:
-			delSet=set(random.sample(set(self.goal_nodes_names),min(sz_n,sz_nn)))
+			delSet=set(random.sample(self.goal_nodes_names,min(sz_n,sz_nn)))
 			self.goal_nodes_names=[k for k in self.goal_nodes_names if not k in delSet]
 			for k in delSet: del self.goal_nodes[k]
 		self.addNodes(newNodes)
