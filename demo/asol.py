@@ -257,6 +257,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_nodes=_nodes,_rtvNodes=_rtvNodes,
 						_possible=_possible,
 						__internal_data=__internal_data,
+						shortcut=shortcut,
 						endBefore=endBefore,
 						verbose=verbose,
 						__lv=__lv+1)
