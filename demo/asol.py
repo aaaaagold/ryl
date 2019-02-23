@@ -125,6 +125,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	_nodes=[],_rtvNodes=[],
 	_possible=[],
 	__internal_data=None,
+	shortcut=True,
 	endBefore=None,
 	verbose=False,
 	__lv=0,
@@ -161,7 +162,8 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		"nodes":_nodes,
 		"__dummy":None}
 	keys=gt.wkeys(currentKey=_lastMatch,beforeKeys=set(_nodes)) # rtv = [ (weight,nodeName) , ... ]
-	keys.sort(reverse=True)
+	if shortcut==False: keys.sort()
+	else: keys.sort(reverse=True)
 	#if verbose: print("?",keys) # debug
 	hvv=[]
 	hvv+=gt.pushs(currentKey=_lastMatch)+gt.pulls(currentKey=_lastMatch,wkeys=keys) # it's slow
@@ -226,6 +228,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
 						_possible=_possible,
 						__internal_data=__internal_data,
+						shortcut=shortcut,
 						endBefore=endBefore,
 						verbose=verbose,
 						__lv=__lv+1)
