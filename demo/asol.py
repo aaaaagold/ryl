@@ -172,28 +172,27 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	INFO.update(expInfo)
 	INFO['hvv']=hvv
 	#print(INFO) # debug
+	# try different heuristic function
 	for _ in range(len(hvv)+1):
-		#
-		#
-		#INFO["h"]=hv[x]
-		if _!=0: break # debug
+		#if _!=0: break # debug
 		bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
-		#del expInfo,INFO ####
 		#if _isBegin: print(keys) # debug
-		minProb=keys[len(keys)>>1][0]
+		#minProb=keys[len(keys)>>1][0]
 		matchesDict={}
 		matchedKeys=[]
 		#print(keys) # debug
+		# verify if a node can match
 		for i in range(len(keys)):
-			if keys[i][0]<minProb:
-				#break
-				pass
-				# omit < 50%-th.  # keys is sorted
+			#if keys[i][0]<minProb:
+			#	#break
+			#	pass
+			#	# omit < 50%-th.  # keys is sorted
 			key=keys[i][1]
 			goalSet=gt.getGoals(key)
 			
 			# check if it floods to some nodes
 			matchedBfsRes=[]
+			# go through flooding results
 			for i in bfsRes:
 				bRes=bfsRes[i]
 				if matchGoaltree_find_inSet(bRes[0],goalSet):
@@ -202,7 +201,6 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						matchedBfsRes=[(i,bRes)]
 					elif bRes[1]==matchedBfsRes[0][1][1]:
 						matchedBfsRes.append((i,bRes))
-			#print("!",matchedBfsRes) # debug
 			if len(matchedBfsRes)==0: continue
 			#
 			# check final
@@ -238,6 +236,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			# node appearsa, but previously path not found
 			matchesDict[key]=matchedBfsRes
 			matchedKeys.append(key)
+		# nothing match, need adjust or record as best
 		if len(_rtvMoves)==0: # try next
 			sureFail=False
 			if "next" in info:
@@ -272,6 +271,11 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 				while len(failinfo["set"])>failinfo["cnt"]:
 					tmp=heappop(failinfo["arr"])
 					failinfo["set"].remove(tmp[1])
+				# record possible
+				_possible.append(_nodes+[key])
+				newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
+				_possible.clear()
+				_possible.extend(newPoss)
 	del expInfo,INFO ####
 	if len(_rtvMoves)==0: # after try next
 		#print(_lastMatch) # debug
@@ -279,12 +283,6 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		if verbose:
 			print("GG",_nodes,len(hvv)) # debug
 			b.print()
-		tmp=[]
-		tmp.extend(_nodes)
-		_possible.append(tmp)
-		newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
-		_possible.clear()
-		_possible.extend(newPoss)
 	if _isBegin:
 		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.

@@ -613,9 +613,10 @@ class goaltree_edgeless:
 	def getSuccsStr(self,k):
 		# TODO
 		if k in self.cache_succsStr: return self.cache_succsStr[k]
+		if k in self.goal_final: return k
 		w=self.goal_nodes[k][0]
 		arr=[ (self.goal_nodes[kk][0],kk) for kk in self.goal_nodes if k==kk or self.goal_nodes[kk][0]<w ]
-		arr.sort(reverse=True)
+		arr.sort()
 		rtv='-'.join([ x[1] for x in arr ])
 		self.cache_succsStr[k]=rtv
 		return rtv
@@ -651,9 +652,9 @@ class goaltree_edgeless:
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
 		# inter-func. END
-		w=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else nINF_v1
+		minW=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else nINF_v1
 		rtv=[]
-		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if w<v[0] ]
+		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if minW<v[0] ]
 		rtv_nodes.sort()
 		#rtv_nodes=[rtv_nodes[0]] # debug
 		maxW=(max(rtv_nodes)[0]+[0]) if len(rtv_nodes)!=0 else [0]

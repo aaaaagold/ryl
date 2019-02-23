@@ -140,7 +140,7 @@ else:
 	failCnt=0
 	while 0==0:
 		print(len(succList))
-		if len(succList)>99 or learnFile!="":
+		if len(succList)>999 or learnFile!="":
 			for t in boardInitHistory:
 				print(t[0].rawBoard(),t[1],t[2])
 			def getmmm(arr):
