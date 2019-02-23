@@ -276,7 +276,8 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 					tmp=heappop(failinfo["arr"])
 					failinfo["set"].remove(tmp[1])
 				# record possible
-				_possible.append(_nodes+[key])
+				tmp=_nodes if len(matchedKeys)==0 else _nodes+[matchedKeys[shortcut-1]]
+				_possible.append(tmp)
 				newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
 				_possible.clear()
 				_possible.extend(newPoss)
