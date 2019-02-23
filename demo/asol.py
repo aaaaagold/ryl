@@ -177,7 +177,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	#print(INFO) # debug
 	# try different heuristic function
 	for _ in range(len(hvv)+1):
-		#if _!=0: break # debug
+		if _!=0: break # debug
 		bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
 		#if _isBegin: print(keys) # debug
 		#minProb=keys[len(keys)>>1][0]
