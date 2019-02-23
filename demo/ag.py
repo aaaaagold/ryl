@@ -614,8 +614,8 @@ class goaltree_edgeless:
 		# TODO
 		if k in self.cache_succsStr: return self.cache_succsStr[k]
 		if k in self.goal_final: return k
-		w=self.goal_nodes[k][0]
-		arr=[ (self.goal_nodes[kk][0],kk) for kk in self.goal_nodes if k==kk or self.goal_nodes[kk][0]<w ]
+		baseW=self.goal_nodes[k][0]
+		arr=[ (self.goal_nodes[kk][0],kk) for kk in self.goal_nodes if k==kk or baseW<self.goal_nodes[kk][0] ]
 		arr.sort()
 		rtv='-'.join([ x[1] for x in arr ])
 		self.cache_succsStr[k]=rtv
