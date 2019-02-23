@@ -126,6 +126,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	_possible=[],
 	__internal_data=None,
 	shortcut=True,
+	onlyFirst=False,
 	endBefore=None,
 	verbose=False,
 	__lv=0,
@@ -229,6 +230,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_possible=_possible,
 						__internal_data=__internal_data,
 						shortcut=shortcut,
+						onlyFirst=onlyFirst,
 						endBefore=endBefore,
 						verbose=verbose,
 						__lv=__lv+1)
@@ -239,6 +241,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			# node appearsa, but previously path not found
 			matchesDict[key]=matchedBfsRes
 			matchedKeys.append(key)
+			if onlyFirst: break
 		# nothing match, need adjust or record as best
 		if len(_rtvMoves)==0: # try next
 			sureFail=False
@@ -258,6 +261,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_possible=_possible,
 						__internal_data=__internal_data,
 						shortcut=shortcut,
+						onlyFirst=onlyFirst,
 						endBefore=endBefore,
 						verbose=verbose,
 						__lv=__lv+1)
