@@ -688,7 +688,7 @@ class goaltree_edgeless:
 		return self._newGoal()
 	def newGoal_fromConstraints(self,cs,p_contraintSelected=0.5,p_negateRatio=0.5):
 		rtv=self._newGoal()
-		for c  in cs:
+		for c in cs:
 			if random.random()<p_contraintSelected:
 				rtv[1].add(item=c[1],label=c[0],negate=c[2]^(random.random()<p_negateRatio),arrangeLater=True)
 		rtv[1].arrange()
@@ -732,6 +732,19 @@ class goaltree_edgeless:
 		g2=random.choice(n2[1])
 		g=self.newGoal_merge(g1,g2,p_contraintSelected,p_negateRatio)
 		if len(g[1].constraints)==0: return None
+		return self.newNodeByGoals([g[1]])
+	
+	def newGoal_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
+		csb=set(base.constraints)
+		csm=set(more.constraints)
+		cs=csb^csm
+		cs=base.constraints+[self._newGoal_noise_noisify(c) for c in cs]
+		return self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
+	def newNode_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
+		gb=random.choice(base[1])
+		gm=random.choice(more[1])
+		g=self.newGoal_noiseDiff(gb,gm,p_contraintSelected,p_negateRatio)
+		if len(g[1].constraints)==len(gb.constraints): return None
 		return self.newNodeByGoals([g[1]])
 	
 	def newGoal_fromFinal(self,p_contraintSelected=0.5,p_negateRatio=0.5):
@@ -801,6 +814,15 @@ class goaltree_edgeless:
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
+	def _mutate_noiseDiff(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
+		rtv=[]
+		if not strt in self.goal_nodes: return None
+		nextIt=self.oriNodes_dict[strt]+1
+		base=self.goal_nodes[ self.oriNodes[nextIt-1] ]
+		more=self.goal_nodes[ self.oriNodes[nextIt] if nextIt<len(self.oriNodes) else  random.choice([k for k in self.goal_final]) ]
+		node=self.newNode_noiseDiff(base,more,p_constraintReserved,p_negateRatio)
+		rtv.append(node)
+		return rtv
 	def _mutate_partialFinal(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
@@ -809,6 +831,7 @@ class goaltree_edgeless:
 	def mutate(self,strt="",
 		maxAddedNodes=20,
 		p_nodeNoise=0.5,
+		p_nodeNoiseDiff=0.5,
 		p_nodePartialFinal=1,
 		p_nodeSparse=0.5, # TODO
 		p_nodeMerge=0.5, # TODO
@@ -820,6 +843,8 @@ class goaltree_edgeless:
 		newNodes=[]
 		if random.random()<p_nodeNoise:
 			newNodes+=self._mutate_noise(strt=strt,p_negateRatio=0)
+		if random.random()<p_nodeNoiseDiff:
+			newNodes+=self._mutate_noiseDiff(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodePartialFinal:
 			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeSparse:
