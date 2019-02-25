@@ -744,13 +744,14 @@ class goaltree_edgeless:
 	
 	def _mutate_randWeight(self,strt="",p=1):
 		# random adjust weights
-		minW=nINF_v1 if strt=="" or (not strt in self.goal_nodes) else self.goal_nodes[strt][0]
+		useDefault=(not strt in self.goal_nodes)
+		minW=nINF_v1 if useDefault else self.goal_nodes[strt][0]
 		maxW=[0]
-		deltaW=None if strt=="" else maxW[0]-minW[0]
+		deltaW=None if useDefault else maxW[0]-minW[0]
 		for k,v in self.goal_nodes.items():
 			if minW<v[0] and (not k in self.oriNodes_dict) and random.random()<p:
 				w=v[0]
-				if strt=="":
+				if useDefault:
 					for i in range(len(w)):
 						w[i]+=random.random()-0.5
 					if w[0]>0: w[0]*=0
@@ -759,15 +760,15 @@ class goaltree_edgeless:
 					w.extend([random.random()*deltaW+minW[0]])
 		pass
 	def _mutate_getCandi(self,strt=""):
-		# get nodes whose wegiht > strt's
-		useDefault=(strt=="" or (not strt in self.goal_nodes))
+		# get nodes whose wegiht > strt's and <= next(strt)'s
+		useDefault=(not strt in self.goal_nodes)
 		minW=nINF_v1 if useDefault else self.goal_nodes[strt][0]
 		nextNodeName=""
 		if not useDefault:
 			tmp=self.oriNodes_dict[strt]+1
 			nextNodeName+=self.oriNodes[tmp] if tmp<len(self.oriNodes) else ""
-		maxW=[0] if nextNodeName=="" else self.goal_nodes[nextNodeName][0]
-		rtv=[ (v,k) for k,v in self.goal_nodes.items() if minW<v[0] and (nextNodeName=="" or v[0]<=maxW) ]
+		maxW=[0] if useDefault else self.goal_nodes[nextNodeName][0]
+		rtv=[ (v,k) for k,v in self.goal_nodes.items() if useDefault or (minW<v[0] and v[0]<=maxW) ]
 		rtv.sort(key=lambda x:x[0][0])
 		rtv=random.sample(rtv,2)
 		rtv=[x[0] for x in rtv]
@@ -806,7 +807,7 @@ class goaltree_edgeless:
 		rtv.append(node)
 		return rtv
 	def mutate(self,strt="",
-		max_node_cnt=200,
+		maxAddedNodes=20,
 		p_nodeNoise=0.5,
 		p_nodePartialFinal=1,
 		p_nodeSparse=0.5, # TODO
@@ -827,10 +828,11 @@ class goaltree_edgeless:
 			newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
-		sz_n=len(self.goal_nodes)
-		sz_nn=len(newNodes)
-		if sz_n+sz_nn>max_node_cnt:
-			delSet=set(random.sample(self.goal_nodes_names,min(sz_n,sz_nn)))
+		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
+		addedSuccs=[k for k in self.goal_nodes if (k==strt or baseW<self.goal_nodes[k][0]) and not k in self.oriNodes_dict]
+		cnt=len(addedSuccs)-maxAddedNodes
+		if cnt>=0:
+			delSet=set(random.sample(addedSuccs,cnt))
 			self.goal_nodes_names=[k for k in self.goal_nodes_names if not k in delSet]
 			for k in delSet: del self.goal_nodes[k]
 		self.addNodes(newNodes)
