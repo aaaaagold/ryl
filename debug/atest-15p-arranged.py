@@ -44,8 +44,8 @@ def main(argv):
 		
 		args={
 			"manual":"ainput-15p-arranged/main.txt",
-			"popsize":20,
-			"maxAddedNodes":20,
+			"popsize":11,
+			"maxAddedNodes":100,
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":10000,
