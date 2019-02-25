@@ -49,7 +49,7 @@ def main(argv):
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":10000,
-			"r-change":10,
+			"r-change":20,
 			"addedRatio":2.0,
 			"qsize":1,
 			"step":8,
