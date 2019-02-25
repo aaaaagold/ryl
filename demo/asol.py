@@ -122,6 +122,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	_lastMatches={},_lastMatch="",
 	_isBegin=True,
 	_moves=[],_rtvMoves=[],
+	_mvSep=[],_rtvMvSep=[],
 	_nodes=[],_rtvNodes=[],
 	_possible=[],
 	__internal_data=None,
@@ -138,6 +139,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	if _isBegin:
 		del _rtvMoves,_rtvNodes,_possible,__internal_data
 		_rtvMoves=[]
+		_rtvMvSep=[]
 		_rtvNodes=[]
 		_possible=[]
 		__internal_data={
@@ -208,7 +210,9 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			#
 			# check final
 			if key in __internal_data["finals"]:
-				_rtvMoves.append(_moves+bfs2moveSeq(bfsRes,matchedBfsRes[0][0]))
+				newMoves=bfs2moveSeq(bfsRes,matchedBfsRes[0][0])
+				_rtvMoves.append(_moves+newMoves)
+				_rtvMvSep.append(_mvSep+[((_lastMatch,key),newMoves)])
 				_rtvNodes.append(_nodes+[key])
 				break
 				pass
@@ -220,12 +224,14 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 					# {(stateHash,key):totalStep}
 					stateMatch={(x[0],key):currStep+x[1][1]}
 					stateMatch.update(_lastMatches)
+					newMoves=bfs2moveSeq(bfsRes,x[0])
 					genSol(x[1][0],gt,step,stateLimit=stateLimit,currStep=currStep+x[1][1],
 						notBelow=notBelow,
 						info=info,
 						_lastMatches=stateMatch,_lastMatch=key,
 						_isBegin=False,
-						_moves=_moves+bfs2moveSeq(bfsRes,x[0]),_rtvMoves=_rtvMoves,
+						_moves=_moves+newMoves,_rtvMoves=_rtvMoves,
+						_mvSep=_mvSep+[((_lastMatch,key),newMoves)],_rtvMvSep=_rtvMvSep,
 						_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
 						_possible=_possible,
 						__internal_data=__internal_data,
@@ -257,6 +263,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_lastMatches=_lastMatches,_lastMatch=_lastMatch,
 						_isBegin=False,
 						_moves=_moves,_rtvMoves=_rtvMoves,
+						_mvSep=_mvSep,_rtvMvSep=_rtvMvSep,
 						_nodes=_nodes,_rtvNodes=_rtvNodes,
 						_possible=_possible,
 						__internal_data=__internal_data,
@@ -293,7 +300,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			print("GG",_nodes,len(hvv)) # debug
 			b.print()
 	if _isBegin:
-		return {"moves":_rtvMoves,"nodes":_rtvNodes,"possible":_possible}
+		return {"moves":_rtvMoves,"mvSep":_rtvMvSep,"nodes":_rtvNodes,"possible":_possible}
 	# END OF FUNC.
 
 genSol=genSol_v3

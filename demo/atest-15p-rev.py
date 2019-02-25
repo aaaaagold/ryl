@@ -63,6 +63,23 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 		movesS=res['moves']
 		mml=min([len(mv) for mv in movesS])
 		print(movesS,mml)
+		for msg in res['mvSep'][0]:
+			print("from-to")
+			print(msg[0][0])
+			print(msg[0][1])
+			print()
+			for m in msg[1]:
+				move=m[1]
+				print("move")
+				print(move)
+				print()
+				bbb.move(move)
+				print("board")
+				bbb.print()
+				print()
+		print("move end")
+		print()
+		'''
 		nodesS=res['nodes']
 		for msg in movesS[0]:
 			print("msg")
@@ -73,6 +90,7 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 			print("board")
 			bbb.print()
 			print()
+		'''
 		print(mml)
 	pass
 	exit()

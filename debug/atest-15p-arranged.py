@@ -92,8 +92,6 @@ def main(argv):
 		pop[0][0][0]+=sum([x[0] for x in strt])
 		pop[0][2].extend(strt)
 		print(pop[0]) # debug
-		from pprint import pprint
-		pprint(pop[0][1].goal_nodes)
 		for _ in range(r_total):
 			print(_)
 			untilSize=int(len(pop)*addedRatio)
@@ -128,10 +126,10 @@ def main(argv):
 					print(res)
 			newpop.sort(reverse=True,key=lambda x:x[0])
 			pop=newpop[:popsize]
-			print(pop[-1])
-			print(pop[0])
 			from pprint import pprint
 			pprint(pop[0][1].goal_nodes)
+			print(pop[0])
+			print(pop[-1])
 	return 0
 		
 if __name__=='__main__':
