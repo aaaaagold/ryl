@@ -84,7 +84,7 @@ def main(argv):
 		# [ ([solve count,gen],idv) , ... ]
 		bbb=board((4,4))
 		qv=[bbb.random().copy() for _ in range(qsize)]
-		qv.extend([bbb.setNums(arr,arr.index(15)) for arr in tests])
+		qv.extend([bbb.setNums(arr,arr.index(15)).copy() for arr in tests])
 		print(qv[0].outputs()),qv[0].print() # debug
 		strt=[]
 		for q in qv:
