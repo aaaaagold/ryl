@@ -10,13 +10,33 @@ from a15p_arranged import *
 from asol import *
 	
 def sol1(q,elgt,oriNodes,step):
+	def c2ii(c): return [ int(x) for x in c[1].split(":") ]
+	def cs2d(cs): return dict([c2ii(c) for c in cs])
 	print("sol1 strt") # debug
 	res=genSol_v3(q,elgt,step=step,stateLimit=4095,shortcut=False,onlyFirst=True,verbose=False)
 	print("sol1 genSol ende") # debug
 	print(res,oriNodes)
-	if len(res["moves"])!=0: return len(oriNodes)+1
+	rtv=len(oriNodes)+1
+	if len(res["moves"])!=0: return (rtv,"Final")
+	# /*
+	fd=cs2d(elgt.goal_final[ [k for k in elgt.goal_final][0] ][1][0].constraints)
+	rtv=INF_v1[0]
+	for p in res['possible']:
+		gs=elgt.goal_nodes[p[-1]][1]
+		M=-(len(fd)<<3)*(len(gs)==0)
+		for g in gs:
+			cd=cs2d(g.constraints)
+			S=0
+			for k in fd: S-=(4 if not k in cd else abs(fd[k]-cd[k]))*k*k
+			if S<M: M=S
+		if M<rtv: rtv=M
+	# */
 	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
 	print("trans",trans) # debug
+	# /*
+	print(rtv)
+	return (rtv,max(trans)[1])
+	# */
 	return max(trans)
 
 def demo1(argv):
@@ -90,8 +110,10 @@ def main(argv):
 		for q in qv:
 			res=sol1(q,elgt,oriNodes,step)
 			strt.append(res)
-		pop[0][0][0]+=sum([x[0] for x in strt])
-		pop[0][2].extend(strt)
+		tmp=sum([x[0] for x in strt])
+		for p in pop:
+			p[0][0]+=tmp
+			p[2].extend(strt)
 		print(pop[0]) # debug
 		for _ in range(r_total):
 			print(_)
@@ -122,7 +144,7 @@ def main(argv):
 				p[2].clear()
 				for q in qv:
 					res=sol1(q,p[1],oriNodes,step)
-					p[0][0]+=res[0]**2
+					p[0][0]+=res[0]**3
 					p[2].append(res)
 					print(res)
 			newpop.sort(reverse=True,key=lambda x:x[0])
