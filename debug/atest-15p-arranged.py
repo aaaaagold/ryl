@@ -40,6 +40,7 @@ def main(argv):
 		tests=[
 			[4, 8, 7, 0, 12, 11, 14, 2, 6, 15, 1, 13, 10, 3, 5, 9],
 			[1, 6, 12, 9, 14, 4, 11, 3, 0, 10, 5, 13, 2, 8, 7, 15],
+			[6, 4, 9, 2, 8, 15, 11, 7, 12, 1, 10, 0, 3, 14, 13, 5],
 		]
 		
 		args={
@@ -121,7 +122,7 @@ def main(argv):
 				p[2].clear()
 				for q in qv:
 					res=sol1(q,p[1],oriNodes,step)
-					p[0][0]+=res[0]
+					p[0][0]+=res[0]**2
 					p[2].append(res)
 					print(res)
 			newpop.sort(reverse=True,key=lambda x:x[0])
