@@ -854,7 +854,7 @@ class goaltree_edgeless:
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
-		addedSuccs=[k for k in self.goal_nodes if (k==strt or baseW<self.goal_nodes[k][0]) and not k in self.oriNodes_dict]
+		addedSuccs=[k for k in self.goal_nodes if baseW<self.goal_nodes[k][0] and not k in self.oriNodes_dict]
 		cnt=len(addedSuccs)-maxAddedNodes
 		if cnt>=0:
 			delSet=set(random.sample(addedSuccs,cnt))
