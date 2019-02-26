@@ -29,6 +29,7 @@ def sol1(q,elgt,oriNodes,step):
 			S=0
 			for k in fd: S-=(4 if not k in cd else abs(fd[k]-cd[k]))*k*k
 			if S<M: M=S
+		M-=len(p)
 		if M<rtv: rtv=M
 	# */
 	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
