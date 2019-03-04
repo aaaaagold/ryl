@@ -767,7 +767,7 @@ class goaltree_edgeless:
 		maxW=self.getNode(self.getNextNodeNames(strt)[0])[0]
 		deltaW=None if useDefault else maxW[0]-minW[0]
 		for k,v in self.goal_nodes.items():
-			if minW[0]<=v[0] and v[0]<=maxW[0] and (not k in self.oriNodes_dict) and random.random()<p:
+			if minW<=v[0] and v[0]<=maxW and (not k in self.oriNodes_dict) and random.random()<p:
 				w=v[0]
 				if useDefault:
 					#for i in range(len(w)):
