@@ -663,6 +663,11 @@ class goaltree_edgeless:
 		rtv.extend(rtv_nodes)
 		return rtv
 	
+	def getNextNodeNames(self,curr=""):
+		if len(self.oriNodes)==0 or self.oriNodes[-1]==curr: return self.goal_final.keys()
+		return [self.oriNodes[self.oriNodes_dict[curr]+1 if curr in self.oriNodes_dict else 0]]
+	def getNode(self,name):
+		return self.goal_final[name] if name in self.goal_final else self.goal_nodes[name]
 	def _newNode(self):
 		self.clean_cache()
 		self.__class__.cnt_newNode+=1
@@ -757,17 +762,17 @@ class goaltree_edgeless:
 	
 	def _mutate_randWeight(self,strt="",p=1):
 		# random adjust weights
-		useDefault=(not strt in self.goal_nodes)
+		useDefault=(not strt in self.oriNodes_dict)
 		minW=nINF_v1 if useDefault else self.goal_nodes[strt][0]
-		maxW=[0]
+		maxW=self.getNode(self.getNextNodeNames(strt)[0])[0]
 		deltaW=None if useDefault else maxW[0]-minW[0]
 		for k,v in self.goal_nodes.items():
-			if minW<v[0] and (not k in self.oriNodes_dict) and random.random()<p:
+			if minW<=v and v<=maxW and (not k in self.oriNodes_dict) and random.random()<p:
 				w=v[0]
 				if useDefault:
 					for i in range(len(w)):
-						w[i]+=random.random()-0.5
-					if w[0]>0: w[0]*=0
+						w[i]+=random.random()*32-16
+					w[0]=min(w[0],maxW[0]-1)
 				else:
 					w.clear()
 					w.extend([random.random()*deltaW+minW[0]])
@@ -776,11 +781,7 @@ class goaltree_edgeless:
 		# get nodes whose wegiht > strt's and <= next(strt)'s
 		useDefault=(not strt in self.goal_nodes)
 		minW=nINF_v1 if useDefault else self.goal_nodes[strt][0]
-		nextNodeName=""
-		if not useDefault:
-			tmp=self.oriNodes_dict[strt]+1
-			nextNodeName+=self.oriNodes[tmp] if tmp<len(self.oriNodes) else ""
-		maxW=[0] if useDefault else self.goal_nodes[nextNodeName][0]
+		maxW=self.getNode(self.getNextNodeNames(strt)[0])[0]
 		rtv=[ (v,k) for k,v in self.goal_nodes.items() if useDefault or (minW<v[0] and v[0]<=maxW) ]
 		rtv.sort(key=lambda x:x[0][0])
 		rtv=random.sample(rtv,2)
@@ -834,9 +835,10 @@ class goaltree_edgeless:
 		p_nodeNoiseDiff=0.5,
 		p_nodePartialFinal=1,
 		p_nodeSparse=0.5, # TODO
-		p_nodeMerge=0.5, # TODO
+		#p_nodeMerge=0.5, # TODO
 		p_nodeRandWeight=0.5,
 		__dummy=0):
+		if strt in self.goal_final: return self
 		#TODO: constraint mutation
 		#TODO structure is wrong
 		self.clean_cache()
@@ -849,12 +851,12 @@ class goaltree_edgeless:
 			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeSparse:
 			newNodes+=self._mutate_sparse(strt=strt,p_negateRatio=0)
-		if random.random()<p_nodeMerge:
-			newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
+		#if random.random()<p_nodeMerge:
+		#	newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
-		addedSuccs=[k for k in self.goal_nodes if baseW<self.goal_nodes[k][0] and not k in self.oriNodes_dict]
+		addedSuccs=[k for k in self.goal_nodes if baseW<=self.goal_nodes[k][0] and not k in self.oriNodes_dict]
 		cnt=len(addedSuccs)-maxAddedNodes
 		if cnt>=0:
 			delSet=set(random.sample(addedSuccs,cnt))
