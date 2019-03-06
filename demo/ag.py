@@ -691,8 +691,8 @@ class goaltree_edgeless:
 	def newGoal(self):
 		# empty goal
 		return self._newGoal()
-	def newGoal_fromConstraints(self,cs,p_contraintSelected=0.5,p_negateRatio=0.5):
-		rtv=self._newGoal()
+	def newGoal_fromConstraints(self,cs,p_contraintSelected=0.5,p_negateRatio=0.5,base=None):
+		rtv=self._newGoal() if isNone(base) else base
 		for c in cs:
 			if random.random()<p_contraintSelected:
 				rtv[1].add(item=c[1],label=c[0],negate=c[2]^(random.random()<p_negateRatio),arrangeLater=True)
@@ -743,8 +743,9 @@ class goaltree_edgeless:
 		csb=set(base.constraints)
 		csm=set(more.constraints)
 		cs=csb^csm
-		cs=base.constraints+[self._newGoal_noise_noisify(c) for c in cs]
-		return self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
+		cs=[self._newGoal_noise_noisify(c) for c in cs]
+		rtv=self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
+		return self.newGoal_fromConstraints(base.constraints,1,0,base=rtv)
 	def newNode_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
 		gb=random.choice(base[1])
 		gm=random.choice(more[1])
