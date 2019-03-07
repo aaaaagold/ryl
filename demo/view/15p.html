@@ -57,10 +57,20 @@ textarea{width:100%;}
 <div id="root-15p">
 <div id="outFile"><div>output file path</div><div><textarea tabindex=1></textarea></div></div>
 <div id="confirm" class="btn"><a tabindex=2 href="javascript:void(0);">confirm</a></div>
-<div id="_15p"><div>15p</div><div id="15p-blklist"></div><div id="15p-delay"></div><div id="15p-display"><pre></pre></div></div>
+<div id="_15p"><div>15p</div><div id="15p-blklist"></div><div>
+----
+</div><div id="15p-delay"><div>delay <input tabindex=3 value=500></input> ms</div><div id="15p-paused" style="display:none;">paused</div></div><div id="15p-btns"><div class=btn>
+<a tabindex=4 href="javascript:void(0);">play</a>
+</div><div class=btn>
+<a tabindex=5 href="javascript:void(0);">pause</a>
+</div><div class=btn>
+<a tabindex=6 href="javascript:void(0);">prev</a>
+</div><div class=btn>
+<a tabindex=7 href="javascript:void(0);">next</a>
+</div></div><div id="15p-display"><pre></pre></div></div>
 </div>
 <script>
-let loop=function g(t,f,a){let d=a[0];setTimeout(function(){if(new Date().getTime()<t)g(t,f,a);else if(f&&!f(a))g(new Date().getTime()+d,f,a);},1);};
+let loop=function g(t,d,f,a){setTimeout(function(){if(new Date().getTime()<t)g(t,d,f,a);else if(f&&!f(a))g(new Date().getTime()+d,d,f,a);},1);};
 let ct=(txt)=>{return document.createTextNode(txt);};
 let ce=(tag)=>{return document.createElement(tag);};
 let ge=(id)=>{return document.getElementById(id);};
@@ -120,17 +130,31 @@ let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 		if(_getparse.putRes==undefined){ _getparse.putRes=function _putRes(res,putAtDiv){
 			if(_putRes.nodeClick==undefined){ _putRes.nodeClick=function(){
 				let p=this.parentNode;
+				let pp=p.parentNode;
+				let node_delay=pp.childNodes[3].childNodes[0].childNodes[1];
 				p.choice=this.it;
-				loop(0,(argv)=>{
+				let argv=[Number(node_delay.value),this.content,0,new Date().getTime()];
+				let btns=ge("15p-btns").childNodes;
+				btns[0].onclick=()=>{p.pause=0;ge("15p-paused").style="display:none;";};
+				btns[1].onclick=()=>{p.pause=1;ge("15p-paused").style="display:inline-block;";};
+				btns[2].onclick=()=>{argv[3]=new Date().getTime()+argv[0];argv[2]+=(argv[1][1].length-1);argv[2]%=argv[1][1].length};
+				btns[3].onclick=()=>{argv[3]=new Date().getTime()+argv[0];argv[2]+=(argv[1][1].length+1);argv[2]%=argv[1][1].length};
+				loop(0,1,(argv)=>{
+					let delay=Number(node_delay.value);
+					argv[0]=delay;
+					if(p.choice!==this.it) return 1;
 					if(argv[2]<argv[1][1].length){
-						if(p.choice!==this.it) return 1;
-						let target=p.parentNode.childNodes[3].childNodes[0];
+						let target=pp.childNodes[5].childNodes[0];
 						target.rc(0).atxt(argv[1][1][argv[2]]);
 						target.atxt(argv[2]+1+"/"+argv[1][1].length);
 					}
-					argv[2]+=p.pause^1;
-					argv[2]*=argv[2]<=argv[1][1].length;
-				},[500,this.content,0]);
+					let tm=new Date().getTime();
+					if(tm>=argv[3]){
+						argv[2]+=p.pause^1;
+						argv[2]*=argv[2]<=argv[1][1].length;
+						argv[3]=tm+argv[0];
+					}
+				},argv);
 			};}
 			console.log(res);
 			let nodeDiv=putAtDiv.childNodes[1];
