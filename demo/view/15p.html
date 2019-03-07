@@ -129,11 +129,12 @@ let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 		};}
 		if(_getparse.putRes==undefined){ _getparse.putRes=function _putRes(res,putAtDiv){
 			if(_putRes.nodeClick==undefined){ _putRes.nodeClick=function(){
-				this.lastIt=-1;
+				this.frameIt=0;
 				let p=this.parentNode;
+				if(p.choice===this.it) return;
+				p.choice=this.it;
 				let pp=p.parentNode;
 				let node_delay=pp.childNodes[3].childNodes[0].childNodes[1];
-				p.choice=this.it;
 				let argv=[Number(node_delay.value),this.content,0,new Date().getTime()];
 				argv[3]+=argv[0];
 				let btns=ge("15p-btns").childNodes;
@@ -143,20 +144,24 @@ let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 				btns[2].onclick=()=>{changeIt(-1);};
 				btns[3].onclick=()=>{changeIt(1);};
 				loop(0,1,(argv)=>{
-					let delay=Number(node_delay.value);
-					argv[0]=delay;
 					if(p.choice!==this.it) return 1;
-					if(argv[2]!==this.lastIt && argv[2]<argv[1][1].length){
+					let delay=Number(node_delay.value);
+					let tm=new Date().getTime();
+					argv[0]=delay;
+					if(argv[2]!==this.frameIt){
+						argv[2]=this.frameIt;
+						argv[3]=tm+argv[0];
+					}
+					if(argv[2]<argv[1][1].length){
 						let target=pp.childNodes[5].childNodes[0];
 						target.rc(0).atxt(argv[1][1][argv[2]]);
 						target.atxt(argv[2]+1+"/"+argv[1][1].length);
-						this.lastIt=argv[2];
 					}
-					let tm=new Date().getTime();
 					if(tm>=argv[3]){
 						argv[2]+=p.pause^1;
 						argv[2]*=argv[2]!==argv[1][1].length;
 						argv[3]=tm+argv[0]+500*(argv[2]+1===argv[1][1].length);
+						this.frameIt=argv[2];
 					}
 				},argv);
 			};}
