@@ -62,12 +62,14 @@ def main(argv):
 			[4, 8, 7, 0, 12, 11, 14, 2, 6, 15, 1, 13, 10, 3, 5, 9],
 			[1, 6, 12, 9, 14, 4, 11, 3, 0, 10, 5, 13, 2, 8, 7, 15],
 			[6, 4, 9, 2, 8, 15, 11, 7, 12, 1, 10, 0, 3, 14, 13, 5],
+			[0, 6, 1, 11, 7, 3, 2, 9, 4, 12, 13, 5, 14, 15, 10, 8],
 		]
+		tests=tests[-1:]
 		
 		args={
 			"manual":"ainput-15p-arranged/main.txt",
 			"popsize":11,
-			"maxAddedNodes":10,
+			"maxAddedNodes":20,
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":10000,
@@ -102,7 +104,7 @@ def main(argv):
 		oriNodes=[ x[1] for x in oriNodes ]
 		print(oriNodes)
 		pop=[ ([0,0],elgt.copy(),[]) for _ in range(popsize) ]
-		# [ ([solve count,gen],idv) , ... ]
+		# [ ([scoreTotal,gen],idv,[score1,node]) , ... ]
 		bbb=board((4,4))
 		qv=[bbb.random().copy() for _ in range(qsize)]
 		qv.extend([bbb.setNums(arr,arr.index(15)).copy() for arr in tests])
@@ -115,7 +117,10 @@ def main(argv):
 		for p in pop:
 			p[0][0]+=tmp
 			p[2].extend(strt)
-		print(pop[0]) # debug
+		print("debug",pop[0]) # debug
+		#last=[]
+		#last+=pop[0][2]
+		#maxIt=1
 		for _ in range(r_total):
 			print(_)
 			untilSize=int(len(pop)*addedRatio)
@@ -129,7 +134,14 @@ def main(argv):
 				for _r_change in range(r_change):
 					if random.random()<0.5:
 						# mutate
-						base[1].mutate(best,maxAddedNodes=maxAddedNodes)
+						base[1].mutate(best,maxAddedNodes=maxAddedNodes,
+							p_nodeNoise=0.5,
+							p_nodeNoiseDiff=0.9,
+							p_nodePartialFinal=0.1,
+							p_nodeSparse=0.1,
+							#p_nodeMerge=0.5,
+							p_nodeRandWeight=0.1
+							)
 					else:
 						# cross
 						rhs=random.choice(pop)
@@ -143,7 +155,9 @@ def main(argv):
 				print("P:",p)
 				p[0][0]&=0
 				p[2].clear()
-				for q in qv:
+				for x in range(len(qv)):
+					#if x==maxIt: break
+					q=qv[x]
 					res=sol1(q,p[1],oriNodes,step)
 					p[0][0]+=res[0]**3
 					p[2].append(res)
