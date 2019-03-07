@@ -159,9 +159,10 @@ def main(argv):
 					#if x==maxIt: break
 					q=qv[x]
 					res=sol1(q,p[1],oriNodes,step)
-					p[0][0]+=res[0]**3
+					p[0][0]+=res[0]
 					p[2].append(res)
 					print(res)
+				print(p)
 			newpop.sort(reverse=True,key=lambda x:x[0])
 			pop=newpop[:popsize]
 			from pprint import pprint
