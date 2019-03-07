@@ -134,6 +134,7 @@ let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 				let node_delay=pp.childNodes[3].childNodes[0].childNodes[1];
 				p.choice=this.it;
 				let argv=[Number(node_delay.value),this.content,0,new Date().getTime()];
+				argv[3]+=argv[0];
 				let btns=ge("15p-btns").childNodes;
 				btns[0].onclick=()=>{p.pause=0;ge("15p-paused").style="display:none;";};
 				btns[1].onclick=()=>{p.pause=1;ge("15p-paused").style="display:inline-block;";};
