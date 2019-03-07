@@ -128,7 +128,7 @@ let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 						target.rc(0).atxt(argv[1][1][argv[2]]);
 						target.atxt(argv[2]+1+"/"+argv[1][1].length);
 					}
-					++argv[2];
+					argv[2]+=p.pause^1;
 					argv[2]*=argv[2]<=argv[1][1].length;
 				},[500,this.content,0]);
 			};}
