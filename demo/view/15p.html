@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{position:relative;}
+.btn{border:1px solid grey;text-align:center;}
+.btn *{display:inline-block;width:100%;height:100%;}
+.btn:hover{background-color:rgba(111,111,0,0.5);}
+#_15p{}
+#_15p>div>div{
+	display:inline-block;
+	margin:1px;
+	padding-right:22px;
+}
+#_15p>div>div>a{
+	padding:11px;
+}
+#maze-blk{
+	display:inline-block;
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+.row{margin:0px;padding:0px;border:0px solid black;}
+.cell{
+	position:relative;display:inline-block;width:23px;height:23px;
+	margin:0px;padding:0px;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+	color:rgba(0,0,0,0);
+}
+.cell-inner{
+	position:absolute;
+	display:block;
+	width:100%;
+	height:100%;
+}
+.cell-ruler{
+	position:relative;display:inline-block;width:23px;height:23px;
+	margin:0px;padding:0px;
+	border-right:1px solid rgba(0,0,0,0);
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+.cell-inner>div{
+	-ms-transform:scale(1,-1);
+	-webkit-transform:scale(1,-1);
+	transform:scale(1,-1);
+}
+textarea{width:100%;}
+</style>
+<style id="dynamic">
+</style>
+</head>
+<body>
+<div id="root-15p">
+<div id="outFile"><div>output file path</div><div><textarea tabindex=1></textarea></div></div>
+<div id="confirm" class="btn"><a tabindex=2 href="javascript:void(0);">confirm</a></div>
+<div id="_15p"><div>15p</div><div id="15p-blklist"></div><div id="15p-delay"></div><div id="15p-display"><pre></pre></div></div>
+</div>
+<script>
+let loop=function g(t,f,a){let d=a[0];setTimeout(function(){if(new Date().getTime()<t)g(t,f,a);else if(f&&!f(a))g(new Date().getTime()+d,f,a);},1);};
+let ct=(txt)=>{return document.createTextNode(txt);};
+let ce=(tag)=>{return document.createElement(tag);};
+let ge=(id)=>{return document.getElementById(id);};
+Object.prototype.arrback=function(){if(this.length)return this[this.length-1];};
+HTMLElement.prototype.ac=function(c){this.appendChild(c);return this;};
+HTMLElement.prototype.sa=function(a,v){this.setAttribute(a,v);return this;};
+HTMLElement.prototype.ga=function(a){return this.getAttribute(a);};
+HTMLElement.prototype.atxt=function(t){this.appendChild(ct(t));return this;};
+HTMLElement.prototype.getCell=function(xyz__){
+	let rtv=this;
+	for(let x=xyz__.length;x--;) rtv=rtv.childNodes[xyz__[x]];
+	return rtv;
+};
+HTMLElement.prototype.rc=function(remainCnt){
+	let arr=this.childNodes;
+	while(remainCnt<arr.length) this.removeChild(arr.arrback());
+	return this;
+};
+
+let css_dynamic=ge("dynamic");
+let css_light="",css_dark="";
+
+css_light+="body{ background-color:white; color:black; }";
+css_light+="a{color:#0000FF;}";
+css_light+="#maze-blk{ border-left:1px solid black; border-top:1px solid black; }";
+css_light+=".cell{ border-right:1px solid black; border-bottom:1px solid black; }";
+css_light+=".cell-ruler{ color:black; }";
+css_light+=".cell-inner>div{ color:black; }";
+
+css_dark+="body{ background-color:black; color:white; }";
+css_dark+="a{color:#FFFF00;}"; // default
+css_dark+="#maze-blk{ border-left:1px solid white; border-top:1px solid white; }";
+css_dark+=".cell{ border-right:1px solid white; border-bottom:1px solid white; }";
+css_dark+=".cell-ruler{ color:white; }";
+css_dark+=".cell-inner>div{ color:white; }";
+
+css_dynamic.innerHTML=css_dark;
+
+let confirmBtn=ge("confirm");
+let jurl=function jurl(url,method,data,callback){ let xhttp = new XMLHttpRequest(); xhttp.onreadystatechange = function() { if (this.readyState == 4) { let s=this.status.toString(); if(s.length==3 && s.slice(0,1)=='2'){ if(typeof(callback)=="function"){ callback(this.responseText); } } } }; xhttp.open(method,url,true); xhttp.send(method==="GET"?undefined:data); };
+let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
+	if(_parser_15p.getparse==undefined){ _parser_15p.getparse=function _getparse(txt,putAtDiv){
+		if(_getparse.parse==undefined){ _getparse.parse=function _parse(txt){
+			txt=txt.replace("\r","");
+			let re_all=/((from-to[\n][^\n]*[\n][^\n]+[\n][\n])((move[\n][^\n]+[\n][\n]board[\n]([^\n]+[\n])*[\n])+))/g;
+			let re_basicStep=/move([\n][^\n]+[\n][\n])board([\n]([^\n]+[\n])*[\n])/g;
+			let arr=txt.split(re_all);
+			let rtv=[];
+			for(let dx=re_all.toString().split("(").length,x=1;x<arr.length;x+=dx){
+				let ft=arr[x+1].split("\n"); ft.shift(); ft.length=2;
+				let mbs=arr[x+2].split(re_basicStep);
+				let mbv=[]; for(let dx=re_basicStep.toString().split(")").length,x=1;x<mbs.length;x+=dx) mbv.push([mbs[x+0],mbs[x+1]]);
+				rtv.push([ft,mbv]);
+			}
+			return rtv;
+		};}
+		if(_getparse.putRes==undefined){ _getparse.putRes=function _putRes(res,putAtDiv){
+			if(_putRes.nodeClick==undefined){ _putRes.nodeClick=function(){
+				let p=this.parentNode;
+				p.choice=this.it;
+				loop(0,(argv)=>{
+					if(argv[2]<argv[1][1].length){
+						if(p.choice!==this.it) return 1;
+						let target=p.parentNode.childNodes[3].childNodes[0];
+						target.rc(0).atxt(argv[1][1][argv[2]]);
+						target.atxt(argv[2]+1+"/"+argv[1][1].length);
+					}
+					++argv[2];
+					argv[2]*=argv[2]<=argv[1][1].length;
+				},[500,this.content,0]);
+			};}
+			console.log(res);
+			let nodeDiv=putAtDiv.childNodes[1];
+			nodeDiv.rc(0);
+			for(let x=0;x<res.length;++x){
+				let div=ce("div").ac(ce("a").atxt(res[x][0].toString()).sa("href","javascript:void(0);")).sa("class","btn");
+				nodeDiv.ac(div);
+				div.content=res[x];
+				div.it=x;
+				div.onclick=_putRes.nodeClick;
+			}
+		};}
+		_getparse.putRes(_getparse.parse(txt),putAtDiv);
+	};}
+	jurl(outtxt_relpath,"GET",0,(txt)=>{_parser_15p.getparse(txt,putAtDiv);});
+};
+//jurl("out-maze.txt","GET",0,(txt)=>{ge("blk").ac(ct(txt));});
+let outFilePath=ge("outFile").childNodes[1].childNodes[0];
+outFilePath.value="out-15p-0.txt";
+let update=()=>{parser_15p(outFilePath.value,ge("_15p"));};
+confirmBtn.onclick=update;
+update();
+
+</script>
+</body>
+</html>
