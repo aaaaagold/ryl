@@ -118,8 +118,8 @@ def main(argv):
 			p[0][0]+=tmp
 			p[2].extend(strt)
 		print("debug",pop[0]) # debug
-		#last=[]
-		#last+=pop[0][2]
+		initScore=[]
+		initScore+=pop[0][2]
 		#maxIt=1
 		for _ in range(r_total):
 			print(_)
@@ -169,6 +169,7 @@ def main(argv):
 			pprint(pop[0][1].goal_nodes)
 			print(pop[0])
 			print(pop[-1])
+			print("initScore",initScore)
 	return 0
 		
 if __name__=='__main__':
