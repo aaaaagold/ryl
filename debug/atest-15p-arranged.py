@@ -103,7 +103,7 @@ def main(argv):
 		oriNodes.sort()
 		oriNodes=[ x[1] for x in oriNodes ]
 		print(oriNodes)
-		pop=[ ([0,0],elgt.copy(),[]) for _ in range(popsize) ]
+		pop=[ ([0,0],elgt.copy(),[]) for _ in range(1) ]
 		# [ ([scoreTotal,gen],idv,[score1,node]) , ... ]
 		bbb=board((4,4))
 		qv=[bbb.random().copy() for _ in range(qsize)]
