@@ -123,7 +123,7 @@ def main(argv):
 		#maxIt=1
 		for _ in range(r_total):
 			print(_)
-			untilSize=int(len(pop)*addedRatio)
+			untilSize=int(popsize*addedRatio)
 			newpop=[]
 			newpop.extend(pop)
 			while len(newpop)<untilSize:
@@ -164,9 +164,13 @@ def main(argv):
 					print(res)
 				print(p)
 			newpop.sort(reverse=True,key=lambda x:x[0])
-			pop=newpop[:popsize]
+			pop=[newpop[0]]
+			for p in newpop:
+				if p[1].similar(pop[-1][1]): continue
+				pop.append(p)
 			from pprint import pprint
 			pprint(pop[0][1].goal_nodes)
+			print(len(pop))
 			print(pop[0])
 			print(pop[-1])
 			print("initScore",initScore)

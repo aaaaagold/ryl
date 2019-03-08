@@ -860,7 +860,7 @@ class goaltree_edgeless:
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
 		addedSuccs=[k for k in self.goal_nodes if baseW<=self.goal_nodes[k][0] and not k in self.oriNodes_dict]
 		cnt=len(addedSuccs)-maxAddedNodes
-		if cnt>=0:
+		if cnt>0:
 			delSet=set(random.sample(addedSuccs,cnt))
 			self.goal_nodes_names=[k for k in self.goal_nodes_names if not k in delSet]
 			for k in delSet: del self.goal_nodes[k]
@@ -878,4 +878,17 @@ class goaltree_edgeless:
 				w.extend(rhs.goal_nodes[k][0])
 		return self
 		pass
+	def similar(self,rhs):
+		lnn=[n for n in self.goal_nodes_names]
+		rnn=[n for n in  rhs.goal_nodes_names]
+		if len(lnn)!=len(rnn): return False
+		f=lambda x:str(x)
+		for i in range(len(lnn)):
+			if lnn[i]==rnn[i]: continue # same name
+			lns=[cs for cs in self.goal_nodes[lnn[i]][1]]
+			rns=[cs for cs in  rhs.goal_nodes[rnn[i]][1]]
+			lns.sort(key=f)
+			rns.sort(key=f)
+			if lns!=rns: return False
+		return True
 
