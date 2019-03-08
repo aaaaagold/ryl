@@ -150,7 +150,7 @@ def main(argv):
 				base[0][1]+=1 # inc genNum
 				newpop.append(base)
 			for q in qv: print(q.rawBoard()),q.print("\n") # debug
-			for i in range(popsize,len(newpop)):
+			for i in range(len(pop),len(newpop)):
 				p=newpop[i]
 				print("P:",p)
 				p[0][0]&=0
