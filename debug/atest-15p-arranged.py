@@ -168,6 +168,7 @@ def main(argv):
 			for p in newpop:
 				if p[1].similar(pop[-1][1]): continue
 				pop.append(p)
+				if len(pop)>=popsize: break
 			from pprint import pprint
 			pprint(pop[0][1].goal_nodes)
 			print(len(pop))
