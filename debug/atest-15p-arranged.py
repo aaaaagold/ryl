@@ -153,6 +153,7 @@ def main(argv):
 			for i in range(len(pop),len(newpop)):
 				p=newpop[i]
 				print("P:",p)
+				print(p[1].goal_nodes_names)
 				p[0][0]&=0
 				p[2].clear()
 				for x in range(len(qv)):
@@ -173,7 +174,9 @@ def main(argv):
 			pprint(pop[0][1].goal_nodes)
 			print(len(pop))
 			print(pop[0])
+			print(pop[0][1].goal_nodes_names)
 			print(pop[-1])
+			print(pop[-1][1].goal_nodes_names)
 			print("initScore",initScore)
 	return 0
 		
