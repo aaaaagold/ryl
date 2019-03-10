@@ -715,7 +715,7 @@ class goaltree_edgeless:
 		for c in rtv1v:
 			rtv1s=c.split(":")
 			#print(rtv1s) # debug
-			newVal=int(rtv1s[1])+int(random.random()*15)-7
+			newVal=int(rtv1s[1])+int(random.random()*31)-15
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
 		#print(rtv[1]) # debug
@@ -739,14 +739,14 @@ class goaltree_edgeless:
 		if len(g[1].constraints)==0: return None
 		return self.newNodeByGoals([g[1]])
 	
-	def newGoal_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
+	def newGoal_noiseDiff(self,base,more,p_contraintSelected=1,p_negateRatio=0.5):
 		csb=set(base.constraints)
 		csm=set(more.constraints)
 		cs=csb^csm
 		cs=[self._newGoal_noise_noisify(c) for c in cs]
 		rtv=self.newGoal_fromConstraints(cs,p_contraintSelected,p_negateRatio)
 		return self.newGoal_fromConstraints(base.constraints,1,0,base=rtv)
-	def newNode_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
+	def newNode_noiseDiff(self,base,more,p_contraintSelected=1,p_negateRatio=0.5):
 		gb=random.choice(base[1])
 		gm=random.choice(more[1])
 		g=self.newGoal_noiseDiff(gb,gm,p_contraintSelected,p_negateRatio)
@@ -817,7 +817,7 @@ class goaltree_edgeless:
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def _mutate_noiseDiff(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
+	def _mutate_noiseDiff(self,strt="",p_constraintReserved=1,p_negateRatio=0.5):
 		rtv=[]
 		if not strt in self.goal_nodes: return rtv
 		nextIt=self.oriNodes_dict[strt]+1
@@ -848,7 +848,7 @@ class goaltree_edgeless:
 		if random.random()<p_nodeNoise:
 			newNodes+=self._mutate_noise(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeNoiseDiff:
-			newNodes+=self._mutate_noiseDiff(strt=strt,p_negateRatio=0)
+			newNodes+=self._mutate_noiseDiff(strt=strt,p_constraintReserved=1,p_negateRatio=0)
 		if random.random()<p_nodePartialFinal:
 			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0)
 		if random.random()<p_nodeSparse:

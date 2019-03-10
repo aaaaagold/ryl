@@ -129,6 +129,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	shortcut=True,
 	onlyFirst=False,
 	endBefore=None,
+	toNodeName="",
 	verbose=False,
 	__lv=0,
 	__dummy=None):
@@ -178,6 +179,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	INFO['hvv']=hvv
 	#print(INFO) # debug
 	# try different heuristic function
+	found=False
 	for _ in range(len(hvv)+1):
 		if _!=0: break # debug
 		bfsRes=bfs(b,step,stateLimit=stateLimit,notViolate=gt.getGoals('__notViolate'),info=INFO)
@@ -208,8 +210,9 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						matchedBfsRes.append((i,bRes))
 			if len(matchedBfsRes)==0: continue
 			#
+			found=True
 			# check final
-			if key in __internal_data["finals"]:
+			if key==toNodeName or key in __internal_data["finals"]:
 				newMoves=bfs2moveSeq(bfsRes,matchedBfsRes[0][0])
 				_rtvMoves.append(_moves+newMoves)
 				_rtvMvSep.append(_mvSep+[((_lastMatch,key),newMoves)])
@@ -238,6 +241,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						shortcut=shortcut,
 						onlyFirst=onlyFirst,
 						endBefore=endBefore,
+						toNodeName=toNodeName,
 						verbose=verbose,
 						__lv=__lv+1)
 					if len(_rtvMoves)!=0: break
@@ -270,6 +274,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						shortcut=shortcut,
 						onlyFirst=onlyFirst,
 						endBefore=endBefore,
+						toNodeName=toNodeName,
 						verbose=verbose,
 						__lv=__lv+1)
 				else:
@@ -296,8 +301,9 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	if len(_rtvMoves)==0: # after try next
 		#print(_lastMatch) # debug
 		# all candidate nodes cannot find a path to final(s)
-		if verbose:
+		if verbose and found==False:
 			print("GG",_nodes,len(hvv)) # debug
+			print(b.outputs())
 			b.print()
 	if _isBegin:
 		return {"moves":_rtvMoves,"mvSep":_rtvMvSep,"nodes":_rtvNodes,"possible":_possible}
