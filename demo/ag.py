@@ -715,7 +715,8 @@ class goaltree_edgeless:
 		for c in rtv1v:
 			rtv1s=c.split(":")
 			#print(rtv1s) # debug
-			newVal=int(rtv1s[1])+int(random.random()*31)-15
+			#newVal=int(rtv1s[1])+int(random.random()*15)-7
+			newVal=min(max(int(rtv1s[1])+int(random.random()*3)-1,0),3) # debug
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
 		#print(rtv[1]) # debug
@@ -882,6 +883,8 @@ class goaltree_edgeless:
 		lnn=[n for n in self.goal_nodes_names]
 		rnn=[n for n in  rhs.goal_nodes_names]
 		if len(lnn)!=len(rnn): return False
+		lnn.sort(key=lambda x:self.goal_nodes[x][0])
+		rnn.sort(key=lambda x: rhs.goal_nodes[x][0])
 		f=lambda x:str(x)
 		for i in range(len(lnn)):
 			if lnn[i]==rnn[i]: continue # same name
