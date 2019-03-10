@@ -13,30 +13,35 @@ def sol1(q,elgt,oriNodes,step):
 	def c2ii(c): return [ int(x) for x in c[1].split(":") ]
 	def cs2d(cs): return dict([c2ii(c) for c in cs])
 	print("sol1 strt") # debug
-	res=genSol_v3(q,elgt,step=step,stateLimit=4095,shortcut=False,onlyFirst=True,verbose=False)
+	res=genSol_v3(q,elgt,step=step,stateLimit=4095,shortcut=False,onlyFirst=True,verbose=True)
 	print("sol1 genSol ende") # debug
+	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
+	tmp=max(trans)
 	print(res,oriNodes)
 	rtv=len(oriNodes)+1
 	if len(res["moves"])!=0: return (rtv,"Final")
 	# /*
-	fd=cs2d(elgt.goal_final[ [k for k in elgt.goal_final][0] ][1][0].constraints)
-	rtv=INF_v1[0]
+	node=elgt.goal_nodes[oriNodes[tmp[0]]] if tmp[0]<len(oriNodes) else elgt.goal_final[ [k for k in elgt.goal_final][0] ]
+	fd=cs2d(node[1][0].constraints)
+	rtv=nINF_v1[0]
 	for p in res['possible']:
 		gs=elgt.goal_nodes[p[-1]][1]
-		M=-(len(fd)<<3)*(len(gs)==0)
+		M=-(len(fd)<<8)*(len(gs)==0)
 		for g in gs:
 			cd=cs2d(g.constraints)
 			S=0
-			for k in fd: S-=(4 if not k in cd else abs(fd[k]-cd[k]))*k*k
+			for k in fd: S-=(4 if not k in cd else abs(fd[k]-cd[k]))*4*(int((k//2)**0.5))**4
+			print(fd)
+			print(cd)
 			if S<M: M=S
+		M*=20
 		M-=len(p)
-		if M<rtv: rtv=M
+		if rtv<M: rtv=M
 	# */
-	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
 	print("trans",trans) # debug
 	# /*
 	print(rtv)
-	return (rtv,max(trans)[1])
+	return (rtv+tmp[0]*1000000,tmp[1])
 	# */
 	return max(trans)
 
@@ -63,8 +68,14 @@ def main(argv):
 			[1, 6, 12, 9, 14, 4, 11, 3, 0, 10, 5, 13, 2, 8, 7, 15],
 			[6, 4, 9, 2, 8, 15, 11, 7, 12, 1, 10, 0, 3, 14, 13, 5],
 			[0, 6, 1, 11, 7, 3, 2, 9, 4, 12, 13, 5, 14, 15, 10, 8],
+			[1, 10, 3, 14, 6, 7, 8, 15, 4, 12, 2, 11, 0, 13, 5, 9], # D
+			[12, 6, 8, 13, 5, 10, 0, 4, 1, 11, 3, 7, 14, 2, 9, 15], # E
+			[12, 4, 13, 0, 14, 3, 5, 9, 1, 10, 8, 15, 7, 6, 11, 2], # E
+			[5, 10, 4, 6, 7, 8, 15, 12, 14, 13, 3, 1, 11, 0, 2, 9], # E
+			[11, 14, 1, 15, 9, 5, 3, 0, 6, 4, 7, 8, 10, 13, 2, 12], # E
 		]
 		tests=tests[-1:]
+		tests=[]
 		
 		args={
 			"manual":"ainput-15p-arranged/main.txt",
@@ -123,7 +134,7 @@ def main(argv):
 		#maxIt=1
 		for _ in range(r_total):
 			print(_)
-			untilSize=int(popsize*addedRatio)
+			untilSize=int(popsize*addedRatio)+popsize
 			newpop=[]
 			newpop.extend(pop)
 			while len(newpop)<untilSize:
@@ -132,7 +143,7 @@ def main(argv):
 				base=([0,baseGenNum],basesrc[1].copy(),[])
 				best="" if len(base[2])==0 else min(base[2])[1]
 				for _r_change in range(r_change):
-					if random.random()<0.5:
+					if random.random()<0.9:
 						# mutate
 						base[1].mutate(best,maxAddedNodes=maxAddedNodes,
 							p_nodeNoise=0.5,
@@ -153,6 +164,7 @@ def main(argv):
 			for i in range(len(pop),len(newpop)):
 				p=newpop[i]
 				print("P:",p)
+				print(i)
 				print(p[1].goal_nodes_names)
 				p[0][0]&=0
 				p[2].clear()
@@ -164,11 +176,14 @@ def main(argv):
 					p[2].append(res)
 					print(res)
 				print(p)
+				print("initScore",initScore)
+			print("execute")
 			newpop.sort(reverse=True,key=lambda x:x[0])
 			pop=[newpop[0]]
 			for p in newpop:
 				if p[1].similar(pop[-1][1]): continue
 				pop.append(p)
+				print(p[1].goal_nodes_names)
 				if len(pop)>=popsize: break
 			from pprint import pprint
 			pprint(pop[0][1].goal_nodes)
