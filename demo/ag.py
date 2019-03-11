@@ -755,7 +755,12 @@ class goaltree_edgeless:
 				newVal+=','.join(tmp)
 			else:
 				# suppose integer
-				newVal+=str(min(max(int(rtv1s[1])+int(random.random()*3)-1,0),3)) # debug
+				v=int(rtv1s[1])
+				dx=int(random.random()*3)-1
+				dy=int(random.random()*3)-1
+				if not ( (v% 4==0 and dx<0) or (v% 4==3 and dx>0) ): v+=dx
+				if not ( (v//4==0 and dy<0) or (v//4==3 and dy>0) ): v+=dy
+				newVal+=str(v)
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
 		#print(rtv[1]) # debug

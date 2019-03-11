@@ -239,37 +239,72 @@ include C41-C44.txt
 
 
 C36 C41 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2
 
 
 C35 C36 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2,3
 
 
 C34 C35 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2,4
 
 
 C33 C34 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2,5
 
 
 C32 C33 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2,6
 
 
 C31 C32 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 0 near12:2,7
 
 
 C28 C31 C
-include top5.txt
+#include top5.txt
+0 0:0
+0 1:1
+0 2:2
+0 3:3
+0 4:4
 
 
 #### {
