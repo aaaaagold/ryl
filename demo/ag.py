@@ -876,7 +876,7 @@ class goaltree_edgeless:
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def mutate(self,strt="",
+	def mutate(self,strts=[""],
 		maxAddedNodes=20,
 		p_nodeNoise=0.5,
 		p_nodeNoiseDiff=0.5,
@@ -885,6 +885,7 @@ class goaltree_edgeless:
 		#p_nodeMerge=0.5, # TODO
 		p_nodeRandWeight=0.5,
 		__dummy=0):
+		strt=strts[0]
 		if strt in self.goal_final: return self
 		#TODO: constraint mutation
 		#TODO structure is wrong
