@@ -787,7 +787,7 @@ class goaltree_edgeless:
 		maxW=self.getNode(self.getNextNodeNames(strt)[0])[0]
 		rtv=[ (v,k) for k,v in self.goal_nodes.items() if useDefault or (minW<v[0] and v[0]<=maxW) ]
 		rtv.sort(key=lambda x:x[0][0])
-		rtv=random.sample(rtv,2)
+		rtv=random.sample(rtv,2) if len(rtv)>1 else rtv
 		rtv=[x[0] for x in rtv]
 		return rtv
 	def _mutate_merge(self,strt="",p_contraintSelected=0.5,p_negateRatio=0.5):
@@ -805,7 +805,7 @@ class goaltree_edgeless:
 		# take partial constraints of a goalset of a final node to form a new node
 		rtv=[]
 		candi=self._mutate_getCandi(strt=strt)
-		if len(candi)<2: return rtv
+		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_sparse(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
@@ -813,7 +813,7 @@ class goaltree_edgeless:
 	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		candi=self._mutate_getCandi(strt=strt)
-		if len(candi)<2: return rtv
+		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
