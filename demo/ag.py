@@ -896,7 +896,7 @@ class goaltree_edgeless:
 		#if random.random()<p_nodeMerge:
 		#	newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
-		for node in newNodes: node[2]["precs"]=set([strt])
+		for node in newNodes: node[1][2]["precs"]=set([strt])
 		# rand weight
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
 		#nextW=self.getNode(self.getNextNodeNames(strt))[0]
