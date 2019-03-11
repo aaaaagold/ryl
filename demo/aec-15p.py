@@ -16,11 +16,12 @@ def sol1(q,elgt,oriNodes,step):
 	print("sol1 strt") # debug
 	res=genSol_v3(q,elgt,step=step,stateLimit=4095,shortcut=False,onlyFirst=True,verbose=True)
 	print("sol1 genSol ende") # debug
-	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
-	tmp=max(trans)
 	print(res,oriNodes)
 	rtv=len(oriNodes)+1
 	if len(res["moves"])!=0: return (rtv,"Final")
+	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
+	tmp=max(trans)
+	return tmp
 	# /*
 	node=elgt.goal_nodes[oriNodes[tmp[0]]] if tmp[0]<len(oriNodes) else elgt.goal_final[ [k for k in elgt.goal_final][0] ]
 	fd=cs2d(node[1][0].constraints)

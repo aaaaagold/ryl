@@ -183,32 +183,35 @@ B B11 -pull near0 near1 near2 near3 near4 near8 near12
 0 corner1:1
 
 
-C47 B C
-include top5.txt
-0 8:9
-0 12:8
+####	{
+#C47 B C
+#include top5.txt
+#0 8:9
+#0 12:8
+#
+#
+#C46_2 C47 C
+#include top5.txt
+#0 12:9
+#0 8:13
+#0 15:8 15:12
+#
+#
+#C46 C46_2 C
+#include top5.txt
+#0 8:10 8:5
+#0 12:8
+#
+#
+#C45 C46 C
+#include top5.txt
+#0 8:10 8:5
+#0 12:9
+####	}
 
 
-C46_2 C47 C
-include top5.txt
-0 12:9
-0 8:13
-0 15:8 15:12
-
-
-C46 C46_2 C
-include top5.txt
-0 8:10 8:5
-0 12:8
-
-
-C45 C46 C
-include top5.txt
-0 8:10 8:5
-0 12:9
-
-
-C44 C45 C
+#C44 C45 C
+C44 B C
 include C41-C44.txt
 0 near8:2
 
@@ -228,12 +231,14 @@ include C41-C44.txt
 0 near8:2,5
 
 
-C37 C41 C
-include top5.txt
-0 8:12 9:12
+## ????
+#C37 C41 C
+#include top5.txt
+#0 8:12 9:12
+##
 
 
-C36 C37 C
+C36 C41 C
 include top5.txt
 0 near12:2
 
@@ -267,39 +272,42 @@ C28 C31 C
 include top5.txt
 
 
-C27 C28 C
-include LU3.txt
-0 3:2
-0 2:6
+#### {
+#C27 C28 C
+#include LU3.txt
+#0 3:2
+#0 2:6
+#
+#
+#C26_3 C27 C
+## piece2 at 3 thus 'piece2 at 3 and piece3 at 7' is more siutable
+#include LU3.txt
+#0 2:3
+#0 near3:2 3:7
+#
+#
+#C26_2 C26_3 C
+## empty block at 2 or 3 and 'piece2 and piece3 at 7,6 respectlively'
+#include LU3.txt
+#0 6:3
+#0 2:7
+#0 15:2 15:3
+#
+#
+#C26 C26_2 C
+#include LU3.txt
+#0 3:2
+#0 2:10 2:5
+#
+#
+#C25 C26 C
+#include C21-C25.txt
+#0 2:10 2:5
+#### }
 
 
-C26_3 C27 C
-# piece2 at 3 thus 'piece2 at 3 and piece3 at 7' is more siutable
-include LU3.txt
-0 2:3
-0 near3:2 3:7
-
-
-C26_2 C26_3 C
-# empty block at 2 or 3 and 'piece2 and piece3 at 7,6 respectlively'
-include LU3.txt
-0 6:3
-0 2:7
-0 15:2 15:3
-
-
-C26 C26_2 C
-include LU3.txt
-0 3:2
-0 2:10 2:5
-
-
-C25 C26 C
-include C21-C25.txt
-0 2:10 2:5
-
-
-C24 C25 C
+#C24 C25 C
+C24 C28 C
 include C21-C25.txt
 0 near2:2
 

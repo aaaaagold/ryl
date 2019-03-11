@@ -709,14 +709,30 @@ class goaltree_edgeless:
 	
 	def _newGoal_noise_noisify(self,c):
 		# TODO noise in RealNumber and Range
+		if c[0]<0: return c # special definitions
 		rtv=list(c)
 		rtv1v=re.split("[ ]+",rtv[1])
 		newrtv1strs=[]
 		for c in rtv1v:
+			if not ":" in c: continue
 			rtv1s=c.split(":")
 			#print(rtv1s) # debug
 			#newVal=int(rtv1s[1])+int(random.random()*15)-7
-			newVal=min(max(int(rtv1s[1])+int(random.random()*3)-1,0),3) # debug
+			newVal=''
+			if ',' in rtv1s[1]:
+				tmp=rtv1s[1].split(',')
+				tmp=[ int(x)+int(random.random()*3-1) for x in tmp ]
+				if tmp[0]>tmp[1]:
+					tmp2=sum(tmp)
+					if tmp2&1:
+						tmp[0]=(tmp2+0)>>1
+						tmp[1]=(tmp2+1)>>1
+					else: tmp[1]=tmp[0]=tmp2
+				tmp=[str(x) for x in tmp]
+				newVal+=','.join(tmp)
+			else:
+				# suppose integer
+				newVal+=str(min(max(int(rtv1s[1])+int(random.random()*3)-1,0),3)) # debug
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
 		#print(rtv[1]) # debug

@@ -307,7 +307,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		#print(_lastMatch) # debug
 		# all candidate nodes cannot find a path to final(s)
 		if verbose and found==False:
-			print("GG",_nodes,_lastMatch,len(hvv)) # debug
+			print("GG",_nodes,_lastMatch,len(hvv),__lv) # debug
 			print(b.outputs())
 			b.print()
 	if _isBegin:
