@@ -80,14 +80,14 @@ def main(argv):
 		args={
 			"manual":"ainput-15p-arranged/main.txt",
 			"popsize":11,
-			"maxAddedNodes":20,
+			"maxAddedNodes":10,
 			"r-mutate":10,
 			"r-cross":10,
 			"r-total":10000,
-			"r-change":10,
+			"r-change":20,
 			"addedRatio":2.0,
 			"qsize":1,
-			"step":8,
+			"step":23,
 			"__dummy":0
 		}
 		if "--help" in argv or "-h" in argv or "?" in argv:
@@ -141,17 +141,17 @@ def main(argv):
 				basesrc=random.choice(pop)
 				baseGenNum=basesrc[0][1]
 				base=([0,baseGenNum],basesrc[1].copy(),[])
-				best="" if len(base[2])==0 else min(base[2])[1]
+				best="" if len(basesrc[2])==0 else min(basesrc[2])[1]
 				for _r_change in range(r_change):
 					if random.random()<0.9:
 						# mutate
 						base[1].mutate(best,maxAddedNodes=maxAddedNodes,
-							p_nodeNoise=0.5,
+							p_nodeNoise=0.1,
 							p_nodeNoiseDiff=0.9,
 							p_nodePartialFinal=0.1,
-							p_nodeSparse=0.1,
+							p_nodeSparse=0.01,
 							#p_nodeMerge=0.5,
-							p_nodeRandWeight=0.1
+							p_nodeRandWeight=0.9
 							)
 					else:
 						# cross
