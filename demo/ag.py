@@ -516,8 +516,9 @@ class goaltree_edgeless:
 		tmp={}
 		for k in self.goal_nodes:
 			t=self.goal_nodes[k]
-			tt=([],t[1].copy())
+			tt=([],t[1].copy(),{})
 			tt[0].extend(t[0])
+			for k,v in t[2].items(): tt[2][k]=copy.deepcopy(v)
 			tmp[k]=tt
 		rtv.goal_nodes=tmp
 		rtv.goal_nodes_names.extend(self.goal_nodes_names)
@@ -542,15 +543,20 @@ class goaltree_edgeless:
 		wdata=self._setRef_weightedRecurr(goaltree)
 		for goalnode_key in goaltree.sets:
 			goalnode=goaltree.sets[goalnode_key]
-			goalset=goalnode[0]
-			succ=goalnode[1]
+			goalset=goalnode[0] # a list
+			succ=goalnode[1] # a str
+			precs=goalnode[4] # a set
 			if succ!='-':
-				tmp[goalnode_key]=([ wdata[goalnode_key] ],goalset)
+				tmp[goalnode_key]=([ wdata[goalnode_key] ],goalset,{
+					"precs":precs
+				})
 				self.goal_nodes_names.append(goalnode_key)
 			else:
 				# finals
 				# wdata[goalnode_key]===0
-				self.goal_final[goalnode_key]=([ wdata[goalnode_key] ],goalset)
+				self.goal_final[goalnode_key]=([ wdata[goalnode_key] ],goalset,{
+					"precs":precs
+				})
 		self.goal_nodes.update(tmp)
 		self._setRef_oth(goaltree)
 	def _setRef_weightedRecurr(self,goaltree,_wdata=None,_currentPath=None,_beginNode=""):
@@ -622,6 +628,12 @@ class goaltree_edgeless:
 		return rtv
 	def getFinals(self):
 		return [ k for k in self.goal_final ]
+	def hasNode(self,k):
+		return (k in self.goal_nodes) | (k in self.goal_final)
+	def getPrecs(self,k):
+		tmp=self.getNode(k)[2]
+		if "precs" in tmp: return tmp["precs"]
+		return set()
 	def size(self):
 		rtv={"byname":len(self.goal_final)+len(self.goal_nodes),"bygoal":0}
 		for _,d in self.goal_final.items():
@@ -651,15 +663,21 @@ class goaltree_edgeless:
 		# ( === finals have greatest weight )
 		# notBelow and beforeKeys is not used # in current version
 		# inter-func.
+		def valid_prec(k):
+			# control upper nodes to return
+			# True === valid , i.e. will be return from 'wkeys'
+			# it takes 'beforeKeys' to check if there's at least 1 presenting in 'precs'
+			precs=self.getPrecs(k)
+			return len(precs)==0 or len(precs&beforeKeys)!=0
 		# inter-func. END
 		minW=self.goal_nodes[currentKey][0] if currentKey in self.goal_nodes else nINF_v1
 		rtv=[]
-		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if minW<v[0] ]
+		rtv_nodes = [ (v[0],k) for k,v in self.goal_nodes.items() if minW<v[0] and valid_prec(k) ]
 		rtv_nodes.sort()
 		#rtv_nodes=[rtv_nodes[0]] # debug
 		maxW=(max(rtv_nodes)[0]+[0]) if len(rtv_nodes)!=0 else [0]
 		# let finals be tested first
-		rtv.extend([ (maxW,k) for k in self.goal_final ])
+		rtv.extend([ (maxW,k) for k in self.goal_final if valid_prec(k) ])
 		rtv.extend(rtv_nodes)
 		return rtv
 	
@@ -672,7 +690,7 @@ class goaltree_edgeless:
 		self.clean_cache()
 		self.__class__.cnt_newNode+=1
 		name="ec_%d"%(self.__class__.cnt_newNode,)
-		node=([0],[])
+		node=([0],[],{})
 		return name,node
 	def newNodeByGoals(self,gs=[]):
 		rtv=self._newNode()
@@ -815,6 +833,8 @@ class goaltree_edgeless:
 		nodesrc1=candi[0]
 		nodesrc2=candi[1]
 		node=self.newNode_merge(nodesrc1,nodesrc2,p_contraintSelected,p_negateRatio)
+		if not "precs" in node[2]: node[2]["precs"]=set()
+		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_sparse(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
@@ -824,6 +844,8 @@ class goaltree_edgeless:
 		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_sparse(nodesrc,p_constraintReserved,p_negateRatio)
+		if not "precs" in node[2]: node[2]["precs"]=set()
+		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
@@ -832,6 +854,8 @@ class goaltree_edgeless:
 		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
+		if not "precs" in node[2]: node[2]["precs"]=set()
+		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_noiseDiff(self,strt="",p_constraintReserved=1,p_negateRatio=0.5):
@@ -841,11 +865,15 @@ class goaltree_edgeless:
 		base=self.goal_nodes[ self.oriNodes[nextIt-1] ]
 		more=self.goal_nodes[ self.oriNodes[nextIt] if nextIt<len(self.oriNodes) else  random.choice([k for k in self.goal_final]) ]
 		node=self.newNode_noiseDiff(base,more,p_constraintReserved,p_negateRatio)
+		if not "precs" in node[2]: node[2]["precs"]=set()
+		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_partialFinal(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
+		if not "precs" in node[2]: node[2]["precs"]=set()
+		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def mutate(self,strt="",
@@ -875,6 +903,7 @@ class goaltree_edgeless:
 		newNodes=[ node for node in newNodes if not isNone(node) ]
 		# rand weight
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
+		#nextW=self.getNode(self.getNextNodeNames(strt))[0]
 		addedSuccs=[k for k in self.goal_nodes if baseW<=self.goal_nodes[k][0] and not k in self.oriNodes_dict]
 		cnt=len(addedSuccs)-maxAddedNodes
 		if cnt>0:
