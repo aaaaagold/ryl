@@ -755,7 +755,12 @@ class goaltree_edgeless:
 				newVal+=','.join(tmp)
 			else:
 				# suppose integer
-				newVal+=str(min(max(int(rtv1s[1])+int(random.random()*3)-1,0),3)) # debug
+				v=int(rtv1s[1])
+				dx=int(random.random()*3)-1
+				dy=int(random.random()*3)-1
+				if not ( (v% 4==0 and dx<0) or (v% 4==3 and dx>0) ): v+=dx
+				if not ( (v//4==0 and dy<0) or (v//4==3 and dy>0) ): v+=dy
+				newVal+=str(v)
 			newrtv1strs.append(rtv1s[0]+":"+str(newVal))
 		rtv[1]=' '.join(newrtv1strs)
 		#print(rtv[1]) # debug
@@ -871,7 +876,7 @@ class goaltree_edgeless:
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def mutate(self,strt="",
+	def mutate(self,strts=[""],
 		maxAddedNodes=20,
 		p_nodeNoise=0.5,
 		p_nodeNoiseDiff=0.5,
@@ -880,6 +885,7 @@ class goaltree_edgeless:
 		#p_nodeMerge=0.5, # TODO
 		p_nodeRandWeight=0.5,
 		__dummy=0):
+		strt=strts[0]
 		if strt in self.goal_final: return self
 		#TODO: constraint mutation
 		#TODO structure is wrong

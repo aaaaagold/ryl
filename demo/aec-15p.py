@@ -21,7 +21,9 @@ def sol1(q,elgt,oriNodes,step):
 	if len(res["moves"])!=0: return (rtv,"Final")
 	trans=[(0,"")]+[ (oriNodes.index(n)+1,n) for nv in res['possible'] for n in nv if n in oriNodes ]
 	tmp=max(trans)
-	return tmp
+	tmp2=[nv[nv.index(tmp[1]):] for nv in res['possible'] if tmp[1] in nv]
+	tmp2.sort(key=lambda x:len(x))
+	return (tmp[0],tmp2[0])
 	# /*
 	node=elgt.goal_nodes[oriNodes[tmp[0]]] if tmp[0]<len(oriNodes) else elgt.goal_final[ [k for k in elgt.goal_final][0] ]
 	fd=cs2d(node[1][0].constraints)
