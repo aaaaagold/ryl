@@ -1,7 +1,7 @@
 #!/bin/python3
-# 4x4x2d
+# 4x4
 
-outputCnt=32
+outputCnt=16
 
 def corner(ov,width):
 	self=corner
@@ -47,4 +47,3 @@ def near12(ov): return near(ov,12)
 def near13(ov): return near(ov,13)
 def near14(ov): return near(ov,14)
 def near15(ov): return near(ov,15)
-

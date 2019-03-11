@@ -5,7 +5,8 @@ import time
 
 from ag import *
 #from ab import *
-from a15p_arranged import *
+#from a15p_arranged import *
+from a15p_rev import *
 #from ab2g import *
 from asol import *
 	
@@ -78,7 +79,7 @@ def main(argv):
 		tests=[]
 		
 		args={
-			"manual":"ainput-15p-arranged/main.txt",
+			"manual":"ainput-15p-rev-sparse/main.txt",
 			"popsize":11,
 			"maxAddedNodes":10,
 			"r-mutate":10,
@@ -120,6 +121,10 @@ def main(argv):
 		qv=[bbb.random().copy() for _ in range(qsize)]
 		qv.extend([bbb.setNums(arr,arr.index(15)).copy() for arr in tests])
 		print(qv[0].outputs()),qv[0].print() # debug
+		if 0!=0: # debug test: ok if it's original
+			res=genSol_v3(qv[0],elgt,step=step,stateLimit=4095,shortcut=False,onlyFirst=True,verbose=True)
+			print(res)
+			exit()
 		strt=[]
 		for q in qv:
 			res=sol1(q,elgt,oriNodes,step)

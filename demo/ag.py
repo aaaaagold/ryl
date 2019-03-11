@@ -847,13 +847,13 @@ class goaltree_edgeless:
 		self.clean_cache()
 		newNodes=[]
 		if random.random()<p_nodeNoise:
-			newNodes+=self._mutate_noise(strt=strt,p_negateRatio=0)
+			newNodes+=self._mutate_noise(strt=strt,p_negateRatio=0.05)
 		if random.random()<p_nodeNoiseDiff:
-			newNodes+=self._mutate_noiseDiff(strt=strt,p_constraintReserved=1,p_negateRatio=0)
+			newNodes+=self._mutate_noiseDiff(strt=strt,p_negateRatio=0.05)
 		if random.random()<p_nodePartialFinal:
-			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0)
+			newNodes+=self._mutate_partialFinal(strt=strt,p_negateRatio=0.05)
 		if random.random()<p_nodeSparse:
-			newNodes+=self._mutate_sparse(strt=strt,p_negateRatio=0)
+			newNodes+=self._mutate_sparse(strt=strt,p_negateRatio=0.05)
 		#if random.random()<p_nodeMerge:
 		#	newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
