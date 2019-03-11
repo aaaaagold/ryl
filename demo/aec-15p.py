@@ -112,9 +112,8 @@ def main(argv):
 		gt=Goaltree()
 		gt.fromTxt(manual)
 		elgt=goaltree_edgeless(gt)
-		oriNodes=elgt.wkeys("")
-		oriNodes.sort()
-		oriNodes=[ x[1] for x in oriNodes ]
+		oriNodes=[n for n in elgt.goal_nodes_names]
+		oriNodes.sort(key=lambda x:elgt.goal_nodes[x][0])
 		print(oriNodes)
 		pop=[ ([0,0],elgt.copy(),[]) for _ in range(1) ]
 		# [ ([scoreTotal,gen],idv,[score1,node]) , ... ]

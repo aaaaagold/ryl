@@ -499,7 +499,7 @@ class goaltree_edgeless:
 		self.extendedView=None
 		self.goal_final={}
 		self.goal_nodes={}
-		# [k]=>([weight_vector],goalset_from_goaltree)
+		# [k]=>([weight_vector],goalset_from_goaltree,{meta})
 		# the order to be used is from greatest ( far from final ) to the least ( close to final )
 		self.goal_nodes_names=[]
 		#self.goal_nodes_usedCnt={} # "name":int_cnt
@@ -518,7 +518,7 @@ class goaltree_edgeless:
 			t=self.goal_nodes[k]
 			tt=([],t[1].copy(),{})
 			tt[0].extend(t[0])
-			for k,v in t[2].items(): tt[2][k]=copy.deepcopy(v)
+			for kk,vv in t[2].items(): tt[2][kk]=copy.deepcopy(vv)
 			tmp[k]=tt
 		rtv.goal_nodes=tmp
 		rtv.goal_nodes_names.extend(self.goal_nodes_names)
@@ -656,6 +656,11 @@ class goaltree_edgeless:
 			wkeys=self.wkeys(currentKey=currentKey,notBelow=notBelow,beforeKeys=beforeKeys)
 			wkeys.sort()
 		return ()
+	def allkeys(self):
+		rtv=[ (v[0],k) for k,v in self.goal_nodes ]
+		rtv.extend([(v[0],k) for k,v in self.goal_final ])
+		rtv.sort(key=lambda x:x[0])
+		return rtv
 	def wkeys(self,currentKey,notBelow=None,beforeKeys=set()):
 		# bigger (than 'currentKey') weight will be reserved
 		# [and bigger weight (in reserved keys) at first]@asol.py
@@ -833,8 +838,6 @@ class goaltree_edgeless:
 		nodesrc1=candi[0]
 		nodesrc2=candi[1]
 		node=self.newNode_merge(nodesrc1,nodesrc2,p_contraintSelected,p_negateRatio)
-		if not "precs" in node[2]: node[2]["precs"]=set()
-		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_sparse(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
@@ -844,8 +847,6 @@ class goaltree_edgeless:
 		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_sparse(nodesrc,p_constraintReserved,p_negateRatio)
-		if not "precs" in node[2]: node[2]["precs"]=set()
-		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_noise(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
@@ -854,8 +855,6 @@ class goaltree_edgeless:
 		if len(candi)<1: return rtv
 		nodesrc=candi[0]
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
-		if not "precs" in node[2]: node[2]["precs"]=set()
-		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_noiseDiff(self,strt="",p_constraintReserved=1,p_negateRatio=0.5):
@@ -865,15 +864,11 @@ class goaltree_edgeless:
 		base=self.goal_nodes[ self.oriNodes[nextIt-1] ]
 		more=self.goal_nodes[ self.oriNodes[nextIt] if nextIt<len(self.oriNodes) else  random.choice([k for k in self.goal_final]) ]
 		node=self.newNode_noiseDiff(base,more,p_constraintReserved,p_negateRatio)
-		if not "precs" in node[2]: node[2]["precs"]=set()
-		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def _mutate_partialFinal(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		node=self.newNode_fromFinal(p_constraintReserved,p_negateRatio)
-		if not "precs" in node[2]: node[2]["precs"]=set()
-		node[2]["precs"].add(strt)
 		rtv.append(node)
 		return rtv
 	def mutate(self,strt="",
@@ -901,6 +896,7 @@ class goaltree_edgeless:
 		#if random.random()<p_nodeMerge:
 		#	newNodes+=self._mutate_merge(strt=strt,p_negateRatio=0)
 		newNodes=[ node for node in newNodes if not isNone(node) ]
+		for node in newNodes: node[2]["precs"]=set([strt])
 		# rand weight
 		baseW=self.goal_nodes[strt][0] if strt in self.oriNodes_dict else nINF_v1
 		#nextW=self.getNode(self.getNextNodeNames(strt))[0]
