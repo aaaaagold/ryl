@@ -106,9 +106,9 @@ def matchGoaltree_trim_selectPossible(possibleV,gt):
 	tmparr=[]
 	lessNode={}
 	for p in possibleV:
-		if len(p)==0: continue
-		if (not p[-1] in lessNode) or len(lessNode[p[-1]])>len(p):
-			lessNode[p[-1]]=p
+		if len(p)==1: continue # last is board
+		if (not p[-2] in lessNode) or len(lessNode[p[-2]])>len(p):
+			lessNode[p[-2]]=p
 	res=matchGoaltree_trim([ n for n in lessNode ],gt)
 	for n in res:
 		rtv.append(lessNode[n])
@@ -124,7 +124,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 	_moves=[],_rtvMoves=[],
 	_mvSep=[],_rtvMvSep=[],
 	_nodes=[],_rtvNodes=[],
-	_possible=[],
+	_possible=[],_possible_fin=[],
 	__internal_data=None,
 	shortcut=True,
 	onlyFirst=False,
@@ -236,7 +236,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_moves=_moves+newMoves,_rtvMoves=_rtvMoves,
 						_mvSep=_mvSep+[((_lastMatch,key),newMoves)],_rtvMvSep=_rtvMvSep,
 						_nodes=_nodes+[key],_rtvNodes=_rtvNodes,
-						_possible=_possible,
+						_possible=_possible,_possible_fin=_possible_fin,
 						__internal_data=__internal_data,
 						shortcut=shortcut,
 						onlyFirst=onlyFirst,
@@ -269,7 +269,7 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 						_moves=_moves,_rtvMoves=_rtvMoves,
 						_mvSep=_mvSep,_rtvMvSep=_rtvMvSep,
 						_nodes=_nodes,_rtvNodes=_rtvNodes,
-						_possible=_possible,
+						_possible=_possible,_possible_fin=_possible_fin,
 						__internal_data=__internal_data,
 						shortcut=shortcut,
 						onlyFirst=onlyFirst,
@@ -293,10 +293,14 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 					failinfo["set"].remove(tmp[1])
 				# record possible, only when no matches
 				if len(matchedKeys)==0:
-					_possible.append(_nodes)
+					_possible.append([])
+					_possible[-1].extend(_nodes)
+					_possible[-1].append(b)
 					newPoss=matchGoaltree_trim_selectPossible(_possible,gt)
 					_possible.clear()
-					_possible.extend(newPoss)
+					_possible_fin.clear()
+					_possible.extend([n[:-1] for n in newPoss])
+					_possible_fin.extend([n[-1] for n in newPoss])
 	del expInfo,INFO ####
 	if len(_rtvMoves)==0: # after try next
 		#print(_lastMatch) # debug
@@ -306,7 +310,10 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 			print(b.outputs())
 			b.print()
 	if _isBegin:
-		return {"moves":_rtvMoves,"mvSep":_rtvMvSep,"nodes":_rtvNodes,"possible":_possible}
+		return {"moves":_rtvMoves,"mvSep":_rtvMvSep,"nodes":_rtvNodes,
+			"possible":_possible,"possible-fin":_possible_fin,
+			"_dummy":0
+		}
 	# END OF FUNC.
 
 genSol=genSol_v3
