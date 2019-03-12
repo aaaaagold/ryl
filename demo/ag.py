@@ -301,13 +301,13 @@ class Goaltree:
 			#print(i,curr,defined) # debug
 			succ = rs[i+2]
 			prec = set(sts.split(rs[i+3])[1:]) # or
-			opts = {"-push":(set(),[]),"-pull":(set(),[])} # (fooNamesLookup,fooContent)
+			opts = {"-push":(set(),[]),"-pull":(set(),[])} # (fooNamesLookupForRepeated,fooContent)
 			for opt in nodeopt.split(rs[i+5])[1::nodeopt.groups+1]:
 				arr=sts.split(opt) # opt_type foo1 foo2 ...
 				dest=[k for k in opts if arr[0]==k] # opt_type
 				if len(dest)==0: raise TypeError("Error: "+arr[0]+" is not an option")
 				arr,dst=tuple(arr[1:]),opts[dest[0]]
-				if not (arr in dst[0]): # trim repeated
+				if not (arr in dst[0]): # trim repeated combination
 					dst[0].add(arr)
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
@@ -472,7 +472,7 @@ class Goaltree:
 		#validKeys=[k for k in self.sets if len(self.getSuccs(k)&notBelow)==0]
 		nextgoal=self.learned["nextgoal"]
 		target=nextgoal[currentKey] if currentKey in nextgoal else {}
-		rtv=[ (v,k) for k,v in target.items() if len(self.getSuccs(k)&notBelow)==0 and valid_prec(k) ]
+		rtv=[ (v,k) for k,v in target.items() if k in self.sets and len(self.getSuccs(k)&notBelow)==0 and valid_prec(k) ]
 		#rtv+=[ (0,k) for k in self.sets if (not k in target) and len(self.getSuccs(k)&notBelow)==0]
 		#rtv.sort(reverse=True) # leave it to caller
 		return rtv
@@ -784,7 +784,7 @@ class goaltree_edgeless:
 		if len(g[1].constraints)==0: return None
 		return self.newNodeByGoals([g[1]])
 	
-	def newGoal_noiseDiff(self,base,more,p_contraintSelected=1,p_negateRatio=0.5):
+	def newGoal_noiseDiff(self,base,more,p_contraintSelected=0.5,p_negateRatio=0.5):
 		csb=set(base.constraints)
 		csm=set(more.constraints)
 		cs=csb^csm
@@ -862,7 +862,7 @@ class goaltree_edgeless:
 		node=self.newNode_noise(nodesrc,p_constraintReserved,p_negateRatio)
 		rtv.append(node)
 		return rtv
-	def _mutate_noiseDiff(self,strt="",p_constraintReserved=1,p_negateRatio=0.5):
+	def _mutate_noiseDiff(self,strt="",p_constraintReserved=0.5,p_negateRatio=0.5):
 		rtv=[]
 		if not strt in self.goal_nodes: return rtv
 		nextIt=self.oriNodes_dict[strt]+1
