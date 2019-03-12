@@ -320,6 +320,9 @@ class Goaltree:
 		#pprint(data) # debug
 		self.sets=dict(data)
 		del data
+		for k in self.sets:
+			for kk in self.sets:
+				if k==kk: continue
 		self.isSuccsOf=dict([(k,set()) for k in self.sets])
 		for k,v in self.sets.items():
 			succSet,succStr=self._getSuccs(k)
