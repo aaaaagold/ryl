@@ -320,9 +320,50 @@ class Goaltree:
 		#pprint(data) # debug
 		self.sets=dict(data)
 		del data
+		'''
+		def getTarget(c):
+			tmp=c[1].split(":")[1] if ":" in c[1] else c[1]
+			return c[0],tmp,c[2]
 		for k in self.sets:
-			for kk in self.sets:
-				if k==kk: continue
+			node=self.sets[k]
+			if node[1]=='-': continue
+			gs_node=node[0]
+			if len(gs_node)!=1: continue
+			gs_node=gs_node[0]
+			gs_node.arrange()
+			sn=set(gs_node.constraints)
+			succ=self.sets[node[1]]
+			gs_succ=succ[0]
+			for g in gs_succ:
+				if abs(len(g.constraints)-len(sn))>1: continue
+				ss=set(g.constraints)
+				delta=ss^sn
+				if len(delta)>2: continue
+				rem_sn=delta&sn
+				rem_ss=delta&ss
+				if len(rem_sn)!=1 or len(rem_ss)!=1: continue # no idea how to do
+				rem_sn=rem_sn.pop()
+				rem_ss=rem_ss.pop()
+				if not (":" in rem_sn[1] or ":" in rem_ss[1]): continue # not value
+				rem1_sn=re.split(r'[ \t]+',rem_sn[1])
+				rem1_ss=re.split(r'[ \t]+',rem_ss[1])
+				if len(rem1_sn)!=len(rem1_ss)!=1: continue
+				rem1_sn.sort()
+				rem1_ss.sort()
+				diff=[]
+				for i in range(len(rem1_sn)):
+					if rem1_sn[i]!=rem1_ss[i]:
+						diff.append((rem1_sn[i],rem1_ss[i]))
+				if len(diff)!=1 or diff[0]==diff[1]: continue
+				target=[ x[:x.index(":")] for x in diff ]
+				if target[0]!=target[1]: continue
+				vals=[ x[len(target[0])+1:] for x in diff ]
+				if not ',' in vals[0]: vals[0]=vals[0]+','+vals[0]
+				if not ',' in vals[1]: vals[1]=vals[1]+','+vals[1]
+			newNodes=[]
+			if vals[0]
+			print("?",gs_node),exit()
+		'''
 		self.isSuccsOf=dict([(k,set()) for k in self.sets])
 		for k,v in self.sets.items():
 			succSet,succStr=self._getSuccs(k)
