@@ -9,7 +9,32 @@ from ag import *
 from a15p_rev import *
 #from ab2g import *
 from asol import *
-	
+
+
+def search():
+	return
+	# mutate
+	#  minimize(max([distance of 2 nodes which are nearby]))
+	#   try several mids # subset of delta-constraint become mids
+	#    and mids of two, probability related to distance
+	#     and mids ( repeat )
+	#
+
+def reproduce():
+	return
+	# cross
+	#  exchange partial solution?
+	#
+
+def turn():
+	return
+	# several_reproduce
+	# 
+
+def solving():
+	return
+	#
+
 def sol1(q,elgt,oriNodes,step):
 	def c2ii(c): return [ int(x) for x in c[1].split(":") ]
 	def cs2d(cs): return dict([c2ii(c) for c in cs])
@@ -83,7 +108,7 @@ def main(argv):
 			"r-change":20,
 			"addedRatio":2.0,
 			"qsize":1,
-			"step":23,
+			"step":11,
 			"__dummy":0
 		}
 		if "--help" in argv or "-h" in argv or "?" in argv:
