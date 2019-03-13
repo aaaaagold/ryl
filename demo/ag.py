@@ -66,6 +66,32 @@ class Goal:
 			raise TypeError("unsupport: %s == %s"%(self.__class__,type(rhs)))
 	def __repr__(self):
 		return "[Goal:"+str(self.constraints)+"]"
+	def isSpecial(self):
+		# having constraints labels != 0
+		for c in self.constraints:
+			if c[0]!=0:
+				return 1
+		return 0
+	def flatten(self,debug=""):
+		add=[]
+		delItSet=set()
+		rg=range(len(self.constraints))
+		for i in rg:
+			c=self.constraints[i]
+			if c[0]==self.__class__.KW_include_label:
+				src=c[1][1]
+				if len(src.sets)<=1 and len(src.pushs(""))==0 and len(src.pulls(""))==0:
+					cFinalGs=src[src.getFinals()[0]][0]
+					if len(cFinalGs)<=1 and cFinalGs[0].isSpecial()==0:
+						add+=cFinalGs[0].constraints
+						delItSet.add(i)
+		if len(add)!=0:
+			newCs=[ self.constraints[i] for i in rg if not i in delItSet ]
+			self.constraints=newCs
+			for c in add:
+				self.add(c[1],c[0],c[2],arrangeLater=True)
+			self.arrange()
+		return self
 	def arrange(self):
 		if self.arrangeNeeded!=False:
 			self.arrangeNeeded=False
@@ -77,12 +103,15 @@ class Goal:
 				tmpv.append(c)
 				tmp=c
 			self.constraints=tmpv
+			if len([ c[0] for c in tmpv if c[0]==-1])==0:
+				self.including=False
+		return self
 	def add(self,item,label=0,negate=False,arrangeLater=False):
 		# label must be an integer
 		self.constraints.append((label,item,negate))
 		if self.maxLabel<label: self.maxLabel=label
 		if arrangeLater==False: self.arrange()
-		else: arrangeNeeded=arrangeLater
+		else: self.arrangeNeeded=arrangeLater
 	def fromStr(self,s,cd='./',extView=None):
 		'''
 			character:'\r' is ommited
@@ -154,7 +183,7 @@ class Goal:
 		rtv=""
 		tmpv=[]
 		for c in self.constraints:
-			useLen=length+c[2]
+			useLen=length+c[2] # len of neg no usage
 			label=c[0]
 			content=c[1]
 			if label==self.__class__.KW_include_label:
@@ -312,7 +341,7 @@ class Goaltree:
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
-			data.append((curr, ([ Goal().fromStr(gs,cd=cd,extView=self.extendedView) for gs in gsv ],succ,set(),[''],prec,opts) ))
+			data.append((curr, ([ Goal().fromStr(gs,cd=cd,extView=self.extendedView).flatten() for gs in gsv ],succ,set(),[''],prec,opts) ))
 			# curr:( Goal()s , succ , succSet , succStrs , prec , opts)
 		#data.sort()
 		#print(defined),exit() # debug
@@ -377,7 +406,8 @@ class Goaltree:
 		self.learned["nextgoal"][""]=dict([ (k,(0.0-len(self.getSuccs(k)))/len(allKeys)) for k in allKeys if len(self.getPrecs(k))==0 ])
 		return self
 	def toStr(self,labelMinLen=0):
-		kv=self.keys()
+		kv=[ k for k in self.sets ]
+		kv.sort()
 		rtv=""
 		tmpv=[]
 		for k in kv:
@@ -385,6 +415,8 @@ class Goaltree:
 			tmps+=k
 			tmps+='\t'
 			tmps+=self.getSucc(k)
+			tmps+='\t'
+			tmps+='\t'.join(sorted([ kk for kk in self.getPrecs(k) ]))
 			tmpgsv=[ g.toStr(labelMinLen=labelMinLen) for g in self.getGoals(k) ]
 			tmpv.append('\n'.join([tmps,"\n\n".join(tmpgsv)]))
 		rtv+="\n\n\n".join(tmpv)
