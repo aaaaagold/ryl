@@ -330,7 +330,7 @@ class Goaltree:
 			#print(i,curr,defined) # debug
 			succ = rs[i+2]
 			prec = set(sts.split(rs[i+3])[1:]) # or
-			opts = {"-push":(set(),[]),"-pull":(set(),[])} # (fooNamesLookupForRepeated,fooContent)
+			opts = {"-push":(set(),[],[]),"-pull":(set(),[],[])} # (fooNamesLookupForRepeated,fooContent)
 			for opt in nodeopt.split(rs[i+5])[1::nodeopt.groups+1]:
 				arr=sts.split(opt) # opt_type foo1 foo2 ...
 				dest=[k for k in opts if arr[0]==k] # opt_type
@@ -340,6 +340,7 @@ class Goaltree:
 					dst[0].add(arr)
 					dst[1].append([getattr(self.extendedView,f) for f in arr])
 				else: print("warning: permutation:",arr,"in",dest[0],"already exists in this node")
+				dst[2].append(arr)
 			gsv  = re.split("[\n][ \t]*[\n]",rs[i+9]) # or
 			data.append((curr, ([ Goal().fromStr(gs,cd=cd,extView=self.extendedView).flatten() for gs in gsv ],succ,set(),[''],prec,opts) ))
 			# curr:( Goal()s , succ , succSet , succStrs , prec , opts)
@@ -368,17 +369,14 @@ class Goaltree:
 				ss=set(g.constraints)
 				delta=ss^sn
 				if len(delta)>2: continue
-				rem_sn=delta&sn
-				rem_ss=delta&ss
+				rem_sn,rem_ss=delta&sn,delta&ss
 				if len(rem_sn)!=1 or len(rem_ss)!=1: continue # no idea how to do
-				rem_sn=rem_sn.pop()
-				rem_ss=rem_ss.pop()
+				rem_sn,rem_ss=rem_sn.pop(),rem_ss.pop()
 				if not (":" in rem_sn[1] or ":" in rem_ss[1]): continue # not value
 				rem1_sn=re.split(r'[ \t]+',rem_sn[1])
 				rem1_ss=re.split(r'[ \t]+',rem_ss[1])
 				if len(rem1_sn)!=len(rem1_ss)!=1: continue
-				rem1_sn.sort()
-				rem1_ss.sort()
+				rem1_sn.sort(),rem1_ss.sort()
 				diff=[]
 				for i in range(len(rem1_sn)):
 					if rem1_sn[i]!=rem1_ss[i]:
@@ -412,11 +410,15 @@ class Goaltree:
 		tmpv=[]
 		for k in kv:
 			tmps=""
-			tmps+=k
-			tmps+='\t'
-			tmps+=self.getSucc(k)
-			tmps+='\t'
-			tmps+='\t'.join(sorted([ kk for kk in self.getPrecs(k) ]))
+			tmps+=k+'\t'+self.getSucc(k)
+			if len(self.getPrecs(k))!=0:
+				tmps+='\t'.join([""]+sorted([ kk for kk in self.getPrecs(k) ]))
+			opts=self.sets[k][5]
+			optstrs=[]
+			for opt in sorted([_ for _ in opts]):
+				if len(opts[opt][2])!=0:
+					optstrs.append('\t'.join([x for v in opts[opt][2]for x in[opt]+list(v)]))
+			tmps+='\t'.join([""]+optstrs)
 			tmpgsv=[ g.toStr(labelMinLen=labelMinLen) for g in self.getGoals(k) ]
 			tmpv.append('\n'.join([tmps,"\n\n".join(tmpgsv)]))
 		rtv+="\n\n\n".join(tmpv)
@@ -425,7 +427,8 @@ class Goaltree:
 		'''
 			concept:
 			a block with a name is a set of Goal. that means reach one of them is a 'match', and can to further more (try the successor)
-			
+		'''
+		'''
 			format prototype:
 
 			( none or more empty lines )
