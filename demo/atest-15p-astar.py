@@ -138,7 +138,7 @@ def test2(gt,psize=11):
 				print("score done")
 				newpop.sort()
 				pop=newpop[:int(len(newpop)//3)]
-				print("best",newpop[0],newpop[2])
+				print("best",newpop[0])
 			pass
 		pass
 	pass
