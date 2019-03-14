@@ -76,10 +76,12 @@ class idv:
 		return rtv
 	def __lt__(self,rhs):
 		return False
-	def reserve(self,sz,w=1):
+	def reserve(self,sz,w=1,b=0):
 		for _ in range(len(self.w),sz):
-			self.w.append(random.random()*w)
+			self.w.append(random.random()*w+b)
 		return self
+	def maxW(self):
+		return max(self.w)
 	def mutate(self):
 		r=random.random()+goldRate
 		self.w=[random.random()*w+goldRate for w in self.w]
@@ -96,7 +98,8 @@ def test2(gt,psize=11):
 	maxstep=2323
 	pop=[ [None,idv(),0] ]
 	for n in range(2,7):
-		for p in pop: p[1].reserve(n*n)
+		M=max([p[1].maxW()for p in pop])
+		for p in pop: p[1].reserve(sz=n*n,b=M+1)
 		gs=gt.sets['Final'][0]
 		gs.clear()
 		g=Goal()
@@ -108,7 +111,7 @@ def test2(gt,psize=11):
 			print("batch",_)
 			# split cases
 			qv=[bbb.random().copy() for _ in range(1+(n+_)*2)]
-			print("qv done")
+			print("qv done",len(qv))
 			# clear results
 			for p in pop: p[0]=None
 			print("result cleaned")
