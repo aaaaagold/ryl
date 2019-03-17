@@ -83,9 +83,14 @@ class idv:
 	def maxW(self):
 		return max(self.w)
 	def mutate(self):
-		r=random.random()+goldRate
-		self.w=[random.random()*w+goldRate for w in self.w]
-		self.w=[w+random.random() for w in self.w]
+		p=random.random()
+		if p<0.5:
+			self.w=[(random.random()+goldRate)*w for w in self.w]
+		elif p<0.75:
+			self.w=[random.random()*w for w in self.w]
+		else:
+			self.w=[w/(random.random()+2**-11) for w in self.w]
+		self.w=[w+random.random()-0.5 for w in self.w]
 		self.w=[0 if w<0 else w for w in self.w]
 		return self
 	def cross(self,rhs):
@@ -94,7 +99,7 @@ class idv:
 				self.w[i]=rhs.w[i]
 		return self
 
-def test2(gt,psize=11):
+def test2(gt,psize=23):
 	maxstep=2323
 	pop=[ [None,idv(),0] ]
 	for n in range(2,7):
@@ -110,7 +115,7 @@ def test2(gt,psize=11):
 			print("size",n)
 			print("batch",_)
 			# split cases
-			qv=[bbb.random().copy() for _ in range(1+(n+_)*2)]
+			qv=[bbb.random().copy() for _ in range(1+(n+_)*_)]
 			print("qv done",len(qv))
 			# clear results
 			for p in pop: p[0]=None
