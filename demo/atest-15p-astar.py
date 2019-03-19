@@ -15,7 +15,7 @@ bbb=board((4,4))
 
 def test(n,qv,gt,hweights=[],opts={}):
 	steps=opts["steps"] if "steps" in opts else 2323
-	stateLimit=opts["stateLimit"] if "stateLimit" in opts else 4095
+	stateLimit=opts["stateLimit"] if "stateLimit" in opts else 65535
 	rtv=0 # meaning: step # sum or max
 	wh=(n,n)
 	
