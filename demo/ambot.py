@@ -32,6 +32,7 @@ class mb:
 	def _rot90(self,xy):
 		return [-xy[1],xy[0]]
 	def _move(self,m1m2):
+		# TODO: suppose a timeslot = ?ms
 		# L,R
 		m1,m2=m1m2
 		mscale=1
