@@ -38,15 +38,12 @@ class mb:
 		D=1 # distance of 2 wheels
 		# common used
 		pi_180=math.pi/180
-		mm=m1*m2
-		R=m1/m2
-		r=(m1+m2)/2.0
 		#c,s=math.cos(self.d*math.pi*2/360),math.sin(self.d*math.pi*2/360) # F
 		c,s=math.cos(self.d*pi_180),math.sin(self.d*pi_180) # F
 		rc,rs=self._rot90([c,s]) # L
-		if mm==0:
-			d=D/2.0
-			dxy=[rc*d,rs*d]
+		d=D/2.0
+		dxy=[rc*d,rs*d]
+		if m1*m2==0:
 			rad=0
 			if m1!=0:
 				rad+=-m1*mscale/D
@@ -62,9 +59,11 @@ class mb:
 			#self.d+=rad/(math.pi*2)*360
 			self.d+=rad/pi_180
 			self.d%=360
+		elif m1==m2:
+			scale=m1*mscale
+			self.xy[0]+=c*scale
+			self.xy[1]+=s*scale
 		else:
-			d=D/2.0
-			dxy=[rc*d,rs*d] # L/2
 			n=(m1-m2)*1.0
 			m1/=n
 			m2/=n
@@ -107,4 +106,11 @@ if __name__=='__main__':
 	for _ in range(4):
 		bbb.print()
 		bbb._move([math.pi*-0.5,math.pi*0.5])
+	bbb.print()
+	print()
+	for _ in range(2):
+		bbb.print()
+		bbb._move([1,1])
+		bbb.print()
+		bbb._move([math.pi*1.5,math.pi*2])
 	bbb.print()
