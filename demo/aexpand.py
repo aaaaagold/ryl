@@ -42,7 +42,8 @@ def _bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 			actinfo=near[:2] # (who does, does what)
 			if currstep<step:
 				#q.push((stat,currstep+1,(actinfo,currstatNum)))
-				hInfo=tuple([ h(stat.outputs()) for h in hv ])
+				hInfo=[ h(stat.outputs()) for h in hv ]
+				if len(hInfo)!=0: hInfo[0]+=currstep
 				if len(hDistinct[0])==0:
 					for arr in hDistinct:
 						arr.extend(hInfo)
