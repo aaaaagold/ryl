@@ -10,22 +10,24 @@ from amyhead import *
 
 class mb:
 	def __init__(self):
-		self.xy=[0,0]
 		self.d=90 # F
+		self.xy=[0,0]
 	def copy(self):
 		rtv=self.__class__()
-		rtv.xy=self.xy
 		rtt.d=self.d
+		rtv.xy=self.xy
 		return rtv
 	def ouyputs(self):
-		pass
+		rtv=[self.d]
+		rtv+=self.xy
+		return rtv
 	def setStat(self,xy=None,d=None):
 		if not isNone(xy): self.xy=xy
 		if not isNone(d):  self.d=d
 		return self
 	def print(self):
-		print("xy",self.xy)
 		print("dir",self.d)
+		print("xy",self.xy)
 	def _rot(self,xy,rad):
 		c,s=math.cos(rad),math.sin(rad)
 		return [xy[0]*c-xy[1]*s,xy[0]*s+xy[1]*c]
@@ -35,7 +37,7 @@ class mb:
 		# TODO: suppose a timeslot = ?ms
 		# L,R
 		m1,m2=m1m2
-		mscale=1
+		mscale=math.pi*0.25/800 # [-100,100] dt=0.125 * 7 ~ 90 deg # neg*1.1 # notice inertia
 		D=1 # distance of 2 wheels
 		# common used
 		pi_180=math.pi/180
@@ -101,8 +103,10 @@ if __name__=='__main__':
 	bbb=mb()
 	for _ in range(8):
 		bbb.print()
-		bbb._move([math.pi*3.5,math.pi*4])
+		#bbb._move([math.pi*-0.25,math.pi*0.25])
+		bbb._move([-100,100])
 	bbb.print()
+	exit()
 	print()
 	for _ in range(4):
 		bbb.print()
