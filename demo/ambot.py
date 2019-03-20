@@ -83,8 +83,12 @@ class mb:
 		return self
 	def moves(self,info={}):
 		# return available (move steps)s
-		# (+- 0%,20%,40%,60%,80%,100%, ... )
-		pass
+		# (0%,+-100%, ... )
+		rtv=[]
+		for j in range(3):
+			for i in range(3):
+				rtv.append(((i-1)*100,(j-1)*100))
+		return rtv
 	def moveSeq(self,msgv,verbose=True):
 		# move several move steps
 		pass
