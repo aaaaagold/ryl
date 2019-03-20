@@ -37,7 +37,7 @@ class mb:
 		# TODO: suppose a timeslot = ?ms
 		# L,R
 		m1,m2=m1m2
-		mscale=math.pi*0.25/800 # [-100,100] dt=0.125 * 7 ~ 90 deg # neg*1.1 # notice inertia
+		mscale=math.pi*0.25/800 # [-100,100] dt=0.125 * 7 ~ 90 deg # neg*1.125 # notice inertia
 		D=1 # distance of 2 wheels
 		# common used
 		pi_180=math.pi/180
