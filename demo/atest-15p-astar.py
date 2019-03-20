@@ -82,16 +82,18 @@ class idv:
 		return self
 	def maxW(self):
 		return max(self.w)
-	def mutate(self):
+	def mutate(self,strt=0):
 		p=random.random()
+		m=self.w[strt:]
 		if p<0.5:
-			self.w=[(random.random()+goldRate)*w for w in self.w]
+			m=[(random.random()+goldRate)*w for w in m]
 		elif p<0.75:
-			self.w=[random.random()*w for w in self.w]
+			m=[random.random()*w for w in m]
 		else:
-			self.w=[w/(random.random()+2**-11) for w in self.w]
-		self.w=[w+random.random()-0.5 for w in self.w]
-		self.w=[0 if w<0 else w for w in self.w]
+			m=[w/(random.random()+2**-11) for w in m]
+		m=[w+random.random()-0.5 for w in m]
+		m=[0 if w<0 else w for w in m]
+		self.w=self.w[:strt]+m
 		return self
 	def cross(self,rhs):
 		for i in range(len(self.w)):
@@ -132,7 +134,7 @@ def test2(gt,psize=23):
 						ch2=random.choice(pop)[1]
 						tmp+=[ch.cross(ch2)]
 					else:
-						tmp+=[ch.mutate()]
+						tmp+=[ch.mutate(strt=(n-1)**2)]
 					tmp+=[p[2]+1]
 					newpop.append(tmp)
 				print("new pop done")
