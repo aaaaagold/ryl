@@ -19,7 +19,16 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 	it=3
 	step=int(sys.argv[it]) if len(sys.argv)>it and sys.argv[it].isdigit() else 8
 	t0=time.time()
-	res=genSol_v3(bbb,xxx,step=step,stateLimit=4095,verbose=True)
+	info={
+		# formed basic steps
+		"moves":[
+			[(100, -100), (100, -100), (100, -100), (100, -100), (100, -100), (100, -100), (100, -100), (100, -100)], # deg90n
+			[(-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100)], # deg90p
+			[(100, 100), (100, 100), (100, 100), (100, 100), (100, 100), (100, 100), (100, 100), (100, 100)], # forward
+			[(-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100)], # backward
+		]
+	}
+	res=genSol_v3(bbb,xxx,step=step,stateLimit=4095,verbose=True,info=info)
 	print(time.time()-t0)
 	if len(res['moves'])==0:
 		print("GG")
