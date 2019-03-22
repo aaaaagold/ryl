@@ -43,7 +43,7 @@ def _bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 			if currstep<step:
 				#q.push((stat,currstep+1,(actinfo,currstatNum)))
 				hInfo=[ h(stat.outputs()) for h in hv ]
-				if len(hInfo)!=0: hInfo[0]+=currstep
+				#if len(hInfo)!=0: hInfo[0]+=currstep # don't use it
 				hInfo=tuple(hInfo)
 				if len(hDistinct[0])==0:
 					for arr in hDistinct:
