@@ -72,7 +72,7 @@ class Goal:
 			if c[0]!=0:
 				return 1
 		return 0
-	def flatten(self,debug=""):
+	def flatten(self):
 		add=[]
 		delItSet=set()
 		rg=range(len(self.constraints))

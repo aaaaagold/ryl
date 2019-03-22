@@ -14,20 +14,27 @@ class mb:
 		self.xy=[0,0]
 	def copy(self):
 		rtv=self.__class__()
-		rtt.d=self.d
-		rtv.xy=self.xy
+		rtv.d=self.d
+		rtv.xy.clear()
+		rtv.xy+=self.xy
 		return rtv
-	def ouyputs(self):
+	def outputs(self):
+		return self.rawBoard()
+	def rawBoard(self):
 		rtv=[self.d]
 		rtv+=self.xy
 		return rtv
+	def hash(self):
+		arr=self.rawBoard()
+		return tuple(self.rawBoard())
 	def setStat(self,xy=None,d=None):
 		if not isNone(xy): self.xy=xy
 		if not isNone(d):  self.d=d
 		return self
-	def print(self):
+	def print(self,end=''):
 		print("dir",self.d)
 		print("xy",self.xy)
+		print(end=end)
 	def _rot(self,xy,rad):
 		c,s=math.cos(rad),math.sin(rad)
 		return [xy[0]*c-xy[1]*s,xy[0]*s+xy[1]*c]
@@ -43,6 +50,8 @@ class mb:
 		pi_180=math.pi/180
 		#c,s=math.cos(self.d*math.pi*2/360),math.sin(self.d*math.pi*2/360) # F
 		c,s=math.cos(self.d*pi_180),math.sin(self.d*pi_180) # F
+		if c<1e-16: c*=0
+		if s<1e-16: s*=0
 		rc,rs=self._rot90([c,s]) # L
 		d=D/2.0
 		dxy=[rc*d,rs*d]
@@ -80,6 +89,7 @@ class mb:
 				self.xy=[ cxy[i]+dxy[i] for i in range(2) ]
 			self.d+=rad/(math.pi*2)*360
 			self.d%=360
+		self.d=int(self.d*100)/100.0
 		return self
 	def moves(self,info={}):
 		# return available (move steps)s
@@ -87,20 +97,30 @@ class mb:
 		rtv=[]
 		for j in range(3):
 			for i in range(3):
-				rtv.append(((i-1)*100,(j-1)*100))
+				rtv.append([((i-1)*100,(j-1)*100)])
 		return rtv
 	def moveSeq(self,msgv,verbose=True):
-		# move several move steps
-		pass
+		for msg in msgv:
+			t,mSeq,s=msg
+			self.move(mSeq)
+			if verbose:
+				print(mSeq)
+				self.print('\n')
 	def move1(self,m,fixedBlockIts=[]):
 		# move 1 step
-		pass
+		return self._move(m)
 	def move(self,move_seq,fixedBlockIts=[]):
 		# 1 move steps
-		pass
+		for m in move_seq: self._move(m)
+		return False
 	def near1(self,info={}):
 		# return near states: (turn,moveSeqFrom_moves,internalState)
-		pass
+		rtv=[]
+		for mSeq in self.moves(info=info):
+			n=self.copy()
+			if n.move(mSeq): continue
+			rtv.append((0,mSeq,n))
+		return rtv
 
 
 if __name__=='__main__':
@@ -123,3 +143,4 @@ if __name__=='__main__':
 		bbb.print()
 		bbb._move([math.pi*1.5,math.pi*2])
 	bbb.print()
+	print()
