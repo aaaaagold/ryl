@@ -44,6 +44,6 @@ if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
 		print("move end")
 		print()
 		print(mml)
-		for m in movesS: print(m)
+		for mv in movesS: print([x for m in mv for x in m[1]])
 	pass
 	exit()
