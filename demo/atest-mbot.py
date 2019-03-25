@@ -74,5 +74,8 @@ if __name__=='__main__':
 			print("start")
 			acts=[x for m in movesS[0] for x in m[1]]
 			for act in acts: doAct(act,bot)
+			print("exit")
+			bot.close()
+			bot.exit(0,0)
 	pass
 	exit()
