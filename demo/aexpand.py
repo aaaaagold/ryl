@@ -49,9 +49,9 @@ def _bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 					for arr in hDistinct:
 						arr.extend(hInfo)
 				else:
-					for m in range(len(hDF)):
-						for i in range(len(hInfo)):
-							hDistinct[m][i]=hDF[m](hDistinct[m][i],hInfo[i])
+					for m,d in enumerate(hDistinct):
+						for i,dd in enumerate(d):
+							d[i]=hDF[m](dd,hInfo[i])
 				cmpInfo=(hInfo,orderNum)
 				heappush(heap,( cmpInfo , (stat,currstep+1,(actinfo,currstatNum)) ))
 				orderNum+=1
@@ -66,9 +66,8 @@ def bfs(obj,step=8,turn=0,stateLimit=4095,notViolate=None,info={}):
 	INFO.update(info)
 	hvv=info['hvv']+[[]]
 	blankTested=False
-	for i in range(len(hvv)):
-		if blankTested!=False and len(hvv)==i+1: continue
-		hv=hvv[i]
+	for i,hv in enumerate(hvv,1):
+		if blankTested!=False and len(hvv)==i: continue
 		INFO['hv']=hv
 		res=_bfs(obj,step=step,turn=turn,stateLimit=stateLimit,notViolate=notViolate,info=INFO)
 		blankTested|=(res[1][0]==res[1][1])

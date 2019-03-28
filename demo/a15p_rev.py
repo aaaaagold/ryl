@@ -15,9 +15,9 @@ class board(a15p_base.board):
 	def _output(self,argv=()):
 		t=()
 		tmp=[ t for _ in range(len(self.__board)) ]
-		for i in range(len(self.__board)):
-			tmp[ self.__board[i] ] = (i,)
-			#tmp[ self.__board[i] ] = (int(i//self.__wh[0]),int(i%self.__wh[0]))
+		for i,p in enumerate(self.__board):
+			tmp[ p ] = (i,)
+			#tmp[ p ] = (int(i//self.__wh[0]),int(i%self.__wh[0]))
 		return [ x for v in tmp for x in v ]
 	def copy(self):
 		rtv=self.__class__(self.__wh)

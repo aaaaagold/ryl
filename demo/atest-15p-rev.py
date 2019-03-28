@@ -10,7 +10,8 @@ from a15p_rev import *
 from asol import *
 
 xxx=Goaltree()
-xxx.fromTxt("ainput-15p-rev/main.txt")
+#xxx.fromTxt("ainput-15p-rev/main.txt")
+xxx.fromTxt(sys.argv[1])
 learnDir="alearn-15p-rev/"
 #print(xxx)
 #print("toStr")
@@ -22,8 +23,8 @@ print("#end")
 print("finals:",xxx.getFinals())
 print("size:",xxx.size())
 bbb=board((4,4))
-if 0!=0 or (len(sys.argv)>1 and sys.argv[1]=="1demo"):
-	it=2
+if 0!=0 or (len(sys.argv)>2 and sys.argv[2]=="1demo"):
+	it=3
 	step=int(sys.argv[it]) if len(sys.argv)>it and sys.argv[it].isdigit() else 8
 	bbb.random()
 	while bbb.solvable()==False: bbb.random()
@@ -141,8 +142,8 @@ if 0!=0:
 		print(i)
 		print()
 else:
-	step=int(sys.argv[1]) if len(sys.argv)>1 and sys.argv[1].isdigit() else 8
-	stateLimit=int(sys.argv[2]) if len(sys.argv)>2 and sys.argv[2].isdigit() else 4095
+	step=int(sys.argv[2]) if len(sys.argv)>2 and sys.argv[2].isdigit() else 8
+	stateLimit=int(sys.argv[3]) if len(sys.argv)>3 and sys.argv[3].isdigit() else 4095
 	learnFile=""
 	for i in range(len(sys.argv)):
 		if sys.argv[i]=="-l":

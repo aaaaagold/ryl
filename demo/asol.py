@@ -190,12 +190,12 @@ def genSol_v3(b,gt,step=8,stateLimit=4095,currStep=0,
 		matchedKeys=[]
 		#print(keys) # debug
 		# verify if a node can match
-		for i in range(len(keys)):
+		for _,keyt in enumerate(keys):
 			#if keys[i][0]<minProb:
 			#	#break
 			#	pass
 			#	# omit < 50%-th.  # keys is sorted
-			key=keys[i][1]
+			key=keyt[1]
 			goalSet=gt.getGoals(key)
 			
 			# check if it floods to some nodes

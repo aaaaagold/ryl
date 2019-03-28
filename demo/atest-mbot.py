@@ -32,7 +32,7 @@ if __name__=='__main__':
 			[(-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100)],
 		]
 	}
-	#info={}
+	info={}
 	res=genSol_v3(bbb,xxx,step=step,stateLimit=4095,verbose=True,info=info)
 	print(time.time()-t0)
 	if len(res['moves'])==0:

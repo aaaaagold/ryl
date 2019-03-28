@@ -7,38 +7,6 @@ import random
 from shorthand import *
 from amyhead import *
 #from ah import *
-'''
-import resource
-rsrc=resource.RLIMIT_DATA
-soft,hard=resource.getrlimit(rsrc)
-print("mem limit soft,hard",soft,hard)
-resource.setrlimit(rsrc,(2**11,2**12))
-soft,hard=resource.getrlimit(rsrc)
-print("mem limit soft,hard",soft,hard)
-del soft,hard
-'''
-'''
-class queue:
-	def __init__(self):
-		self.__contI=[]
-		self.__contO=[]
-	def __dump(self):
-		while len(self.__contI)!=0:
-			self.__contO.append(self.__contI.pop())
-	def front(self):
-		return self.__contI[0] if len(self.__contO)==0 else self.__contO[-1]
-	def back(self):
-		return self.__contO[0] if len(self.__contI)==0 else self.__contI[-1]
-	def push(self,obj):
-		self.__contI.append(obj)
-	def pop(self):
-		if len(self.__contO)==0: self.__dump()
-		return self.__contO.pop()
-	def size(self):
-		return len(self.__contI)+len(self.__contO)
-	def toArr(self):
-		return self.__contO+self.__contI
-'''
 
 class hfunc:
 	def __init__(self,coefCnt):
@@ -115,7 +83,7 @@ class board:
 	def __init__(self,wh):
 		self.__wh=(wh[0],wh[1])
 		sz=self.size()
-		self.__board=[ i for i in range(sz) ]
+		self.__board=[ *range(sz) ]
 		self.__emptyNum=self.__board[-1]
 		self.__emptyAt=sz-1
 	def moves(self,info={}):
@@ -168,8 +136,7 @@ class board:
 		else: return True
 	def move(self,move_seq,fixedBlockIts=[]):
 		if (len(move_seq)<<1)<len(self.rawBoard()):
-			for i in range(len(move_seq)):
-				m=move_seq[i]
+			for i,m in enumerate(move_seq):
 				if self.move1(m,fixedBlockIts=fixedBlockIts):
 					self.moveR(move_seq[:i])
 					return True
@@ -254,9 +221,9 @@ class board:
 		del q
 		if rtvIsList:
 			newrtv={}
-			for i in range(len(rtv)):
-				if type(rtv[i])!=type(None):
-					newrtv[i]=rtv[i]
+			for i,s in enumerate(rtv):
+				if type(s)!=type(None):
+					newrtv[i]=s
 			del rtv
 			rtv=newrtv
 		return rtv # rtv[stateHash]=(state,step,(move,prevState))
@@ -301,10 +268,10 @@ class board:
 		cnt=0
 		bd=self.__board
 		e=self.emptyAt()
-		for p in range(len(bd)):
+		for p,pp in enumerate(bd):
 			if p==e: continue
 			for n in range(p+1,len(bd)):
-				if n!=e and bd[p]>bd[n]:
+				if n!=e and pp>bd[n]:
 					cnt^=1
 		cnt^=1
 		wh=self.__wh
@@ -335,8 +302,8 @@ def p9(goal,strt):
 			for i in range(len(arr)): mp[arr[i]]=i
 			for b in [main]+others:
 				arr=b.rawBoard()
-				for i in range(len(arr)):
-					arr[i]=mp[arr[i]] if arr[i]!=b.emptyNum() else b.size()-1
+				for i,v in enumerate(arr):
+					arr[i]=mp[v] if v!=b.emptyNum() else b.size()-1
 		self.mapping=mapping
 	self.mapping(goal,[strt])
 	rtv=bfs2moveSeq(self.cache[goal.emptyAt()],strt.hash())
@@ -344,19 +311,6 @@ def p9(goal,strt):
 	for i in range(len(rtv)): rtv[i]^=1
 	return rtv
 
-'''
-def bfs2moveSeq(bfs,goalHash):
-	moves=[]
-	if (type(bfs)==type({}) and (goalHash in bfs)) or (type(bfs)==type([]) and type(bfs[goalHash])!=type(None)):
-		pre=bfs[goalHash][2]
-		preStat=pre[1]
-		while preStat>=0:
-			moves.append(pre[0])
-			pre=bfs[preStat][2]
-			preStat=pre[1]
-		moves.reverse()
-	return moves
-'''
 
 def test():
 	# test
