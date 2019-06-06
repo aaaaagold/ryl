@@ -1,4 +1,4 @@
-#!/bin/python3
+﻿#!/bin/python3
 import os
 import re
 import sys
@@ -113,6 +113,7 @@ class Goal:
 		if arrangeLater==False: self.arrange()
 		else: self.arrangeNeeded=arrangeLater
 	def fromStr(self,s,cd='./',extView=None):
+		s=s.replace('\r','')
 		'''
 			character:'\r' is ommited
 			this function will NOT do the arrangement
@@ -301,6 +302,7 @@ class Goaltree:
 	def getFinals(self):
 		return [ k for k in self.sets if self.getSucc(k)=='-' ]
 	def fromStr(self,s,cd='./',extView=None):
+		s=s.replace('\r','')
 		'''
 			\r\n , \n\r , \n -> \n
 			format: see self.fromTxt
