@@ -12,7 +12,6 @@ from asol import *
 xxx=Goaltree()
 #xxx.fromTxt("ainput-15p-rev/main.txt")
 xxx.fromTxt(sys.argv[1])
-learnDir="alearn-15p-rev/"
 #print(xxx)
 #print("toStr")
 xxxtxt=xxx.toStr()
@@ -99,6 +98,7 @@ if 0!=0 or (len(sys.argv)>2 and sys.argv[2]=="1demo"):
 # TODO 
 
 if 0!=0:
+	# debugging HLD
 	notSolved=[
 		#[15, 5, 10, 4, 6, 14, 9, 8, 13, 0, 11, 1, 2, 7, 3, 12],
 		#[15, 5, 10, 12, 1, 6, 11, 8, 4, 2, 9, 7, 3, 0, 13, 14],
@@ -142,25 +142,20 @@ if 0!=0:
 		print(i)
 		print()
 else:
+	# test several boards
 	step=int(sys.argv[2]) if len(sys.argv)>2 and sys.argv[2].isdigit() else 8
 	stateLimit=int(sys.argv[3]) if len(sys.argv)>3 and sys.argv[3].isdigit() else 4095
-	learnFile=""
-	for i in range(len(sys.argv)):
-		if sys.argv[i]=="-l":
-			learnFile+=sys.argv[i+1]
-			break
 	print("need appearing 'goal!'."+
 		("  %s=%s"%("step",str(step)))+
-		("  %s=%s"%("stateLimit",str(stateLimit)))+
-		("  %s=%s"%("learnFile",learnFile))
+		("  %s=%s"%("stateLimit",str(stateLimit)))
 		)
 	succList=[]
 	boardInitHistoryAll=[]
 	boardInitHistory=[]
 	failCnt=0
+	bdcnt=0
 	while 0==0:
-		print(len(succList))
-		if len(succList)>999 or learnFile!="":
+		if bdcnt>999:
 			for t in boardInitHistory:
 				print(t[0].rawBoard(),t[1],t[2])
 			def getmmm(arr):
@@ -169,60 +164,9 @@ else:
 			print("time: max,mid,min =",getmmm([x[1] for x in boardInitHistory]))
 			print("step: max,mid,min =",getmmm([x[3] for x in boardInitHistory]))
 			print("fail count =",failCnt)
-			#print("time: max,mid =",(lambda sarr:(sarr[-1],sarr[len(sarr)>>1]))(sorted( (lambda arr:[x[1] for x in arr])(boardInitHistory) )) ) # deprecated
-			exit() # TODO
-			if learnFile!="":
-				xxx.loadNextGoalFile(learnFile)
-			xxx.saveNextGoal(succList)
-			succList=[]
-			tmp=xxx.saveNextGoalFile(learnDir+"test.learn")
-			print(tmp)
-			boardInitHistoryAll.append(boardInitHistory)
-			if 0==0:
-				#test
-				logs_time=[("bylearn","notlearn")]
-				logs_node=[("bylearn","notlearn")]
-				for i in range(len(boardInitHistory)):
-					print(i)
-					h=boardInitHistory[i]
-					bbb=h[0].copy()
-					bbb.print()
-					print("test",bbb.rawBoard())
-					t0=time.time()
-					res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+h[1]+60,info={"failmemCnt":1023})
-					t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
-					print("test",t1,"prev",h[1])
-					logs_time.append((t1,h[1]))
-					logs_node.append((res['nodes'],h[2]))
-					print("test",res['nodes'])
-				prefix=learnDir+"log/logs-"+str(time.time())
-				with open(prefix+"-time","w") as f:
-					for l in logs_time:
-						f.write(str(l[0])+"\t"+str(l[1])+"\n")
-				with open(prefix+"-node","w") as f:
-					for l in logs_node:
-						f.write(str(l[0])+"\n"+str(l[1])+"\n\n")
-				with open(prefix+"-board","w") as f:
-					f.write("[\n")
-					for h in boardInitHistory:
-						f.write("\t"+str(h[0].rawBoard())+",\n")
-					f.write("]\n")
-				print("unseen boards")
-				with open(prefix+"-unseen","w") as f:
-					f.write("board"+"\t"+"time"+"\t"+"nodes"+"\n")
-					for i in range(100):
-						bbb.random()
-						while bbb.solvable()==False: bbb.random()
-						bbb.print()
-						t0=time.time()
-						res=genSol(bbb,xxx,step=step,stateLimit=stateLimit,endBefore=t0+60)
-						t1=time.time()-t0 if len(res['nodes'])!=0 else "tooLong/fail"
-						print("u",t1)
-						f.write(str(bbb.rawBoard())+"\t"+str(t1)+"\t"+str(res['nodes'])+"\n")
-						print("u",res['nodes'])
-			boardInitHistory.clear()
-			failCnt*=0
 			exit()
+		bdcnt+=1
+		print("bdcnt",bdcnt)
 		print("board.random()")
 		bbb.random()
 		while bbb.solvable()==False: bbb.random()
@@ -254,6 +198,5 @@ else:
 				bbb.print()
 				bbb.moveSeq(moves)
 				print(len(moves))
-		#print(res['nodes']) # debug - for developing learn file
 		# [ [ "subgoal-path_A-1" , "subgoal-path_A-2" , ... ] , [ "subgoal-path_B-1" , "subgoal-path_B-2" , ... ] , ...]
 
