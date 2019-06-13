@@ -8,7 +8,7 @@ from ambot import *
 from asol import *
 
 xxx=Goaltree()
-fname=sys.argv[2]
+fname=sys.argv[2].replace("\\",'/')
 xxx.fromTxt(fname)
 xxxstr=xxx.toStr()
 print(xxxstr)

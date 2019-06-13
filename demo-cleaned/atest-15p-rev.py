@@ -11,7 +11,7 @@ from asol import *
 
 xxx=Goaltree()
 #xxx.fromTxt("ainput-15p-rev/main.txt")
-xxx.fromTxt(sys.argv[1])
+xxx.fromTxt(sys.argv[1].replace("\\",'/'))
 #print(xxx)
 #print("toStr")
 xxxtxt=xxx.toStr()
