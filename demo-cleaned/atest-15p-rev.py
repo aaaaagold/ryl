@@ -152,17 +152,21 @@ else:
 	succList=[]
 	boardInitHistoryAll=[]
 	boardInitHistory=[]
+	failTime=[]
 	failCnt=0
 	bdcnt=0
 	while 0==0:
 		if bdcnt>999:
 			for t in boardInitHistory:
 				print(t[0].rawBoard(),t[1],t[2])
-			def getmmm(arr):
+			def getmmma(arr):
+				if len(arr)==0: return (None,None,None,None)
 				sarr=sorted(arr)
-				return sarr[-1],sarr[len(sarr)>>1],sarr[0]
-			print("time: max,mid,min =",getmmm([x[1] for x in boardInitHistory]))
-			print("step: max,mid,min =",getmmm([x[3] for x in boardInitHistory]))
+				mi=len(sarr)>>1
+				return sarr[-1],(sarr[mi] if len(sarr)&1 else (sarr[mi]+sarr[mi-1])/2.0),sarr[0],sum(arr)*1.0/len(arr)
+			print("time: max,mid,min,avg =",getmmma([x[1] for x in boardInitHistory]))
+			print("time_fail: max,mid,min,avg =",getmmma([x[1] for x in failTime]))
+			print("step: max,mid,min,avg =",getmmma([x[3] for x in boardInitHistory]))
 			print("fail count =",failCnt)
 			exit()
 		bdcnt+=1
@@ -184,7 +188,7 @@ else:
 			#res=genSol_v3(bbb,xxx,step=step,stateLimit=stateLimit,verbose=True)
 			print(bbb.rawBoard())
 			#break
-			boardInitHistory.pop()
+			failTime.append(boardInitHistory.pop())
 		elif 0!=0:
 			movesS=res['moves']
 			nodesS=res['nodes']
