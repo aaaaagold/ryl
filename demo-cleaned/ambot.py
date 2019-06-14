@@ -50,8 +50,8 @@ class mb:
 		pi_180=math.pi/180
 		#c,s=math.cos(self.d*math.pi*2/360),math.sin(self.d*math.pi*2/360) # F
 		c,s=math.cos(self.d*pi_180),math.sin(self.d*pi_180) # F
-		if c<1e-16: c*=0
-		if s<1e-16: s*=0
+		if c*c<1e-16: c*=0
+		if s*s<1e-16: s*=0
 		rc,rs=self._rot90([c,s]) # L
 		d=D/2.0
 		dxy=[rc*d,rs*d]
@@ -125,7 +125,35 @@ class mb:
 
 
 if __name__=='__main__':
+	ms=[
+			# deg90n
+			[(100, -100), (100, -100), (100, -100), (100, -100), (100, -100), (100, -100), (100, -100)],
+			# deg90p
+			[(-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100), (-100, 100)],
+			# forward
+			[(100, 100), (100, 100), (100, 100), (100, 100), (100, 100), (100, 100), (100, 100)],
+			# backward
+			#[(-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100), (-100, -100)],
+		]
 	bbb=mb()
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	bbb.move(ms[0])
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	bbb.move(ms[0])
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	bbb.move(ms[2])
+	bbb.print()
+	exit()
 	for _ in range(8):
 		bbb.print()
 		#bbb._move([math.pi*-0.25,math.pi*0.25])
