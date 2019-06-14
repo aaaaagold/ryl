@@ -232,19 +232,28 @@ include C41-C44.txt
 ##
 
 
-C36 C41 C
+C37 C41 C
 include top5.txt
 0 near12:2
+~0 8:12 8:8
+
+
+C36 C37 C
+include top5.txt
+0 near12:2,3
+~0 8:12 8:8
 
 
 C35 C36 C
 include top5.txt
-0 near12:2,3
+0 near12:2,4
+~0 8:12 8:8
 
 
 C34 C35 C
 include top5.txt
-0 near12:2,4
+0 near12:2,5
+~0 8:12 8:8
 
 
 C33 C34 C
