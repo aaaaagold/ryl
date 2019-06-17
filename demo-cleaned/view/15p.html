@@ -114,7 +114,7 @@ let jurl=function jurl(url,method,data,callback){ let xhttp = new XMLHttpRequest
 let parser_15p=function _parser_15p(outtxt_relpath,putAtDiv){
 	if(_parser_15p.getparse==undefined){ _parser_15p.getparse=function _getparse(txt,putAtDiv){
 		if(_getparse.parse==undefined){ _getparse.parse=function _parse(txt){
-			txt=txt.replace("\r","");
+			txt=txt.replace(/\r/g,"");
 			let re_all=/((from-to[\n][^\n]*[\n][^\n]+[\n][\n])((move[\n][^\n]+[\n][\n]board[\n]([^\n]+[\n])*[\n])+))/g;
 			let re_basicStep=/move([\n][^\n]+[\n][\n])board([\n]([^\n]+[\n])*[\n])/g;
 			let arr=txt.split(re_all);
